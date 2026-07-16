@@ -30,6 +30,7 @@
     <!-- Person -->
     <string name="person_detail_title">Profile</string>
     <string name="tab_overview">Overview</string>
+    <string name="tab_education">Education</string>
     <string name="tab_documents">Documents</string>
     <string name="tab_travel">Travel</string>
     <string name="tab_addresses">Addresses</string>
@@ -74,6 +75,10 @@
     <string name="label_employer_name">Employer name</string>
     <string name="label_job_title">Job title</string>
     <string name="label_employer_address">Employer address</string>
+    <string name="label_institution">University / college</string>
+    <string name="label_degree">Degree</string>
+    <string name="label_field_of_study">Field / major</string>
+    <string name="label_gpa">GPA</string>
     <string name="label_arrival_date">Arrival date</string>
     <string name="label_arrival_city">Arrival city</string>
     <string name="label_departure_date">Departure date</string>
@@ -136,6 +141,8 @@
     <string name="travel_reason">Reason: %1$s</string>
     <string name="empty_addresses">No address history</string>
     <string name="empty_addresses_subtitle">Track where you have lived in the US</string>
+    <string name="empty_education">No education history</string>
+    <string name="empty_education_subtitle">Record schools, degrees, and majors</string>
     <string name="empty_employers">No employer history</string>
     <string name="empty_employers_subtitle">Record your employment for visa compliance</string>
     <string name="empty_petitions">No petitions</string>
@@ -197,6 +204,7 @@
     <string name="edit_i94">Edit I-94</string>
     <string name="add_address">Add address</string>
     <string name="add_employer">Add employer</string>
+    <string name="add_education">Add education</string>
     <string name="add_petition">Add petition</string>
     <string name="edit_person">Edit profile</string>
 </resources>

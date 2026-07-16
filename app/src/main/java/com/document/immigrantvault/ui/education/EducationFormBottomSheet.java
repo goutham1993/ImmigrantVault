@@ -1,4 +1,4 @@
-package com.document.immigrantvault.ui.employer;
+package com.document.immigrantvault.ui.education;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,29 +10,30 @@ import androidx.annotation.Nullable;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
-import com.document.immigrantvault.data.db.entity.EmployerEntry;
-import com.document.immigrantvault.databinding.BottomSheetEmployerFormBinding;
+import com.document.immigrantvault.data.db.entity.EducationEntry;
+import com.document.immigrantvault.databinding.BottomSheetEducationFormBinding;
 import com.document.immigrantvault.util.DatePickerHelper;
+import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Date;
 
-public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
+public class EducationFormBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_PERSON_ID = "person_id";
     private static final String ARG_ENTRY_ID = "entry_id";
 
-    private BottomSheetEmployerFormBinding binding;
+    private BottomSheetEducationFormBinding binding;
     private ImmigrantVaultApplication app;
     private long personId;
-    private EmployerEntry editing;
+    private EducationEntry editing;
     private Date startDate;
     private Date endDate;
 
-    public static EmployerFormBottomSheet newInstance(long personId, Long entryId) {
-        EmployerFormBottomSheet sheet = new EmployerFormBottomSheet();
+    public static EducationFormBottomSheet newInstance(long personId, Long entryId) {
+        EducationFormBottomSheet sheet = new EducationFormBottomSheet();
         Bundle args = new Bundle();
         args.putLong(ARG_PERSON_ID, personId);
         if (entryId != null) args.putLong(ARG_ENTRY_ID, entryId);
@@ -44,7 +45,7 @@ public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = BottomSheetEmployerFormBinding.inflate(inflater, container, false);
+        binding = BottomSheetEducationFormBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -56,7 +57,6 @@ public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
 
         DatePickerHelper.bind(requireContext(), binding.inputStart, null, d -> startDate = d);
         DatePickerHelper.bind(requireContext(), binding.inputEnd, null, d -> endDate = d);
-        binding.switchCurrent.setOnCheckedChangeListener((button, isChecked) -> updateEndDateState(isChecked));
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
@@ -66,74 +66,58 @@ public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
             binding.btnDelete.setVisibility(View.VISIBLE);
             long id = requireArguments().getLong(ARG_ENTRY_ID);
             app.getExecutor().execute(() -> {
-                EmployerEntry entry = app.getDatabase().employerDao().getByIdSync(id);
+                EducationEntry entry = app.getDatabase().educationDao().getByIdSync(id);
                 if (entry != null) requireActivity().runOnUiThread(() -> populate(entry));
             });
         } else {
-            binding.formTitle.setText(R.string.add_employer);
-            updateEndDateState(false);
+            binding.formTitle.setText(R.string.add_education);
         }
     }
 
-    private void populate(EmployerEntry entry) {
+    private void populate(EducationEntry entry) {
         editing = entry;
-        binding.inputEmployer.setText(entry.employerName);
-        binding.inputJob.setText(entry.jobTitle);
+        binding.inputInstitution.setText(entry.institutionName);
+        binding.inputDegree.setText(entry.degree);
+        binding.inputField.setText(entry.fieldOfStudy);
         binding.inputCity.setText(entry.city);
-        binding.inputAddress.setText(entry.address);
-        binding.inputNotes.setText(entry.notes);
+        binding.inputCountry.setText(entry.country);
+        binding.inputGpa.setText(entry.gpa);
         startDate = entry.startDate;
         endDate = entry.endDate;
         if (startDate != null) {
-            binding.inputStart.setText(com.document.immigrantvault.util.DateUtils.formatDate(startDate));
+            binding.inputStart.setText(DateUtils.formatDate(startDate));
         }
-        binding.switchCurrent.setChecked(entry.isCurrent);
-        if (entry.isCurrent) {
-            updateEndDateState(true);
-        } else if (endDate != null) {
-            binding.inputEnd.setText(com.document.immigrantvault.util.DateUtils.formatDate(endDate));
-            updateEndDateState(false);
-        } else {
-            updateEndDateState(false);
-        }
-    }
-
-    private void updateEndDateState(boolean isCurrent) {
-        binding.inputEnd.setEnabled(!isCurrent);
-        binding.inputEndLayout.setEnabled(!isCurrent);
-        binding.inputEnd.setClickable(!isCurrent);
-        if (isCurrent) {
-            endDate = null;
-            binding.inputEnd.setText("");
+        if (endDate != null) {
+            binding.inputEnd.setText(DateUtils.formatDate(endDate));
         }
     }
 
     private void save() {
-        if (text(binding.inputEmployer).isEmpty()) {
-            binding.inputEmployerLayout.setError(getString(R.string.error_required));
+        if (text(binding.inputInstitution).isEmpty()) {
+            binding.inputInstitutionLayout.setError(getString(R.string.error_required));
             return;
         }
-        binding.inputEmployerLayout.setError(null);
+        binding.inputInstitutionLayout.setError(null);
 
-        EmployerEntry entry = editing != null ? editing : new EmployerEntry();
+        EducationEntry entry = editing != null ? editing : new EducationEntry();
         entry.personId = personId;
-        entry.employerName = text(binding.inputEmployer);
-        entry.jobTitle = text(binding.inputJob);
+        entry.institutionName = text(binding.inputInstitution);
+        entry.degree = emptyToNull(text(binding.inputDegree));
+        entry.fieldOfStudy = emptyToNull(text(binding.inputField));
         entry.city = emptyToNull(text(binding.inputCity));
-        entry.address = emptyToNull(text(binding.inputAddress));
+        entry.country = emptyToNull(text(binding.inputCountry));
+        entry.gpa = emptyToNull(text(binding.inputGpa));
         entry.startDate = startDate;
-        entry.isCurrent = binding.switchCurrent.isChecked();
-        entry.endDate = entry.isCurrent ? null : endDate;
-        entry.notes = text(binding.inputNotes);
+        entry.endDate = endDate;
 
-        if (editing == null) app.getEmployerRepository().insert(entry, this::dismiss);
-        else app.getEmployerRepository().update(entry, this::dismiss);
+        if (editing == null) app.getEducationRepository().insert(entry, this::dismiss);
+        else app.getEducationRepository().update(entry, this::dismiss);
     }
 
     private void delete() {
         if (editing == null) return;
         UiUtils.confirmDelete(requireContext(), () ->
-                app.getEmployerRepository().delete(editing, this::dismiss));
+                app.getEducationRepository().delete(editing, this::dismiss));
     }
 
     private String text(TextInputEditText e) {

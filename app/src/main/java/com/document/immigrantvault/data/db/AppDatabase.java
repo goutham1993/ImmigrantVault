@@ -10,6 +10,7 @@ import androidx.room.TypeConverters;
 import com.document.immigrantvault.data.db.dao.BackupDao;
 import com.document.immigrantvault.data.db.dao.AddressDao;
 import com.document.immigrantvault.data.db.dao.DocumentDao;
+import com.document.immigrantvault.data.db.dao.EducationDao;
 import com.document.immigrantvault.data.db.dao.EmployerDao;
 import com.document.immigrantvault.data.db.dao.I94Dao;
 import com.document.immigrantvault.data.db.dao.PersonDao;
@@ -19,6 +20,7 @@ import com.document.immigrantvault.data.db.dao.TimelineDao;
 import com.document.immigrantvault.data.db.dao.TravelDao;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
+import com.document.immigrantvault.data.db.entity.EducationEntry;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.data.db.entity.Person;
@@ -33,13 +35,14 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
                 Document.class,
                 AddressEntry.class,
                 EmployerEntry.class,
+                EducationEntry.class,
                 I94Entry.class,
                 TravelEntry.class,
                 Petition.class,
                 Reminder.class,
                 TimelineEvent.class
         },
-        version = 11,
+        version = 12,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -52,6 +55,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DocumentDao documentDao();
     public abstract AddressDao addressDao();
     public abstract EmployerDao employerDao();
+    public abstract EducationDao educationDao();
     public abstract I94Dao i94Dao();
     public abstract TravelDao travelDao();
     public abstract PetitionDao petitionDao();
@@ -76,7 +80,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_7_8,
                             DatabaseMigrations.MIGRATION_8_9,
                             DatabaseMigrations.MIGRATION_9_10,
-                            DatabaseMigrations.MIGRATION_10_11
+                            DatabaseMigrations.MIGRATION_10_11,
+                            DatabaseMigrations.MIGRATION_11_12
                     )
                             .build();
                 }

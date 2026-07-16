@@ -69,8 +69,12 @@ public class AddressTabFragment extends Fragment {
             for (AddressEntry e : entries) {
                 String title = e.isCurrent ? "Current" : "Previous";
                 String sub = formatAddressSummary(e);
-                items.add(new ListEntryAdapter.ListItem(title, sub,
-                        DateUtils.formatDate(e.startDate) + " – " + DateUtils.formatDate(e.endDate)));
+                String meta = DateUtils.formatEmploymentDateRange(e.startDate, e.endDate, e.isCurrent);
+                String duration = DateUtils.formatYearsMonths(e.startDate, e.endDate, e.isCurrent);
+                if (!duration.isEmpty()) {
+                    meta = meta + " · " + duration;
+                }
+                items.add(new ListEntryAdapter.ListItem(title, sub, meta));
             }
             adapter.setItems(items);
             boolean isEmpty = entries.isEmpty();

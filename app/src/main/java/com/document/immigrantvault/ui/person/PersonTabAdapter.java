@@ -6,6 +6,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.document.immigrantvault.ui.person.tabs.AddressTabFragment;
 import com.document.immigrantvault.ui.person.tabs.DocumentsTabFragment;
+import com.document.immigrantvault.ui.person.tabs.EducationTabFragment;
 import com.document.immigrantvault.ui.person.tabs.EmployerTabFragment;
 import com.document.immigrantvault.ui.person.tabs.OverviewTabFragment;
 import com.document.immigrantvault.ui.person.tabs.PetitionTabFragment;
@@ -28,16 +29,18 @@ public class PersonTabAdapter extends FragmentStateAdapter {
             case 0:
                 return OverviewTabFragment.newInstance(personId);
             case 1:
-                return DocumentsTabFragment.newInstance(personId);
+                return EducationTabFragment.newInstance(personId);
             case 2:
-                return TravelTabFragment.newInstance(personId);
+                return DocumentsTabFragment.newInstance(personId);
             case 3:
-                return AddressTabFragment.newInstance(personId);
+                return TravelTabFragment.newInstance(personId);
             case 4:
-                return EmployerTabFragment.newInstance(personId);
+                return AddressTabFragment.newInstance(personId);
             case 5:
-                return PetitionTabFragment.newInstance(personId);
+                return EmployerTabFragment.newInstance(personId);
             case 6:
+                return PetitionTabFragment.newInstance(personId);
+            case 7:
             default:
                 return TimelineTabFragment.newInstance(personId);
         }
@@ -45,6 +48,6 @@ public class PersonTabAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 7;
+        return 8;
     }
 }

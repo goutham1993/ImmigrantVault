@@ -124,6 +124,27 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_11_12 = new Migration(11, 12) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `education_entries` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`institutionName` TEXT, "
+                    + "`degree` TEXT, "
+                    + "`fieldOfStudy` TEXT, "
+                    + "`city` TEXT, "
+                    + "`country` TEXT, "
+                    + "`gpa` TEXT, "
+                    + "`startDate` INTEGER, "
+                    + "`endDate` INTEGER, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_education_entries_personId` "
+                    + "ON `education_entries` (`personId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

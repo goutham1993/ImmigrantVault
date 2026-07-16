@@ -17,29 +17,44 @@
             android:textAppearance="?attr/textAppearanceTitleLarge" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_employer_layout"
+            android:id="@+id/input_institution_layout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/label_employer_name">
+            android:hint="@string/label_institution">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_employer"
+                android:id="@+id/input_institution"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_job_layout"
+            android:id="@+id/input_degree_layout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/label_job_title">
+            android:hint="@string/label_degree">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_job"
+                android:id="@+id/input_degree"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_field_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/label_field_of_study">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -61,19 +76,32 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_address_layout"
+            android:id="@+id/input_country_layout"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="@string/label_employer_address">
+            android:hint="@string/label_country">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_address"
+                android:id="@+id/input_country"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress|textMultiLine"
-                android:minLines="2" />
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_gpa_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/label_gpa">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_gpa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,28 +137,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_current"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/label_current_employer" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/input_notes_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/label_notes">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_notes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -147,7 +153,10 @@
                 android:textColor="?attr/colorError"
                 android:visibility="gone" />
 
-            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel"

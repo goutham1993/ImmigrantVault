@@ -5,6 +5,7 @@ public enum SourceEntityType {
     DOCUMENT,
     ADDRESS,
     EMPLOYER,
+    EDUCATION,
     TRAVEL,
     PETITION,
     MANUAL

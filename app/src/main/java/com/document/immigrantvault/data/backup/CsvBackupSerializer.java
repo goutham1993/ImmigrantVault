@@ -3,6 +3,7 @@ package com.document.immigrantvault.data.backup;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.DocumentType;
+import com.document.immigrantvault.data.db.entity.EducationEntry;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
@@ -40,6 +41,7 @@ public final class CsvBackupSerializer {
     private static final String DOCUMENTS = "documents.csv";
     private static final String ADDRESSES = "addresses.csv";
     private static final String EMPLOYERS = "employers.csv";
+    private static final String EDUCATION = "education_entries.csv";
     private static final String I94 = "i94_entries.csv";
     private static final String TRAVEL = "travel_entries.csv";
     private static final String PETITIONS = "petitions.csv";
@@ -57,6 +59,7 @@ public final class CsvBackupSerializer {
             writeEntry(zip, DOCUMENTS, writer -> writeDocuments(writer, backup.documents));
             writeEntry(zip, ADDRESSES, writer -> writeAddresses(writer, backup.addresses));
             writeEntry(zip, EMPLOYERS, writer -> writeEmployers(writer, backup.employers));
+            writeEntry(zip, EDUCATION, writer -> writeEducation(writer, backup.educationEntries));
             writeEntry(zip, I94, writer -> writeI94(writer, backup.i94Entries));
             writeEntry(zip, TRAVEL, writer -> writeTravel(writer, backup.travelEntries));
             writeEntry(zip, PETITIONS, writer -> writePetitions(writer, backup.petitions));
@@ -94,6 +97,7 @@ public final class CsvBackupSerializer {
             backup.documents = readDocuments(entries.get(DOCUMENTS));
             backup.addresses = readAddresses(entries.get(ADDRESSES));
             backup.employers = readEmployers(entries.get(EMPLOYERS));
+            backup.educationEntries = readEducation(entries.get(EDUCATION));
             backup.i94Entries = readI94(entries.get(I94));
             backup.travelEntries = readTravel(entries.get(TRAVEL));
             backup.petitions = readPetitions(entries.get(PETITIONS));
@@ -307,6 +311,47 @@ public final class CsvBackupSerializer {
             employers.add(employer);
         }
         return employers;
+    }
+
+    private static void writeEducation(Writer writer, List<EducationEntry> entries) throws IOException {
+        CsvUtils.writeRow(writer,
+                "id", "personId", "institutionName", "degree", "fieldOfStudy",
+                "city", "country", "gpa", "startDate", "endDate");
+        for (EducationEntry entry : entries) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(entry.id),
+                    CsvUtils.formatLong(entry.personId),
+                    CsvUtils.formatString(entry.institutionName),
+                    CsvUtils.formatString(entry.degree),
+                    CsvUtils.formatString(entry.fieldOfStudy),
+                    CsvUtils.formatString(entry.city),
+                    CsvUtils.formatString(entry.country),
+                    CsvUtils.formatString(entry.gpa),
+                    CsvUtils.formatDate(entry.startDate),
+                    CsvUtils.formatDate(entry.endDate));
+        }
+    }
+
+    private static List<EducationEntry> readEducation(byte[] data) throws IOException {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        List<EducationEntry> entries = new ArrayList<>();
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            EducationEntry entry = new EducationEntry();
+            entry.id = CsvUtils.getLong(row, "id");
+            entry.personId = CsvUtils.getLong(row, "personId");
+            entry.institutionName = CsvUtils.get(row, "institutionName");
+            entry.degree = CsvUtils.get(row, "degree");
+            entry.fieldOfStudy = CsvUtils.get(row, "fieldOfStudy");
+            entry.city = CsvUtils.get(row, "city");
+            entry.country = CsvUtils.get(row, "country");
+            entry.gpa = CsvUtils.get(row, "gpa");
+            entry.startDate = CsvUtils.getDate(row, "startDate");
+            entry.endDate = CsvUtils.getDate(row, "endDate");
+            entries.add(entry);
+        }
+        return entries;
     }
 
     private static void writeI94(Writer writer, List<I94Entry> entries) throws IOException {

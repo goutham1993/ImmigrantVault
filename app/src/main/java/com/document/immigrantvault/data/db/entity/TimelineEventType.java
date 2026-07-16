@@ -7,6 +7,7 @@ public enum TimelineEventType {
     DOCUMENT_EXPIRY,
     ADDRESS_CHANGE,
     EMPLOYER_CHANGE,
+    EDUCATION,
     TRAVEL_ENTRY,
     TRAVEL_EXIT,
     PETITION_FILED,

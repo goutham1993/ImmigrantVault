@@ -2,6 +2,7 @@ package com.document.immigrantvault.data.backup;
 
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
+import com.document.immigrantvault.data.db.entity.EducationEntry;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.data.db.entity.Person;
@@ -26,6 +27,7 @@ public class VaultBackup {
     public List<Document> documents = new ArrayList<>();
     public List<AddressEntry> addresses = new ArrayList<>();
     public List<EmployerEntry> employers = new ArrayList<>();
+    public List<EducationEntry> educationEntries = new ArrayList<>();
     public List<I94Entry> i94Entries = new ArrayList<>();
     public List<TravelEntry> travelEntries = new ArrayList<>();
     public List<Petition> petitions = new ArrayList<>();

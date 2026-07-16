@@ -6,6 +6,7 @@ import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.repository.ExportImportRepository;
 import com.document.immigrantvault.data.repository.AddressRepository;
 import com.document.immigrantvault.data.repository.DocumentRepository;
+import com.document.immigrantvault.data.repository.EducationRepository;
 import com.document.immigrantvault.data.repository.EmployerRepository;
 import com.document.immigrantvault.data.repository.I94Repository;
 import com.document.immigrantvault.data.repository.PersonRepository;
@@ -26,6 +27,7 @@ public class ImmigrantVaultApplication extends Application {
     private DocumentRepository documentRepository;
     private AddressRepository addressRepository;
     private EmployerRepository employerRepository;
+    private EducationRepository educationRepository;
     private I94Repository i94Repository;
     private TravelRepository travelRepository;
     private PetitionRepository petitionRepository;
@@ -42,6 +44,7 @@ public class ImmigrantVaultApplication extends Application {
         documentRepository = new DocumentRepository(database, executor);
         addressRepository = new AddressRepository(database, executor);
         employerRepository = new EmployerRepository(database, executor);
+        educationRepository = new EducationRepository(database, executor);
         i94Repository = new I94Repository(database, executor);
         travelRepository = new TravelRepository(database, executor);
         petitionRepository = new PetitionRepository(database, executor);
@@ -73,6 +76,10 @@ public class ImmigrantVaultApplication extends Application {
 
     public EmployerRepository getEmployerRepository() {
         return employerRepository;
+    }
+
+    public EducationRepository getEducationRepository() {
+        return educationRepository;
     }
 
     public I94Repository getI94Repository() {

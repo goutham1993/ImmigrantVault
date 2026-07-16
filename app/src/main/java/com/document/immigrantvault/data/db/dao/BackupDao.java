@@ -9,6 +9,7 @@ import androidx.room.Transaction;
 import com.document.immigrantvault.data.backup.VaultBackup;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
+import com.document.immigrantvault.data.db.entity.EducationEntry;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.data.db.entity.Person;
@@ -33,6 +34,9 @@ public interface BackupDao {
 
     @Query("SELECT * FROM employer_entries")
     List<EmployerEntry> getAllEmployersSync();
+
+    @Query("SELECT * FROM education_entries")
+    List<EducationEntry> getAllEducationSync();
 
     @Query("SELECT * FROM i94_entries")
     List<I94Entry> getAllI94Sync();
@@ -64,6 +68,9 @@ public interface BackupDao {
     @Query("DELETE FROM petitions")
     void deleteAllPetitions();
 
+    @Query("DELETE FROM education_entries")
+    void deleteAllEducationEntries();
+
     @Query("DELETE FROM employer_entries")
     void deleteAllEmployerEntries();
 
@@ -89,6 +96,9 @@ public interface BackupDao {
     void insertEmployers(List<EmployerEntry> employers);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertEducationEntries(List<EducationEntry> entries);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertI94Entries(List<I94Entry> entries);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -110,6 +120,7 @@ public interface BackupDao {
         backup.documents = getAllDocumentsSync();
         backup.addresses = getAllAddressesSync();
         backup.employers = getAllEmployersSync();
+        backup.educationEntries = getAllEducationSync();
         backup.i94Entries = getAllI94Sync();
         backup.travelEntries = getAllTravelSync();
         backup.petitions = getAllPetitionsSync();
@@ -125,6 +136,7 @@ public interface BackupDao {
         deleteAllTravelEntries();
         deleteAllI94Entries();
         deleteAllPetitions();
+        deleteAllEducationEntries();
         deleteAllEmployerEntries();
         deleteAllAddressEntries();
         deleteAllDocuments();
@@ -141,6 +153,9 @@ public interface BackupDao {
         }
         if (backup.employers != null && !backup.employers.isEmpty()) {
             insertEmployers(backup.employers);
+        }
+        if (backup.educationEntries != null && !backup.educationEntries.isEmpty()) {
+            insertEducationEntries(backup.educationEntries);
         }
         if (backup.i94Entries != null && !backup.i94Entries.isEmpty()) {
             insertI94Entries(backup.i94Entries);

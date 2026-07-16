@@ -55,6 +55,7 @@ public class PersonDetailFragment extends Fragment {
 
         String[] tabTitles = {
                 getString(R.string.tab_overview),
+                getString(R.string.tab_education),
                 getString(R.string.tab_documents),
                 getString(R.string.tab_travel),
                 getString(R.string.tab_addresses),

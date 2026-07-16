@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.Person;
 import com.document.immigrantvault.databinding.ItemPersonCardBinding;
 import com.document.immigrantvault.util.DateUtils;
@@ -71,11 +72,19 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
             binding.relationshipChip.setText(EnumLabels.relationship(person.relationship));
             StatusHelper.applyVisaStatusChip(binding.statusChip, person.visaEndDate, itemView.getContext());
 
+            if (person.dateOfBirth != null) {
+                binding.dateOfBirth.setText(
+                        itemView.getContext().getString(R.string.label_date_of_birth)
+                                + ": " + DateUtils.formatDate(person.dateOfBirth));
+                binding.dateOfBirth.setVisibility(View.VISIBLE);
+            } else {
+                binding.dateOfBirth.setVisibility(View.GONE);
+            }
+
             if (person.currentVisaType != null && !person.currentVisaType.isEmpty()) {
                 binding.visaType.setText(person.currentVisaType);
             } else {
-                binding.visaType.setText(itemView.getContext().getString(
-                        com.document.immigrantvault.R.string.status_no_visa));
+                binding.visaType.setText(itemView.getContext().getString(R.string.status_no_visa));
             }
 
             String start = DateUtils.formatDate(person.visaStartDate);

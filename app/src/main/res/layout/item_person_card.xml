@@ -59,14 +59,27 @@
             tools:text="Active" />
 
         <TextView
-            android:id="@+id/visa_type"
+            android:id="@+id/date_of_birth"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/relationship_chip"
+            tools:text="Date of birth: Jan 1, 1990" />
+
+        <TextView
+            android:id="@+id/visa_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/date_of_birth"
+            app:layout_goneMarginTop="16dp"
             tools:text="H-1B" />
 
         <TextView
