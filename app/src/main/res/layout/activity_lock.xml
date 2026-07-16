@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/lock_icon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_notification"
+        app:layout_constraintBottom_toTopOf="@id/lock_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:tint="?attr/colorPrimary" />
+
+    <TextView
+        android:id="@+id/lock_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/lock_title"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        app:layout_constraintBottom_toTopOf="@id/lock_subtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lock_icon" />
+
+    <TextView
+        android:id="@+id/lock_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/lock_enter_pin"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        app:layout_constraintBottom_toTopOf="@id/pin_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lock_title" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/pin_input_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintBottom_toTopOf="@id/error_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lock_subtitle"
+        app:layout_constraintWidth_max="320dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pin_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/lock_enter_pin"
+            android:imeOptions="actionDone"
+            android:inputType="numberPassword"
+            android:maxLength="6" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textColor="?attr/colorError"
+        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/unlock_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pin_input_layout" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/unlock_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/action_save"
+        app:layout_constraintBottom_toTopOf="@id/biometric_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_text"
+        app:layout_constraintWidth_max="320dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/biometric_button"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/lock_use_biometric"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unlock_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

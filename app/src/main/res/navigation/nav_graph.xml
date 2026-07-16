@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.document.immigrantvault.ui.home.HomeFragment"
+        android:label="@string/nav_home">
+        <action
+            android:id="@+id/action_home_to_personDetail"
+            app:destination="@id/personDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/remindersFragment"
+        android:name="com.document.immigrantvault.ui.reminder.RemindersFragment"
+        android:label="@string/nav_reminders" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.document.immigrantvault.ui.settings.SettingsFragment"
+        android:label="@string/nav_settings" />
+
+    <fragment
+        android:id="@+id/personDetailFragment"
+        android:name="com.document.immigrantvault.ui.person.PersonDetailFragment"
+        android:label="@string/person_detail_title">
+        <argument
+            android:name="personId"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

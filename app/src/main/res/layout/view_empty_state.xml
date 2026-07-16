@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <ImageView
+        android:id="@+id/empty_icon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_document"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/empty_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        tools:text="No documents yet" />
+
+    <TextView
+        android:id="@+id/empty_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        tools:text="Add your first document" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/empty_action"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        tools:text="Add"
+        tools:visibility="visible" />
+
+</LinearLayout>

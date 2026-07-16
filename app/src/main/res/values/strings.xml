@@ -1,0 +1,202 @@
+<resources>
+    <string name="app_name">ImmigrantVault</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_reminders">Reminders</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Lock screen -->
+    <string name="lock_title">ImmigrantVault</string>
+    <string name="lock_subtitle">Your immigration records, secured on this device</string>
+    <string name="lock_setup_title">Create your PIN</string>
+    <string name="lock_setup_subtitle">Choose a 4–6 digit PIN to protect your data</string>
+    <string name="lock_confirm_subtitle">Confirm your PIN</string>
+    <string name="lock_enter_pin">Enter PIN</string>
+    <string name="lock_use_biometric">Use fingerprint</string>
+    <string name="lock_pin_mismatch">PINs do not match. Try again.</string>
+    <string name="lock_pin_invalid">PIN must be 4–6 digits</string>
+    <string name="lock_auth_failed">Incorrect PIN</string>
+
+    <!-- Home -->
+    <string name="home_title">Your Family</string>
+    <string name="home_deadlines_title">Upcoming Deadlines</string>
+    <string name="home_empty_title">Welcome to ImmigrantVault</string>
+    <string name="home_empty_subtitle">Add your basic details to start tracking your immigration status</string>
+    <string name="home_add_person">Add family member</string>
+    <string name="home_edit_profile">Edit profile</string>
+    <string name="add_family_member">Add family member</string>
+
+    <!-- Person -->
+    <string name="person_detail_title">Profile</string>
+    <string name="tab_overview">Overview</string>
+    <string name="tab_documents">Documents</string>
+    <string name="tab_travel">Travel</string>
+    <string name="tab_addresses">Addresses</string>
+    <string name="tab_employers">Employers</string>
+    <string name="tab_petitions">Petitions</string>
+    <string name="tab_timeline">Timeline</string>
+
+    <!-- Form labels -->
+    <string name="label_name">Full name</string>
+    <string name="label_date_of_birth">Date of birth</string>
+    <string name="label_relationship">Relationship</string>
+    <string name="label_visa_type">Current visa type</string>
+    <string name="label_visa_start">Visa start date</string>
+    <string name="label_visa_end">Visa end date</string>
+    <string name="label_a_number">A-Number</string>
+    <string name="label_country_birth">Country of birth</string>
+    <string name="label_current_employer">Current employer</string>
+    <string name="label_current_role">Current role</string>
+    <string name="label_notes">Notes</string>
+    <string name="label_document_type">Document type</string>
+    <string name="label_document_number">Document number</string>
+    <string name="label_issuing_authority">Issuing authority</string>
+    <string name="label_issuing_country">Issuing country</string>
+    <string name="label_place_of_issue">Place of issue</string>
+    <string name="label_nationality">Nationality</string>
+    <string name="label_issue_date">Issue date</string>
+    <string name="label_expiry_date">Expiry date</string>
+    <string name="label_address_line1">Address line 1</string>
+    <string name="label_address_line2">Address line 2</string>
+    <string name="label_city">City</string>
+    <string name="label_state">State</string>
+    <string name="label_zip">ZIP code</string>
+    <string name="label_country">Country</string>
+    <string name="label_start_date">Start date</string>
+    <string name="label_end_date">End date</string>
+    <string name="label_current_address">Current address</string>
+    <string name="label_dwelling_type">Dwelling type</string>
+    <string name="dwelling_home">Home</string>
+    <string name="dwelling_apartment">Apartment</string>
+    <string name="label_apartment_name">Apartment / building name (optional)</string>
+    <string name="label_apartment_number">Apartment / unit number (optional)</string>
+    <string name="label_employer_name">Employer name</string>
+    <string name="label_job_title">Job title</string>
+    <string name="label_employer_address">Employer address</string>
+    <string name="label_arrival_date">Arrival date</string>
+    <string name="label_arrival_city">Arrival city</string>
+    <string name="label_departure_date">Departure date</string>
+    <string name="label_departure_city">Departure city</string>
+    <string name="label_port_of_entry">Port of entry</string>
+    <string name="label_travel_reason">Reason/purpose for travel</string>
+    <string name="label_airline">Airline (optional)</string>
+    <string name="label_class_admission">Class of admission</string>
+    <string name="label_admit_until">Admit until date</string>
+    <string name="label_i94_number">I-94 number</string>
+    <string name="label_country_of_citizenship">Country of citizenship</string>
+    <string name="label_petition_type">Petition type</string>
+    <string name="label_receipt_number">Receipt number</string>
+    <string name="label_filed_date">Filed date</string>
+    <string name="label_status">Status</string>
+    <string name="label_check_interval">Check every (days)</string>
+
+    <!-- Actions -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_add">Add</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_check_status">Check status on USCIS</string>
+    <string name="action_get_i94">Get latest I-94</string>
+    <string name="action_mark_checked">Mark as checked today</string>
+    <string name="receipt_copied">Receipt number copied</string>
+
+    <!-- Status -->
+    <string name="status_active">Active</string>
+    <string name="status_expiring_soon">Expiring soon</string>
+    <string name="status_expired">Expired</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_no_visa">No visa set</string>
+
+    <!-- Empty states -->
+    <string name="empty_documents">No documents yet</string>
+    <string name="empty_documents_subtitle">Add passport, visa stamps, and other document details</string>
+    <string name="empty_travel">No travel history</string>
+    <string name="empty_travel_subtitle">Record your trips with arrival and departure cities</string>
+    <string name="empty_i94">No I-94 recorded</string>
+    <string name="empty_i94_subtitle">Add your most recent I-94 details</string>
+    <string name="travel_latest_i94">Most recent I-94</string>
+    <string name="travel_history">Travel history</string>
+    <string name="travel_i94_number">I-94: %1$s</string>
+    <string name="travel_document_number">Document: %1$s</string>
+    <string name="travel_country_of_citizenship">Country of citizenship: %1$s</string>
+    <string name="travel_admit_until">Admit until %1$s</string>
+    <string name="travel_class">Class: %1$s</string>
+    <string name="travel_no_i94_number">No I-94 number</string>
+    <string name="travel_no_document_number">No document number</string>
+    <string name="travel_no_country_of_citizenship">No country of citizenship</string>
+    <string name="travel_no_class">No class of admission</string>
+    <string name="travel_route">%1$s → %2$s</string>
+    <string name="travel_arrived">Arrived %1$s</string>
+    <string name="travel_departed">Departed %1$s</string>
+    <string name="travel_no_arrival_city">No arrival city</string>
+    <string name="travel_no_departure_city">No departure city</string>
+    <string name="travel_no_port">No port of entry</string>
+    <string name="travel_reason">Reason: %1$s</string>
+    <string name="empty_addresses">No address history</string>
+    <string name="empty_addresses_subtitle">Track where you have lived in the US</string>
+    <string name="empty_employers">No employer history</string>
+    <string name="empty_employers_subtitle">Record your employment for visa compliance</string>
+    <string name="empty_petitions">No petitions</string>
+    <string name="empty_petitions_subtitle">Track pending USCIS petitions and receipt numbers</string>
+    <string name="empty_timeline">No timeline events yet</string>
+    <string name="empty_timeline_subtitle">Events appear as you add records</string>
+    <string name="empty_reminders">No upcoming reminders</string>
+    <string name="empty_reminders_subtitle">Reminders are created for expiring documents and pending petitions</string>
+
+    <!-- Reminders -->
+    <string name="reminders_title">Reminders</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_biometric">Use biometric unlock</string>
+    <string name="settings_links">Useful links</string>
+    <string name="settings_link_i94">Official I-94 website</string>
+    <string name="settings_link_uscis">USCIS case status</string>
+    <string name="settings_link_processing">USCIS processing times</string>
+    <string name="settings_privacy">All data is stored locally on this device. No cloud sync.</string>
+    <string name="settings_about">ImmigrantVault helps you organize immigration records for you and your family.</string>
+    <string name="settings_backup">Backup &amp; restore</string>
+    <string name="settings_backup_description">Export your records to a file or restore from a previous backup.</string>
+    <string name="settings_export">Export data</string>
+    <string name="settings_import">Import data</string>
+    <string name="settings_export_format_title">Choose export format</string>
+    <string name="settings_export_json">JSON (.json)</string>
+    <string name="settings_export_csv">CSV (.zip archive)</string>
+    <string name="settings_import_confirm_title">Replace existing data?</string>
+    <string name="settings_import_confirm_message">Importing will replace all records currently stored in ImmigrantVault. This cannot be undone.</string>
+    <string name="settings_import_confirm">Import</string>
+    <string name="settings_export_success">Backup exported successfully</string>
+    <string name="settings_import_success">Backup imported successfully</string>
+    <string name="settings_export_failed">Export failed: %1$s</string>
+    <string name="settings_import_failed">Import failed: %1$s</string>
+    <string name="settings_backup_in_progress">Working…</string>
+
+    <!-- Validation -->
+    <string name="error_required">This field is required</string>
+    <string name="error_date_range">End date must be after start date</string>
+    <string name="delete_confirm_title">Delete this record?</string>
+    <string name="delete_confirm_message">This action cannot be undone.</string>
+    <string name="delete_person_confirm">Delete %1$s and all their records?</string>
+
+    <!-- Overview -->
+    <string name="overview_personal">Personal</string>
+    <string name="overview_no_birthday">No birthday set</string>
+    <string name="overview_visa_status">Visa status</string>
+    <string name="overview_employment">Employment</string>
+    <string name="overview_no_employer">No employer set</string>
+    <string name="overview_no_role">No role set</string>
+    <string name="overview_quick_actions">Quick actions</string>
+    <string name="overview_days_remaining">%1$s</string>
+
+    <string name="add_document">Add document</string>
+    <string name="add_travel">Add travel entry</string>
+    <string name="add_i94">Add I-94</string>
+    <string name="edit_i94">Edit I-94</string>
+    <string name="add_address">Add address</string>
+    <string name="add_employer">Add employer</string>
+    <string name="add_petition">Add petition</string>
+    <string name="edit_person">Edit profile</string>
+</resources>
