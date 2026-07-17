@@ -136,7 +136,7 @@ public final class CsvBackupSerializer {
     private static void writePersons(Writer writer, List<Person> persons) throws IOException {
         CsvUtils.writeRow(writer,
                 "id", "name", "dateOfBirth", "relationship", "currentVisaType",
-                "visaStartDate", "visaEndDate", "aNumber", "countryOfBirth",
+                "visaStartDate", "visaEndDate", "aNumber", "ssnLast4", "countryOfBirth",
                 "currentEmployer", "currentRole", "notes", "sortOrder");
         for (Person person : persons) {
             CsvUtils.writeRow(writer,
@@ -148,6 +148,7 @@ public final class CsvBackupSerializer {
                     CsvUtils.formatDate(person.visaStartDate),
                     CsvUtils.formatDate(person.visaEndDate),
                     CsvUtils.formatString(person.aNumber),
+                    CsvUtils.formatString(person.ssnLast4),
                     CsvUtils.formatString(person.countryOfBirth),
                     CsvUtils.formatString(person.currentEmployer),
                     CsvUtils.formatString(person.currentRole),
@@ -171,6 +172,7 @@ public final class CsvBackupSerializer {
             person.visaStartDate = CsvUtils.getDate(row, "visaStartDate");
             person.visaEndDate = CsvUtils.getDate(row, "visaEndDate");
             person.aNumber = CsvUtils.get(row, "aNumber");
+            person.ssnLast4 = CsvUtils.get(row, "ssnLast4");
             person.countryOfBirth = CsvUtils.get(row, "countryOfBirth");
             person.currentEmployer = CsvUtils.get(row, "currentEmployer");
             person.currentRole = CsvUtils.get(row, "currentRole");

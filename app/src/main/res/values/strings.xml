@@ -46,6 +46,8 @@
     <string name="label_visa_start">Visa start date</string>
     <string name="label_visa_end">Visa end date</string>
     <string name="label_a_number">A-Number</string>
+    <string name="label_ssn_last4">SSN last 4</string>
+    <string name="ssn_last4_display">SSN: •••• %1$s</string>
     <string name="label_country_birth">Country of birth</string>
     <string name="label_current_employer">Current employer</string>
     <string name="label_current_role">Current role</string>
@@ -184,6 +186,7 @@
     <!-- Validation -->
     <string name="error_required">This field is required</string>
     <string name="error_date_range">End date must be after start date</string>
+    <string name="error_ssn_last4">Enter exactly 4 digits</string>
     <string name="delete_confirm_title">Delete this record?</string>
     <string name="delete_confirm_message">This action cannot be undone.</string>
     <string name="delete_person_confirm">Delete %1$s and all their records?</string>
@@ -191,6 +194,7 @@
     <!-- Overview -->
     <string name="overview_personal">Personal</string>
     <string name="overview_no_birthday">No birthday set</string>
+    <string name="overview_no_ssn">No SSN last 4 set</string>
     <string name="overview_visa_status">Visa status</string>
     <string name="overview_employment">Employment</string>
     <string name="overview_no_employer">No employer set</string>

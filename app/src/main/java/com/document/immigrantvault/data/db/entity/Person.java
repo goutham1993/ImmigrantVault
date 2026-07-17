@@ -19,6 +19,7 @@ public class Person {
     public Date visaStartDate;
     public Date visaEndDate;
     public String aNumber;
+    public String ssnLast4;
     public String countryOfBirth;
     public String currentEmployer;
     public String currentRole;

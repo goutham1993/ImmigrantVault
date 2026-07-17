@@ -107,6 +107,7 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
         binding.inputRelationship.setText(EnumLabels.relationship(person.relationship), false);
         binding.inputVisaType.setText(person.currentVisaType);
         binding.inputANumber.setText(person.aNumber);
+        binding.inputSsnLast4.setText(person.ssnLast4);
         binding.inputCountry.setText(person.countryOfBirth);
         binding.inputCurrentEmployer.setText(person.currentEmployer);
         binding.inputCurrentRole.setText(person.currentRole);
@@ -140,6 +141,13 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
         }
         binding.inputVisaEndLayout.setError(null);
 
+        String ssnLast4 = text(binding.inputSsnLast4);
+        if (!ssnLast4.isEmpty() && !ssnLast4.matches("\\d{4}")) {
+            binding.inputSsnLast4Layout.setError(getString(R.string.error_ssn_last4));
+            return;
+        }
+        binding.inputSsnLast4Layout.setError(null);
+
         Person person = editing != null ? editing : new Person();
         person.name = name;
         person.dateOfBirth = dateOfBirth;
@@ -150,6 +158,7 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
         person.visaStartDate = visaStart;
         person.visaEndDate = visaEnd;
         person.aNumber = text(binding.inputANumber);
+        person.ssnLast4 = ssnLast4.isEmpty() ? null : ssnLast4;
         person.countryOfBirth = text(binding.inputCountry);
         person.currentEmployer = text(binding.inputCurrentEmployer);
         person.currentRole = text(binding.inputCurrentRole);

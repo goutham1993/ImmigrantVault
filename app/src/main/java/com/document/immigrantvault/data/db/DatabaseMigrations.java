@@ -145,6 +145,15 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_12_13 = new Migration(12, 13) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            if (!columnExists(db, "persons", "ssnLast4")) {
+                db.execSQL("ALTER TABLE persons ADD COLUMN ssnLast4 TEXT");
+            }
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

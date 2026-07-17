@@ -42,7 +42,7 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
                 Reminder.class,
                 TimelineEvent.class
         },
-        version = 12,
+        version = 13,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -81,7 +81,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_8_9,
                             DatabaseMigrations.MIGRATION_9_10,
                             DatabaseMigrations.MIGRATION_10_11,
-                            DatabaseMigrations.MIGRATION_11_12
+                            DatabaseMigrations.MIGRATION_11_12,
+                            DatabaseMigrations.MIGRATION_12_13
                     )
                             .build();
                 }

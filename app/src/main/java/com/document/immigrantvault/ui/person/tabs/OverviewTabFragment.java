@@ -58,6 +58,10 @@ public class OverviewTabFragment extends Fragment {
                     person.dateOfBirth != null
                             ? DateUtils.formatDate(person.dateOfBirth)
                             : getString(R.string.overview_no_birthday));
+            binding.overviewSsn.setText(
+                    person.ssnLast4 != null && !person.ssnLast4.isEmpty()
+                            ? getString(R.string.ssn_last4_display, person.ssnLast4)
+                            : getString(R.string.overview_no_ssn));
 
             String visa = person.currentVisaType != null ? person.currentVisaType
                     : getString(R.string.status_no_visa);

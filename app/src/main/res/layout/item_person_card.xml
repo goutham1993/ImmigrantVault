@@ -71,6 +71,19 @@
             tools:text="Date of birth: Jan 1, 1990" />
 
         <TextView
+            android:id="@+id/ssn_last4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/date_of_birth"
+            app:layout_goneMarginTop="16dp"
+            tools:text="SSN: •••• 1234" />
+
+        <TextView
             android:id="@+id/visa_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,7 +91,7 @@
             android:textAppearance="?attr/textAppearanceBodyLarge"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_of_birth"
+            app:layout_constraintTop_toBottomOf="@id/ssn_last4"
             app:layout_goneMarginTop="16dp"
             tools:text="H-1B" />
 

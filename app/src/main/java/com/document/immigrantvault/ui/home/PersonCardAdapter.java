@@ -81,6 +81,14 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
                 binding.dateOfBirth.setVisibility(View.GONE);
             }
 
+            if (person.ssnLast4 != null && !person.ssnLast4.isEmpty()) {
+                binding.ssnLast4.setText(
+                        itemView.getContext().getString(R.string.ssn_last4_display, person.ssnLast4));
+                binding.ssnLast4.setVisibility(View.VISIBLE);
+            } else {
+                binding.ssnLast4.setVisibility(View.GONE);
+            }
+
             if (person.currentVisaType != null && !person.currentVisaType.isEmpty()) {
                 binding.visaType.setText(person.currentVisaType);
             } else {
