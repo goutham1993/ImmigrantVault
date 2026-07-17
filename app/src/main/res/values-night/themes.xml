@@ -23,6 +23,7 @@
         <item name="colorSurfaceVariant">#43474E</item>
         <item name="colorOnSurfaceVariant">#C4C7CF</item>
         <item name="colorOutline">#8E9199</item>
+        <item name="colorOutlineVariant">#43474E</item>
         <item name="android:statusBarColor">#121416</item>
     </style>
 </resources>

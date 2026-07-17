@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -14,7 +16,6 @@ import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.databinding.FragmentPersonDetailBinding;
 import com.document.immigrantvault.ui.ViewModelFactory;
-import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -47,9 +48,6 @@ public class PersonDetailFragment extends Fragment {
         PersonDetailViewModel viewModel = new ViewModelProvider(this, new ViewModelFactory(app))
                 .get(PersonDetailViewModel.class);
 
-        binding.personToolbar.setNavigationOnClickListener(v ->
-                requireActivity().getOnBackPressedDispatcher().onBackPressed());
-
         PersonTabAdapter adapter = new PersonTabAdapter(this, personId);
         binding.viewPager.setAdapter(adapter);
 
@@ -73,32 +71,20 @@ public class PersonDetailFragment extends Fragment {
             if (person == null) {
                 return;
             }
-            binding.personToolbar.setTitle(person.name);
-            binding.personToolbar.setSubtitle(EnumLabels.relationship(person.relationship));
-
-            String visa = person.currentVisaType != null ? person.currentVisaType
-                    : getString(R.string.status_no_visa);
-            binding.summaryVisa.setText(visa);
-            binding.summaryDays.setText(DateUtils.daysUntilLabel(person.visaEndDate));
-            if (person.aNumber != null && !person.aNumber.isEmpty()) {
-                binding.summaryANumber.setText("A# " + person.aNumber);
-                binding.summaryANumber.setVisibility(View.VISIBLE);
-            } else {
-                binding.summaryANumber.setVisibility(View.GONE);
-            }
-            if (person.dateOfBirth != null) {
-                binding.summaryBirthday.setText(
-                        getString(R.string.label_date_of_birth) + ": "
-                                + DateUtils.formatDate(person.dateOfBirth));
-                binding.summaryBirthday.setVisibility(View.VISIBLE);
-            } else {
-                binding.summaryBirthday.setVisibility(View.GONE);
+            ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(person.name);
+                actionBar.setSubtitle(EnumLabels.relationship(person.relationship));
             }
         });
     }
 
     @Override
     public void onDestroyView() {
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setSubtitle(null);
+        }
         super.onDestroyView();
         binding = null;
     }

@@ -60,8 +60,17 @@ public class OverviewTabFragment extends Fragment {
                             : getString(R.string.overview_no_birthday));
             binding.overviewSsn.setText(
                     person.ssnLast4 != null && !person.ssnLast4.isEmpty()
-                            ? getString(R.string.ssn_last4_display, person.ssnLast4)
+                            ? "•••• " + person.ssnLast4
                             : getString(R.string.overview_no_ssn));
+
+            if (person.aNumber != null && !person.aNumber.isEmpty()) {
+                binding.overviewANumberLabel.setVisibility(View.VISIBLE);
+                binding.overviewANumber.setVisibility(View.VISIBLE);
+                binding.overviewANumber.setText(person.aNumber);
+            } else {
+                binding.overviewANumberLabel.setVisibility(View.GONE);
+                binding.overviewANumber.setVisibility(View.GONE);
+            }
 
             String visa = person.currentVisaType != null ? person.currentVisaType
                     : getString(R.string.status_no_visa);
