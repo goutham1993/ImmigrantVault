@@ -14,6 +14,8 @@ import com.document.immigrantvault.data.repository.PetitionRepository;
 import com.document.immigrantvault.data.repository.ReminderRepository;
 import com.document.immigrantvault.data.repository.TimelineRepository;
 import com.document.immigrantvault.data.repository.TravelRepository;
+import com.document.immigrantvault.data.repository.UsefulLinkRepository;
+import com.document.immigrantvault.data.repository.VisaRepository;
 import com.document.immigrantvault.util.ReminderScheduler;
 
 import java.util.concurrent.ExecutorService;
@@ -31,6 +33,8 @@ public class ImmigrantVaultApplication extends Application {
     private I94Repository i94Repository;
     private TravelRepository travelRepository;
     private PetitionRepository petitionRepository;
+    private VisaRepository visaRepository;
+    private UsefulLinkRepository usefulLinkRepository;
     private ReminderRepository reminderRepository;
     private TimelineRepository timelineRepository;
     private ExportImportRepository exportImportRepository;
@@ -48,6 +52,8 @@ public class ImmigrantVaultApplication extends Application {
         i94Repository = new I94Repository(database, executor);
         travelRepository = new TravelRepository(database, executor);
         petitionRepository = new PetitionRepository(database, executor);
+        visaRepository = new VisaRepository(database, executor);
+        usefulLinkRepository = new UsefulLinkRepository(database, executor);
         reminderRepository = new ReminderRepository(database, executor);
         timelineRepository = new TimelineRepository(database, executor);
         exportImportRepository = new ExportImportRepository(database, executor);
@@ -92,6 +98,14 @@ public class ImmigrantVaultApplication extends Application {
 
     public PetitionRepository getPetitionRepository() {
         return petitionRepository;
+    }
+
+    public VisaRepository getVisaRepository() {
+        return visaRepository;
+    }
+
+    public UsefulLinkRepository getUsefulLinkRepository() {
+        return usefulLinkRepository;
     }
 
     public ReminderRepository getReminderRepository() {

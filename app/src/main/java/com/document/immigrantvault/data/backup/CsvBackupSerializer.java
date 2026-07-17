@@ -18,6 +18,9 @@ import com.document.immigrantvault.data.db.entity.SourceEntityType;
 import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TimelineEventType;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
+import com.document.immigrantvault.data.db.entity.UsefulLink;
+import com.document.immigrantvault.data.db.entity.VisaEntry;
+import com.document.immigrantvault.data.db.entity.VisaType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,6 +48,8 @@ public final class CsvBackupSerializer {
     private static final String I94 = "i94_entries.csv";
     private static final String TRAVEL = "travel_entries.csv";
     private static final String PETITIONS = "petitions.csv";
+    private static final String VISAS = "visa_entries.csv";
+    private static final String USEFUL_LINKS = "useful_links.csv";
     private static final String REMINDERS = "reminders.csv";
     private static final String TIMELINE = "timeline_events.csv";
 
@@ -63,6 +68,8 @@ public final class CsvBackupSerializer {
             writeEntry(zip, I94, writer -> writeI94(writer, backup.i94Entries));
             writeEntry(zip, TRAVEL, writer -> writeTravel(writer, backup.travelEntries));
             writeEntry(zip, PETITIONS, writer -> writePetitions(writer, backup.petitions));
+            writeEntry(zip, VISAS, writer -> writeVisas(writer, backup.visaEntries));
+            writeEntry(zip, USEFUL_LINKS, writer -> writeUsefulLinks(writer, backup.usefulLinks));
             writeEntry(zip, REMINDERS, writer -> writeReminders(writer, backup.reminders));
             writeEntry(zip, TIMELINE, writer -> writeTimeline(writer, backup.timelineEvents));
             zip.finish();
@@ -101,6 +108,8 @@ public final class CsvBackupSerializer {
             backup.i94Entries = readI94(entries.get(I94));
             backup.travelEntries = readTravel(entries.get(TRAVEL));
             backup.petitions = readPetitions(entries.get(PETITIONS));
+            backup.visaEntries = readVisas(entries.get(VISAS));
+            backup.usefulLinks = readUsefulLinks(entries.get(USEFUL_LINKS));
             backup.reminders = readReminders(entries.get(REMINDERS));
             backup.timelineEvents = readTimeline(entries.get(TIMELINE));
             return backup;
@@ -473,6 +482,75 @@ public final class CsvBackupSerializer {
             petitions.add(petition);
         }
         return petitions;
+    }
+
+    private static void writeVisas(Writer writer, List<VisaEntry> entries) throws IOException {
+        CsvUtils.writeRow(writer,
+                "id", "personId", "type", "visaNumber", "controlNumber",
+                "startDate", "endDate", "notes");
+        for (VisaEntry entry : entries) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(entry.id),
+                    CsvUtils.formatLong(entry.personId),
+                    CsvUtils.formatEnum(entry.type),
+                    CsvUtils.formatString(entry.visaNumber),
+                    CsvUtils.formatString(entry.controlNumber),
+                    CsvUtils.formatDate(entry.startDate),
+                    CsvUtils.formatDate(entry.endDate),
+                    CsvUtils.formatString(entry.notes));
+        }
+    }
+
+    private static List<VisaEntry> readVisas(byte[] data) throws IOException {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        List<VisaEntry> entries = new ArrayList<>();
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            VisaEntry entry = new VisaEntry();
+            entry.id = CsvUtils.getLong(row, "id");
+            entry.personId = CsvUtils.getLong(row, "personId");
+            entry.type = CsvUtils.parseEnum(CsvUtils.get(row, "type"), VisaType.class);
+            entry.visaNumber = CsvUtils.get(row, "visaNumber");
+            entry.controlNumber = CsvUtils.get(row, "controlNumber");
+            entry.startDate = CsvUtils.getDate(row, "startDate");
+            entry.endDate = CsvUtils.getDate(row, "endDate");
+            entry.notes = CsvUtils.get(row, "notes");
+            entries.add(entry);
+        }
+        return entries;
+    }
+
+    private static void writeUsefulLinks(Writer writer, List<UsefulLink> links) throws IOException {
+        CsvUtils.writeRow(writer, "id", "personId", "title", "url", "notes");
+        if (links == null) {
+            return;
+        }
+        for (UsefulLink link : links) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(link.id),
+                    CsvUtils.formatLong(link.personId),
+                    CsvUtils.formatString(link.title),
+                    CsvUtils.formatString(link.url),
+                    CsvUtils.formatString(link.notes));
+        }
+    }
+
+    private static List<UsefulLink> readUsefulLinks(byte[] data) throws IOException {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        List<UsefulLink> links = new ArrayList<>();
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            UsefulLink link = new UsefulLink();
+            link.id = CsvUtils.getLong(row, "id");
+            link.personId = CsvUtils.getLong(row, "personId");
+            link.title = CsvUtils.get(row, "title");
+            link.url = CsvUtils.get(row, "url");
+            link.notes = CsvUtils.get(row, "notes");
+            links.add(link);
+        }
+        return links;
     }
 
     private static void writeReminders(Writer writer, List<Reminder> reminders) throws IOException {

@@ -57,11 +57,13 @@ public class PersonDetailFragment extends Fragment {
                 getString(R.string.tab_overview),
                 getString(R.string.tab_education),
                 getString(R.string.tab_documents),
+                getString(R.string.tab_visas),
                 getString(R.string.tab_travel),
                 getString(R.string.tab_addresses),
                 getString(R.string.tab_employers),
                 getString(R.string.tab_petitions),
-                getString(R.string.tab_timeline)
+                getString(R.string.tab_timeline),
+                getString(R.string.tab_links)
         };
 
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,

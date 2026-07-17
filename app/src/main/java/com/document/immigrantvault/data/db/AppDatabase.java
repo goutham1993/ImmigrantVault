@@ -18,6 +18,8 @@ import com.document.immigrantvault.data.db.dao.PetitionDao;
 import com.document.immigrantvault.data.db.dao.ReminderDao;
 import com.document.immigrantvault.data.db.dao.TimelineDao;
 import com.document.immigrantvault.data.db.dao.TravelDao;
+import com.document.immigrantvault.data.db.dao.UsefulLinkDao;
+import com.document.immigrantvault.data.db.dao.VisaDao;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
@@ -28,6 +30,8 @@ import com.document.immigrantvault.data.db.entity.Petition;
 import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
+import com.document.immigrantvault.data.db.entity.UsefulLink;
+import com.document.immigrantvault.data.db.entity.VisaEntry;
 
 @Database(
         entities = {
@@ -39,10 +43,12 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
                 I94Entry.class,
                 TravelEntry.class,
                 Petition.class,
+                VisaEntry.class,
+                UsefulLink.class,
                 Reminder.class,
                 TimelineEvent.class
         },
-        version = 13,
+        version = 15,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -59,6 +65,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract I94Dao i94Dao();
     public abstract TravelDao travelDao();
     public abstract PetitionDao petitionDao();
+    public abstract VisaDao visaDao();
+    public abstract UsefulLinkDao usefulLinkDao();
     public abstract ReminderDao reminderDao();
     public abstract TimelineDao timelineDao();
 
@@ -82,7 +90,9 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_9_10,
                             DatabaseMigrations.MIGRATION_10_11,
                             DatabaseMigrations.MIGRATION_11_12,
-                            DatabaseMigrations.MIGRATION_12_13
+                            DatabaseMigrations.MIGRATION_12_13,
+                            DatabaseMigrations.MIGRATION_13_14,
+                            DatabaseMigrations.MIGRATION_14_15
                     )
                             .build();
                 }

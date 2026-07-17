@@ -8,5 +8,6 @@ public enum SourceEntityType {
     EDUCATION,
     TRAVEL,
     PETITION,
+    VISA,
     MANUAL
 }

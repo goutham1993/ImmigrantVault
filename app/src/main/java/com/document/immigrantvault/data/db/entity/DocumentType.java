@@ -8,5 +8,6 @@ public enum DocumentType {
     I20,
     I94,
     GREEN_CARD,
+    DRIVERS_LICENSE,
     OTHER
 }

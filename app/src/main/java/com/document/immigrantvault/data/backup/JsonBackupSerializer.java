@@ -76,6 +76,12 @@ public final class JsonBackupSerializer {
         if (backup.petitions == null) {
             backup.petitions = new java.util.ArrayList<>();
         }
+        if (backup.visaEntries == null) {
+            backup.visaEntries = new java.util.ArrayList<>();
+        }
+        if (backup.usefulLinks == null) {
+            backup.usefulLinks = new java.util.ArrayList<>();
+        }
         if (backup.reminders == null) {
             backup.reminders = new java.util.ArrayList<>();
         }

@@ -10,6 +10,8 @@ import com.document.immigrantvault.data.db.entity.Petition;
 import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
+import com.document.immigrantvault.data.db.entity.UsefulLink;
+import com.document.immigrantvault.data.db.entity.VisaEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,8 @@ public class VaultBackup {
     public List<I94Entry> i94Entries = new ArrayList<>();
     public List<TravelEntry> travelEntries = new ArrayList<>();
     public List<Petition> petitions = new ArrayList<>();
+    public List<VisaEntry> visaEntries = new ArrayList<>();
+    public List<UsefulLink> usefulLinks = new ArrayList<>();
     public List<Reminder> reminders = new ArrayList<>();
     public List<TimelineEvent> timelineEvents = new ArrayList<>();
 }

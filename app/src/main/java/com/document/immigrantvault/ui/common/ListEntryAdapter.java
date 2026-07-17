@@ -18,6 +18,10 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
         void onItemClick(int position);
     }
 
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int position);
+    }
+
     public static class ListItem {
         public final String title;
         public final String subtitle;
@@ -32,6 +36,7 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
 
     private final List<ListItem> items = new ArrayList<>();
     private OnItemClickListener listener;
+    private OnItemLongClickListener longClickListener;
 
     public void setItems(List<ListItem> listItems) {
         items.clear();
@@ -43,6 +48,10 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -83,6 +92,13 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
                 if (listener != null) {
                     listener.onItemClick(position);
                 }
+            });
+            itemView.setOnLongClickListener(v -> {
+                if (longClickListener != null) {
+                    longClickListener.onItemLongClick(position);
+                    return true;
+                }
+                return false;
             });
         }
     }

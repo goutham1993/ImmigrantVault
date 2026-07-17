@@ -154,6 +154,41 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_13_14 = new Migration(13, 14) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `visa_entries` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`type` TEXT, "
+                    + "`visaNumber` TEXT, "
+                    + "`controlNumber` TEXT, "
+                    + "`startDate` INTEGER, "
+                    + "`endDate` INTEGER, "
+                    + "`notes` TEXT, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_visa_entries_personId` "
+                    + "ON `visa_entries` (`personId`)");
+        }
+    };
+
+    static final Migration MIGRATION_14_15 = new Migration(14, 15) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `useful_links` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`title` TEXT, "
+                    + "`url` TEXT, "
+                    + "`notes` TEXT, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_useful_links_personId` "
+                    + "ON `useful_links` (`personId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

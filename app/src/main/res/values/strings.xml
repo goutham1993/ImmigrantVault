@@ -32,17 +32,22 @@
     <string name="tab_overview">Overview</string>
     <string name="tab_education">Education</string>
     <string name="tab_documents">Documents</string>
+    <string name="tab_visas">Visas</string>
     <string name="tab_travel">Travel</string>
     <string name="tab_addresses">Addresses</string>
     <string name="tab_employers">Employers</string>
     <string name="tab_petitions">Petitions</string>
     <string name="tab_timeline">Timeline</string>
+    <string name="tab_links">Links</string>
 
     <!-- Form labels -->
     <string name="label_name">Full name</string>
     <string name="label_date_of_birth">Date of birth</string>
     <string name="label_relationship">Relationship</string>
     <string name="label_visa_type">Current visa type</string>
+    <string name="label_visa_entry_type">Visa type</string>
+    <string name="label_visa_number">Visa number</string>
+    <string name="label_control_number">Control number</string>
     <string name="label_visa_start">Visa start date</string>
     <string name="label_visa_end">Visa end date</string>
     <string name="label_a_number">A-Number</string>
@@ -52,6 +57,8 @@
     <string name="label_current_employer">Current employer</string>
     <string name="label_current_role">Current role</string>
     <string name="label_notes">Notes</string>
+    <string name="label_link_title">Title</string>
+    <string name="label_link_url">URL</string>
     <string name="label_document_type">Document type</string>
     <string name="label_document_number">Document number</string>
     <string name="label_issuing_authority">Issuing authority</string>
@@ -147,10 +154,14 @@
     <string name="empty_education_subtitle">Record schools, degrees, and majors</string>
     <string name="empty_employers">No employer history</string>
     <string name="empty_employers_subtitle">Record your employment for visa compliance</string>
+    <string name="empty_visas">No visas</string>
+    <string name="empty_visas_subtitle">Track visa types, validity dates, and numbers</string>
     <string name="empty_petitions">No petitions</string>
     <string name="empty_petitions_subtitle">Track pending USCIS petitions and receipt numbers</string>
     <string name="empty_timeline">No timeline events yet</string>
     <string name="empty_timeline_subtitle">Events appear as you add records</string>
+    <string name="empty_links">No useful links</string>
+    <string name="empty_links_subtitle">Save websites and resources for quick access. Tap to open, long-press to edit.</string>
     <string name="empty_reminders">No upcoming reminders</string>
     <string name="empty_reminders_subtitle">Reminders are created for expiring documents and pending petitions</string>
 
@@ -209,6 +220,8 @@
     <string name="add_address">Add address</string>
     <string name="add_employer">Add employer</string>
     <string name="add_education">Add education</string>
+    <string name="add_visa">Add visa</string>
     <string name="add_petition">Add petition</string>
+    <string name="add_link">Add link</string>
     <string name="edit_person">Edit profile</string>
 </resources>

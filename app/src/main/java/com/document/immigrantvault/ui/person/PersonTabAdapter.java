@@ -8,10 +8,12 @@ import com.document.immigrantvault.ui.person.tabs.AddressTabFragment;
 import com.document.immigrantvault.ui.person.tabs.DocumentsTabFragment;
 import com.document.immigrantvault.ui.person.tabs.EducationTabFragment;
 import com.document.immigrantvault.ui.person.tabs.EmployerTabFragment;
+import com.document.immigrantvault.ui.person.tabs.LinksTabFragment;
 import com.document.immigrantvault.ui.person.tabs.OverviewTabFragment;
 import com.document.immigrantvault.ui.person.tabs.PetitionTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TimelineTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TravelTabFragment;
+import com.document.immigrantvault.ui.person.tabs.VisaTabFragment;
 
 public class PersonTabAdapter extends FragmentStateAdapter {
 
@@ -33,21 +35,25 @@ public class PersonTabAdapter extends FragmentStateAdapter {
             case 2:
                 return DocumentsTabFragment.newInstance(personId);
             case 3:
-                return TravelTabFragment.newInstance(personId);
+                return VisaTabFragment.newInstance(personId);
             case 4:
-                return AddressTabFragment.newInstance(personId);
+                return TravelTabFragment.newInstance(personId);
             case 5:
-                return EmployerTabFragment.newInstance(personId);
+                return AddressTabFragment.newInstance(personId);
             case 6:
-                return PetitionTabFragment.newInstance(personId);
+                return EmployerTabFragment.newInstance(personId);
             case 7:
-            default:
+                return PetitionTabFragment.newInstance(personId);
+            case 8:
                 return TimelineTabFragment.newInstance(personId);
+            case 9:
+            default:
+                return LinksTabFragment.newInstance(personId);
         }
     }
 
     @Override
     public int getItemCount() {
-        return 8;
+        return 10;
     }
 }

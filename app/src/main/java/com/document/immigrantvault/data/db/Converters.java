@@ -10,6 +10,7 @@ import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.data.db.entity.ReminderKind;
 import com.document.immigrantvault.data.db.entity.SourceEntityType;
 import com.document.immigrantvault.data.db.entity.TimelineEventType;
+import com.document.immigrantvault.data.db.entity.VisaType;
 
 import java.util.Date;
 
@@ -103,5 +104,15 @@ public class Converters {
     @TypeConverter
     public static SourceEntityType stringToSourceEntityType(String value) {
         return value == null ? null : SourceEntityType.valueOf(value);
+    }
+
+    @TypeConverter
+    public static String visaTypeToString(VisaType value) {
+        return value == null ? null : value.name();
+    }
+
+    @TypeConverter
+    public static VisaType stringToVisaType(String value) {
+        return value == null ? null : VisaType.valueOf(value);
     }
 }

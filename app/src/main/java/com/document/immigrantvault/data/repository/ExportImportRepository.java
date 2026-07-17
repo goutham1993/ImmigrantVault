@@ -20,7 +20,7 @@ public class ExportImportRepository {
     public ExportImportRepository(AppDatabase database, ExecutorService executor) {
         this.backupDao = database.backupDao();
         this.executor = executor;
-        this.databaseVersion = 11;
+        this.databaseVersion = 15;
     }
 
     public Future<byte[]> exportAsync(ExportFormat format) {

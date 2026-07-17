@@ -17,6 +17,8 @@ import com.document.immigrantvault.data.db.entity.Petition;
 import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
+import com.document.immigrantvault.data.db.entity.UsefulLink;
+import com.document.immigrantvault.data.db.entity.VisaEntry;
 
 import java.util.List;
 
@@ -47,6 +49,12 @@ public interface BackupDao {
     @Query("SELECT * FROM petitions")
     List<Petition> getAllPetitionsSync();
 
+    @Query("SELECT * FROM visa_entries")
+    List<VisaEntry> getAllVisasSync();
+
+    @Query("SELECT * FROM useful_links")
+    List<UsefulLink> getAllUsefulLinksSync();
+
     @Query("SELECT * FROM reminders")
     List<Reminder> getAllRemindersSync();
 
@@ -67,6 +75,12 @@ public interface BackupDao {
 
     @Query("DELETE FROM petitions")
     void deleteAllPetitions();
+
+    @Query("DELETE FROM visa_entries")
+    void deleteAllVisaEntries();
+
+    @Query("DELETE FROM useful_links")
+    void deleteAllUsefulLinks();
 
     @Query("DELETE FROM education_entries")
     void deleteAllEducationEntries();
@@ -108,6 +122,12 @@ public interface BackupDao {
     void insertPetitions(List<Petition> petitions);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertVisaEntries(List<VisaEntry> entries);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertUsefulLinks(List<UsefulLink> links);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReminders(List<Reminder> reminders);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -124,6 +144,8 @@ public interface BackupDao {
         backup.i94Entries = getAllI94Sync();
         backup.travelEntries = getAllTravelSync();
         backup.petitions = getAllPetitionsSync();
+        backup.visaEntries = getAllVisasSync();
+        backup.usefulLinks = getAllUsefulLinksSync();
         backup.reminders = getAllRemindersSync();
         backup.timelineEvents = getAllTimelineEventsSync();
         return backup;
@@ -136,6 +158,8 @@ public interface BackupDao {
         deleteAllTravelEntries();
         deleteAllI94Entries();
         deleteAllPetitions();
+        deleteAllVisaEntries();
+        deleteAllUsefulLinks();
         deleteAllEducationEntries();
         deleteAllEmployerEntries();
         deleteAllAddressEntries();
@@ -165,6 +189,12 @@ public interface BackupDao {
         }
         if (backup.petitions != null && !backup.petitions.isEmpty()) {
             insertPetitions(backup.petitions);
+        }
+        if (backup.visaEntries != null && !backup.visaEntries.isEmpty()) {
+            insertVisaEntries(backup.visaEntries);
+        }
+        if (backup.usefulLinks != null && !backup.usefulLinks.isEmpty()) {
+            insertUsefulLinks(backup.usefulLinks);
         }
         if (backup.reminders != null && !backup.reminders.isEmpty()) {
             insertReminders(backup.reminders);
