@@ -25,5 +25,16 @@
         <item name="colorOutline">#8E9199</item>
         <item name="colorOutlineVariant">#43474E</item>
         <item name="android:statusBarColor">#121416</item>
+
+        <!-- Keep shape/widget styles in sync with light theme -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.ImmigrantVault.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.ImmigrantVault.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.ImmigrantVault.LargeComponent</item>
+
+        <item name="materialButtonStyle">@style/Widget.ImmigrantVault.Button</item>
+        <item name="materialCardViewStyle">@style/Widget.ImmigrantVault.Card</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.ImmigrantVault.BottomSheetDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.ImmigrantVault.MaterialAlertDialog</item>
+        <item name="textInputStyle">@style/Widget.ImmigrantVault.TextInputLayout</item>
     </style>
 </resources>

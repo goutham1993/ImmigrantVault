@@ -11,22 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="16dp">
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="@dimen/screen_padding">
 
         <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.ImmigrantVault.Card"
+            style="@style/Widget.ImmigrantVault.Card.Outlined"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="1dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/list_item_padding">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -88,19 +85,16 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.ImmigrantVault.Card"
+            style="@style/Widget.ImmigrantVault.Card.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/list_item_padding">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -137,19 +131,16 @@
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.ImmigrantVault.Card"
+            style="@style/Widget.ImmigrantVault.Card.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:cardElevation="0dp"
-            app:strokeColor="?attr/colorOutlineVariant"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="12dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="@dimen/list_item_padding">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -194,7 +185,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/action_edit_profile"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.ImmigrantVault.Button.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

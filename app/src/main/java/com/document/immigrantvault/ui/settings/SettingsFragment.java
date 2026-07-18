@@ -21,7 +21,9 @@ import com.document.immigrantvault.data.repository.ExportImportRepository;
 import com.document.immigrantvault.databinding.FragmentSettingsBinding;
 import com.document.immigrantvault.util.LinkConstants;
 import com.document.immigrantvault.util.SecurePrefs;
+import com.document.immigrantvault.util.ThemePreferences;
 import com.document.immigrantvault.util.UiUtils;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.ByteArrayOutputStream;
@@ -52,6 +54,8 @@ public class SettingsFragment extends Fragment {
         ImmigrantVaultApplication app = (ImmigrantVaultApplication) requireActivity().getApplication();
         exportImportRepository = app.getExportImportRepository();
 
+        setupThemeToggle();
+
         binding.switchBiometric.setChecked(prefs.isBiometricEnabled());
         binding.switchBiometric.setOnCheckedChangeListener((buttonView, isChecked) ->
                 prefs.setBiometricEnabled(isChecked));
@@ -77,6 +81,42 @@ public class SettingsFragment extends Fragment {
         }
         binding = null;
         super.onDestroyView();
+    }
+
+    private void setupThemeToggle() {
+        String currentMode = ThemePreferences.getThemeMode(requireContext());
+        int checkedId = themeButtonId(currentMode);
+        binding.themeToggle.check(checkedId);
+        binding.themeToggle.addOnButtonCheckedListener(
+                (MaterialButtonToggleGroup group, int checkedButtonId, boolean isChecked) -> {
+                    if (!isChecked || binding == null) {
+                        return;
+                    }
+                    String mode = themeModeForButton(checkedButtonId);
+                    if (!mode.equals(ThemePreferences.getThemeMode(requireContext()))) {
+                        ThemePreferences.setThemeMode(requireContext(), mode);
+                    }
+                });
+    }
+
+    private static int themeButtonId(String mode) {
+        if (ThemePreferences.MODE_LIGHT.equals(mode)) {
+            return R.id.theme_light;
+        }
+        if (ThemePreferences.MODE_DARK.equals(mode)) {
+            return R.id.theme_dark;
+        }
+        return R.id.theme_system;
+    }
+
+    private static String themeModeForButton(int buttonId) {
+        if (buttonId == R.id.theme_light) {
+            return ThemePreferences.MODE_LIGHT;
+        }
+        if (buttonId == R.id.theme_dark) {
+            return ThemePreferences.MODE_DARK;
+        }
+        return ThemePreferences.MODE_SYSTEM;
     }
 
     private void showExportFormatDialog() {

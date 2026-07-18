@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="@dimen/form_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,11 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textAppearance="?attr/textAppearanceTitleLarge" />
+            android:textAppearance="@style/TextAppearance.ImmigrantVault.FormTitle" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_line1_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/label_address_line1">
@@ -48,7 +48,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_dwelling_home"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.ImmigrantVault.Button.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -56,7 +56,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_dwelling_apartment"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.ImmigrantVault.Button.Outlined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -73,10 +73,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_apartment_name_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.ImmigrantVault.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/form_field_spacing"
                 android:hint="@string/label_apartment_name">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -88,10 +88,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_apartment_number_layout"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.ImmigrantVault.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/form_field_spacing"
                 android:hint="@string/label_apartment_number">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -105,10 +105,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_city_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_city">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -120,10 +120,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_state_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_state">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -135,10 +135,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_zip_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_zip">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -150,10 +150,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_start_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_start_date">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -166,10 +166,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_end_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_end_date">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -184,7 +184,7 @@
             android:id="@+id/switch_current"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:text="@string/label_current_address" />
 
         <LinearLayout
@@ -196,7 +196,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_delete"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.ImmigrantVault.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_delete"
@@ -207,7 +207,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.ImmigrantVault.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_cancel" />

@@ -38,6 +38,8 @@
             android:id="@+id/bottom_nav"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:elevation="8dp"
+            app:itemActiveIndicatorStyle="@style/Widget.ImmigrantVault.BottomNav.ActiveIndicator"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

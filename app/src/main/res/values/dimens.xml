@@ -1,3 +1,21 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Shape system -->
+    <dimen name="corner_extra_small">8dp</dimen>
+    <dimen name="corner_small">12dp</dimen>
+    <dimen name="corner_medium">16dp</dimen>
+    <dimen name="corner_large">20dp</dimen>
+    <dimen name="corner_extra_large">28dp</dimen>
+
+    <!-- Spacing -->
+    <dimen name="form_padding">20dp</dimen>
+    <dimen name="form_field_spacing">12dp</dimen>
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="list_item_padding">16dp</dimen>
+    <dimen name="screen_padding">16dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_card">2dp</dimen>
+    <dimen name="elevation_card_outlined">0dp</dimen>
 </resources>

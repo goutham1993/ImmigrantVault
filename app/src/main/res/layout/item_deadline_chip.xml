@@ -2,13 +2,10 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.ImmigrantVault.Card.Outlined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp"
-    app:strokeColor="?attr/colorOutlineVariant"
-    app:strokeWidth="1dp">
+    android:layout_marginEnd="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"

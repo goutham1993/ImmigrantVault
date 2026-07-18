@@ -17,6 +17,7 @@ import com.document.immigrantvault.data.repository.TravelRepository;
 import com.document.immigrantvault.data.repository.UsefulLinkRepository;
 import com.document.immigrantvault.data.repository.VisaRepository;
 import com.document.immigrantvault.util.ReminderScheduler;
+import com.document.immigrantvault.util.ThemePreferences;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,6 +43,7 @@ public class ImmigrantVaultApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ThemePreferences.applySaved(this);
         database = AppDatabase.getInstance(this);
         executor = Executors.newFixedThreadPool(4);
         personRepository = new PersonRepository(database, executor);

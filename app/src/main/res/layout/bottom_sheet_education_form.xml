@@ -2,7 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:padding="@dimen/form_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,11 +14,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textAppearance="?attr/textAppearanceTitleLarge" />
+            android:textAppearance="@style/TextAppearance.ImmigrantVault.FormTitle" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_institution_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/label_institution">
@@ -32,10 +32,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_degree_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_degree">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -47,10 +47,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_field_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_field_of_study">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -62,10 +62,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_city_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_city">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -77,10 +77,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_country_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_country">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -92,10 +92,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_gpa_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_gpa">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -107,10 +107,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_start_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_start_date">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -123,10 +123,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_end_layout"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_end_date">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -146,7 +146,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_delete"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.ImmigrantVault.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_delete"
@@ -160,7 +160,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_cancel"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.ImmigrantVault.Button.Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_cancel" />

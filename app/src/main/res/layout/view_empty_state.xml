@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="32dp">
+    android:padding="40dp">
 
     <ImageView
         android:id="@+id/empty_icon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/bg_avatar_circle"
         android:contentDescription="@null"
+        android:padding="18dp"
         android:src="@drawable/ic_document"
+        app:tint="?attr/colorOnPrimaryContainer"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/empty_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         tools:text="No documents yet" />
@@ -36,10 +40,10 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/empty_action"
-        style="@style/Widget.Material3.Button.TonalButton"
+        style="@style/Widget.ImmigrantVault.Button.Tonal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:visibility="gone"
         tools:text="Add"
         tools:visibility="visible" />

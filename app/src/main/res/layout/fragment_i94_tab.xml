@@ -17,7 +17,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_external_link"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.ImmigrantVault.Button.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -26,18 +26,18 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/i94_card"
+                style="@style/Widget.ImmigrantVault.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="16dp"
-                android:visibility="gone"
-                app:cardCornerRadius="16dp">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/list_item_padding">
 
                     <TextView
                         android:layout_width="match_parent"
