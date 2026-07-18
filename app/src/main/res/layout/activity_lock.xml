@@ -64,12 +64,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="@string/lock_enter_pin"
             android:imeOptions="actionDone"
             android:inputType="numberPassword"
             android:letterSpacing="0.4"
             android:maxLength="6"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

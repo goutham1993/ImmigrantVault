@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="status_active">#6DD4C4</color>
+    <color name="status_warning">#F0C060</color>
+    <color name="status_expired">#FFB4AB</color>
+    <color name="status_pending">#C4C7CF</color>
+
+    <color name="chip_active_bg">#1A3D38</color>
+    <color name="chip_warning_bg">#3D2E0A</color>
+    <color name="chip_expired_bg">#4A1515</color>
+    <color name="chip_pending_bg">#2C3138</color>
+</resources>

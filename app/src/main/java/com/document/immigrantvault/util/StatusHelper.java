@@ -1,7 +1,6 @@
 package com.document.immigrantvault.util;
 
 import android.content.Context;
-import android.graphics.Color;
 
 import com.document.immigrantvault.R;
 import com.google.android.material.chip.Chip;
@@ -17,6 +16,7 @@ public final class StatusHelper {
         if (visaEndDate == null) {
             chip.setText(R.string.status_no_visa);
             chip.setChipBackgroundColorResource(R.color.chip_pending_bg);
+            chip.setTextColor(context.getColor(R.color.status_pending));
             return;
         }
         int days = DateUtils.daysUntil(visaEndDate);
