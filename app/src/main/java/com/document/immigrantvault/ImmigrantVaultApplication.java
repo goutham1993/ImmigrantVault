@@ -59,6 +59,7 @@ public class ImmigrantVaultApplication extends Application {
         reminderRepository = new ReminderRepository(database, executor);
         timelineRepository = new TimelineRepository(database, executor);
         exportImportRepository = new ExportImportRepository(database, executor);
+        reminderRepository.reconcileOverlappingVisaReminders();
         ReminderScheduler.schedule(this);
     }
 

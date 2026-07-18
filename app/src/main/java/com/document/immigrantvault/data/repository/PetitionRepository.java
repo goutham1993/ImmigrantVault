@@ -46,7 +46,6 @@ public class PetitionRepository {
         executor.execute(() -> {
             database.petitionDao().update(petition);
             database.timelineDao().deleteBySource(SourceEntityType.PETITION, petition.id);
-            database.reminderDao().deleteByLinked(LinkedEntityType.PETITION, petition.id);
             addTimeline(petition);
             reminderRepository.syncPetitionReminders(petition);
             if (onComplete != null) {

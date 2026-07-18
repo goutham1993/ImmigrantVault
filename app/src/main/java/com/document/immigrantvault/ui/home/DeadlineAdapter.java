@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.document.immigrantvault.data.db.entity.Reminder;
+import com.document.immigrantvault.data.repository.ReminderRepository;
 import com.document.immigrantvault.databinding.ItemDeadlineChipBinding;
-import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.StatusHelper;
 
 import java.util.ArrayList;
@@ -23,7 +23,8 @@ public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.ViewHo
     public void setItems(List<Reminder> reminders) {
         items.clear();
         if (reminders != null) {
-            items.addAll(reminders);
+            // One chip per document/visa/petition — hide 30/14/7 lead-day copies.
+            items.addAll(ReminderRepository.collapseByLinkedEntity(reminders));
             Collections.sort(items, Comparator.comparing(r -> r.triggerDate));
         }
         notifyDataSetChanged();

@@ -26,6 +26,9 @@ public interface VisaDao {
     @Query("SELECT * FROM visa_entries WHERE personId = :personId ORDER BY startDate DESC")
     LiveData<List<VisaEntry>> getByPerson(long personId);
 
+    @Query("SELECT * FROM visa_entries WHERE personId = :personId ORDER BY startDate DESC")
+    List<VisaEntry> getByPersonSync(long personId);
+
     @Query("SELECT * FROM visa_entries WHERE id = :id")
     VisaEntry getByIdSync(long id);
 }

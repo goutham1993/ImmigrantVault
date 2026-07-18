@@ -27,6 +27,9 @@ public interface PersonDao {
     @Query("SELECT * FROM persons ORDER BY sortOrder ASC, id ASC")
     LiveData<List<Person>> getAll();
 
+    @Query("SELECT * FROM persons ORDER BY sortOrder ASC, id ASC")
+    List<Person> getAllSync();
+
     @Query("SELECT * FROM persons WHERE id = :id")
     LiveData<Person> getById(long id);
 

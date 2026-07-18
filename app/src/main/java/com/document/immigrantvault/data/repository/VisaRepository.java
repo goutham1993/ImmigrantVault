@@ -45,7 +45,6 @@ public class VisaRepository {
         executor.execute(() -> {
             database.visaDao().update(entry);
             database.timelineDao().deleteBySource(SourceEntityType.VISA, entry.id);
-            database.reminderDao().deleteByLinked(LinkedEntityType.VISA, entry.id);
             addTimeline(entry);
             reminderRepository.syncVisaEntryReminders(entry);
             if (onComplete != null) {

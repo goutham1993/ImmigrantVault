@@ -58,6 +58,8 @@ public class PersonRepository {
 
     public void delete(Person person, Runnable onComplete) {
         executor.execute(() -> {
+            // Reminders have no FK cascade; clear them before the person row is removed.
+            reminderRepository.deleteByPersonId(person.id);
             database.personDao().delete(person);
             completeOnMain(onComplete);
         });

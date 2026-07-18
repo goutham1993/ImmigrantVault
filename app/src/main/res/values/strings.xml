@@ -167,6 +167,8 @@
 
     <!-- Reminders -->
     <string name="reminders_title">Reminders</string>
+    <string name="reminder_on">Reminder on %1$s</string>
+    <string name="reminder_on_lead">%1$d days before · Reminder on %2$s</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

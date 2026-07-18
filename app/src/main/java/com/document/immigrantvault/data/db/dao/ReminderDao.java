@@ -34,6 +34,9 @@ public interface ReminderDao {
     @Query("DELETE FROM reminders WHERE linkedType = :linkedType AND linkedId = :linkedId")
     void deleteByLinked(LinkedEntityType linkedType, long linkedId);
 
+    @Query("DELETE FROM reminders WHERE personId = :personId")
+    void deleteByPersonId(long personId);
+
     @Query("SELECT * FROM reminders WHERE id = :id")
     Reminder getByIdSync(long id);
 }

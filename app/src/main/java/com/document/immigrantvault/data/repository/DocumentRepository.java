@@ -45,7 +45,6 @@ public class DocumentRepository {
         executor.execute(() -> {
             database.documentDao().update(document);
             database.timelineDao().deleteBySource(SourceEntityType.DOCUMENT, document.id);
-            database.reminderDao().deleteByLinked(LinkedEntityType.DOCUMENT, document.id);
             addTimeline(document);
             reminderRepository.syncDocumentReminders(document);
             if (onComplete != null) {

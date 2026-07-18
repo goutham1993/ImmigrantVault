@@ -100,7 +100,15 @@ public class RemindersFragment extends Fragment {
             void bind(Reminder reminder) {
                 binding.reminderTitle.setText(reminder.title);
                 binding.reminderBody.setText(reminder.body);
-                binding.reminderDate.setText("Reminder on " + DateUtils.formatDate(reminder.triggerDate));
+                String dateLabel = reminder.leadDays > 0
+                        ? itemView.getContext().getString(
+                                R.string.reminder_on_lead,
+                                reminder.leadDays,
+                                DateUtils.formatDate(reminder.triggerDate))
+                        : itemView.getContext().getString(
+                                R.string.reminder_on,
+                                DateUtils.formatDate(reminder.triggerDate));
+                binding.reminderDate.setText(dateLabel);
                 binding.reminderSwitch.setOnCheckedChangeListener(null);
                 binding.reminderSwitch.setChecked(reminder.enabled);
                 binding.reminderSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
