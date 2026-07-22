@@ -106,6 +106,9 @@
     <string name="label_state_wages_box16">Box 16 — State wages</string>
     <string name="label_state_tax_box17">Box 17 — State income tax</string>
     <string name="w2_wages_summary">Wages: %1$s</string>
+    <string name="w2_card_tax_line">Federal: %1$s · SS: %2$s · Medicare: %3$s</string>
+    <string name="w2_card_state_total_line">State: %1$s · Total tax: %2$s</string>
+    <string name="w2_card_subtitle">%1$s\n%2$s\n%3$s</string>
     <string name="w2_tax_year_meta">%1$d</string>
     <string name="error_invalid_year">Enter a valid tax year</string>
     <string name="error_invalid_amount">Enter a valid amount</string>

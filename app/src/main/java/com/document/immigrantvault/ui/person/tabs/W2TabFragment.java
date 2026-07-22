@@ -68,9 +68,7 @@ public class W2TabFragment extends Fragment {
             entries = list != null ? list : new ArrayList<>();
             List<ListEntryAdapter.ListItem> items = new ArrayList<>();
             for (W2Entry e : entries) {
-                String subtitle = e.wages != null
-                        ? getString(R.string.w2_wages_summary, currencyFormat.format(e.wages))
-                        : "";
+                String subtitle = formatTaxSubtitle(e);
                 String meta = getString(R.string.w2_tax_year_meta, e.taxYear);
                 items.add(new ListEntryAdapter.ListItem(e.employerName, subtitle, meta));
             }
@@ -81,5 +79,27 @@ public class W2TabFragment extends Fragment {
             binding.fabAdd.setVisibility(View.VISIBLE);
         });
         return binding.getRoot();
+    }
+
+    private String formatTaxSubtitle(W2Entry entry) {
+        double federal = amountOrZero(entry.federalIncomeTax);
+        double socialSecurity = amountOrZero(entry.socialSecurityTax);
+        double medicare = amountOrZero(entry.medicareTax);
+        double state = amountOrZero(entry.stateIncomeTax);
+        double total = federal + socialSecurity + medicare + state;
+
+        String wagesLine = getString(R.string.w2_wages_summary, currencyFormat.format(amountOrZero(entry.wages)));
+        String taxLine = getString(R.string.w2_card_tax_line,
+                currencyFormat.format(federal),
+                currencyFormat.format(socialSecurity),
+                currencyFormat.format(medicare));
+        String stateTotalLine = getString(R.string.w2_card_state_total_line,
+                currencyFormat.format(state),
+                currencyFormat.format(total));
+        return getString(R.string.w2_card_subtitle, wagesLine, taxLine, stateTotalLine);
+    }
+
+    private static double amountOrZero(Double value) {
+        return value != null ? value : 0d;
     }
 }
