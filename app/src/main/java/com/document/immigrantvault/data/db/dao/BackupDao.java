@@ -19,6 +19,7 @@ import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
+import com.document.immigrantvault.data.db.entity.W2Entry;
 
 import java.util.List;
 
@@ -55,6 +56,9 @@ public interface BackupDao {
     @Query("SELECT * FROM useful_links")
     List<UsefulLink> getAllUsefulLinksSync();
 
+    @Query("SELECT * FROM w2_entries")
+    List<W2Entry> getAllW2Sync();
+
     @Query("SELECT * FROM reminders")
     List<Reminder> getAllRemindersSync();
 
@@ -81,6 +85,9 @@ public interface BackupDao {
 
     @Query("DELETE FROM useful_links")
     void deleteAllUsefulLinks();
+
+    @Query("DELETE FROM w2_entries")
+    void deleteAllW2Entries();
 
     @Query("DELETE FROM education_entries")
     void deleteAllEducationEntries();
@@ -128,6 +135,9 @@ public interface BackupDao {
     void insertUsefulLinks(List<UsefulLink> links);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertW2Entries(List<W2Entry> entries);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReminders(List<Reminder> reminders);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -146,6 +156,7 @@ public interface BackupDao {
         backup.petitions = getAllPetitionsSync();
         backup.visaEntries = getAllVisasSync();
         backup.usefulLinks = getAllUsefulLinksSync();
+        backup.w2Entries = getAllW2Sync();
         backup.reminders = getAllRemindersSync();
         backup.timelineEvents = getAllTimelineEventsSync();
         return backup;
@@ -160,6 +171,7 @@ public interface BackupDao {
         deleteAllPetitions();
         deleteAllVisaEntries();
         deleteAllUsefulLinks();
+        deleteAllW2Entries();
         deleteAllEducationEntries();
         deleteAllEmployerEntries();
         deleteAllAddressEntries();
@@ -195,6 +207,9 @@ public interface BackupDao {
         }
         if (backup.usefulLinks != null && !backup.usefulLinks.isEmpty()) {
             insertUsefulLinks(backup.usefulLinks);
+        }
+        if (backup.w2Entries != null && !backup.w2Entries.isEmpty()) {
+            insertW2Entries(backup.w2Entries);
         }
         if (backup.reminders != null && !backup.reminders.isEmpty()) {
             insertReminders(backup.reminders);

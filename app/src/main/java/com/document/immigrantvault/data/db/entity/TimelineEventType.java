@@ -12,5 +12,6 @@ public enum TimelineEventType {
     TRAVEL_EXIT,
     PETITION_FILED,
     PETITION_STATUS,
+    W2_ADDED,
     NOTE
 }

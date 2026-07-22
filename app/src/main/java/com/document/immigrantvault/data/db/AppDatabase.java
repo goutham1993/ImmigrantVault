@@ -20,6 +20,7 @@ import com.document.immigrantvault.data.db.dao.TimelineDao;
 import com.document.immigrantvault.data.db.dao.TravelDao;
 import com.document.immigrantvault.data.db.dao.UsefulLinkDao;
 import com.document.immigrantvault.data.db.dao.VisaDao;
+import com.document.immigrantvault.data.db.dao.W2Dao;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
@@ -32,6 +33,7 @@ import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
+import com.document.immigrantvault.data.db.entity.W2Entry;
 
 @Database(
         entities = {
@@ -45,10 +47,11 @@ import com.document.immigrantvault.data.db.entity.VisaEntry;
                 Petition.class,
                 VisaEntry.class,
                 UsefulLink.class,
+                W2Entry.class,
                 Reminder.class,
                 TimelineEvent.class
         },
-        version = 15,
+        version = 16,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -67,6 +70,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PetitionDao petitionDao();
     public abstract VisaDao visaDao();
     public abstract UsefulLinkDao usefulLinkDao();
+    public abstract W2Dao w2Dao();
     public abstract ReminderDao reminderDao();
     public abstract TimelineDao timelineDao();
 
@@ -92,7 +96,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_11_12,
                             DatabaseMigrations.MIGRATION_12_13,
                             DatabaseMigrations.MIGRATION_13_14,
-                            DatabaseMigrations.MIGRATION_14_15
+                            DatabaseMigrations.MIGRATION_14_15,
+                            DatabaseMigrations.MIGRATION_15_16
                     )
                             .build();
                 }

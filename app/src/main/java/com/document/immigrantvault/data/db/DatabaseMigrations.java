@@ -189,6 +189,41 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_15_16 = new Migration(15, 16) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `w2_entries` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`taxYear` INTEGER NOT NULL, "
+                    + "`employerName` TEXT, "
+                    + "`ein` TEXT, "
+                    + "`wages` REAL, "
+                    + "`federalIncomeTax` REAL, "
+                    + "`socialSecurityWages` REAL, "
+                    + "`socialSecurityTax` REAL, "
+                    + "`medicareWages` REAL, "
+                    + "`medicareTax` REAL, "
+                    + "`box12aCode` TEXT, "
+                    + "`box12aAmount` REAL, "
+                    + "`box12bCode` TEXT, "
+                    + "`box12bAmount` REAL, "
+                    + "`box12cCode` TEXT, "
+                    + "`box12cAmount` REAL, "
+                    + "`box12dCode` TEXT, "
+                    + "`box12dAmount` REAL, "
+                    + "`box14` TEXT, "
+                    + "`state` TEXT, "
+                    + "`stateWages` REAL, "
+                    + "`stateIncomeTax` REAL, "
+                    + "`notes` TEXT, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_w2_entries_personId` "
+                    + "ON `w2_entries` (`personId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

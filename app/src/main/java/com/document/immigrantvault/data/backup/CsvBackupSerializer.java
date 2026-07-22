@@ -21,6 +21,7 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.VisaType;
+import com.document.immigrantvault.data.db.entity.W2Entry;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +51,7 @@ public final class CsvBackupSerializer {
     private static final String PETITIONS = "petitions.csv";
     private static final String VISAS = "visa_entries.csv";
     private static final String USEFUL_LINKS = "useful_links.csv";
+    private static final String W2_ENTRIES = "w2_entries.csv";
     private static final String REMINDERS = "reminders.csv";
     private static final String TIMELINE = "timeline_events.csv";
 
@@ -70,6 +72,7 @@ public final class CsvBackupSerializer {
             writeEntry(zip, PETITIONS, writer -> writePetitions(writer, backup.petitions));
             writeEntry(zip, VISAS, writer -> writeVisas(writer, backup.visaEntries));
             writeEntry(zip, USEFUL_LINKS, writer -> writeUsefulLinks(writer, backup.usefulLinks));
+            writeEntry(zip, W2_ENTRIES, writer -> writeW2Entries(writer, backup.w2Entries));
             writeEntry(zip, REMINDERS, writer -> writeReminders(writer, backup.reminders));
             writeEntry(zip, TIMELINE, writer -> writeTimeline(writer, backup.timelineEvents));
             zip.finish();
@@ -110,6 +113,7 @@ public final class CsvBackupSerializer {
             backup.petitions = readPetitions(entries.get(PETITIONS));
             backup.visaEntries = readVisas(entries.get(VISAS));
             backup.usefulLinks = readUsefulLinks(entries.get(USEFUL_LINKS));
+            backup.w2Entries = readW2Entries(entries.get(W2_ENTRIES));
             backup.reminders = readReminders(entries.get(REMINDERS));
             backup.timelineEvents = readTimeline(entries.get(TIMELINE));
             return backup;
@@ -551,6 +555,82 @@ public final class CsvBackupSerializer {
             links.add(link);
         }
         return links;
+    }
+
+    private static void writeW2Entries(Writer writer, List<W2Entry> entries) throws IOException {
+        CsvUtils.writeRow(writer,
+                "id", "personId", "taxYear", "employerName", "ein",
+                "wages", "federalIncomeTax", "socialSecurityWages", "socialSecurityTax",
+                "medicareWages", "medicareTax",
+                "box12aCode", "box12aAmount", "box12bCode", "box12bAmount",
+                "box12cCode", "box12cAmount", "box12dCode", "box12dAmount",
+                "box14", "state", "stateWages", "stateIncomeTax", "notes");
+        if (entries == null) {
+            return;
+        }
+        for (W2Entry entry : entries) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(entry.id),
+                    CsvUtils.formatLong(entry.personId),
+                    CsvUtils.formatInt(entry.taxYear),
+                    CsvUtils.formatString(entry.employerName),
+                    CsvUtils.formatString(entry.ein),
+                    CsvUtils.formatDouble(entry.wages),
+                    CsvUtils.formatDouble(entry.federalIncomeTax),
+                    CsvUtils.formatDouble(entry.socialSecurityWages),
+                    CsvUtils.formatDouble(entry.socialSecurityTax),
+                    CsvUtils.formatDouble(entry.medicareWages),
+                    CsvUtils.formatDouble(entry.medicareTax),
+                    CsvUtils.formatString(entry.box12aCode),
+                    CsvUtils.formatDouble(entry.box12aAmount),
+                    CsvUtils.formatString(entry.box12bCode),
+                    CsvUtils.formatDouble(entry.box12bAmount),
+                    CsvUtils.formatString(entry.box12cCode),
+                    CsvUtils.formatDouble(entry.box12cAmount),
+                    CsvUtils.formatString(entry.box12dCode),
+                    CsvUtils.formatDouble(entry.box12dAmount),
+                    CsvUtils.formatString(entry.box14),
+                    CsvUtils.formatString(entry.state),
+                    CsvUtils.formatDouble(entry.stateWages),
+                    CsvUtils.formatDouble(entry.stateIncomeTax),
+                    CsvUtils.formatString(entry.notes));
+        }
+    }
+
+    private static List<W2Entry> readW2Entries(byte[] data) throws IOException {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        List<W2Entry> entries = new ArrayList<>();
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            W2Entry entry = new W2Entry();
+            entry.id = CsvUtils.getLong(row, "id");
+            entry.personId = CsvUtils.getLong(row, "personId");
+            entry.taxYear = CsvUtils.getInt(row, "taxYear");
+            entry.employerName = CsvUtils.get(row, "employerName");
+            entry.ein = CsvUtils.get(row, "ein");
+            entry.wages = CsvUtils.getDouble(row, "wages");
+            entry.federalIncomeTax = CsvUtils.getDouble(row, "federalIncomeTax");
+            entry.socialSecurityWages = CsvUtils.getDouble(row, "socialSecurityWages");
+            entry.socialSecurityTax = CsvUtils.getDouble(row, "socialSecurityTax");
+            entry.medicareWages = CsvUtils.getDouble(row, "medicareWages");
+            entry.medicareTax = CsvUtils.getDouble(row, "medicareTax");
+            entry.box12aCode = CsvUtils.get(row, "box12aCode");
+            entry.box12aAmount = CsvUtils.getDouble(row, "box12aAmount");
+            entry.box12bCode = CsvUtils.get(row, "box12bCode");
+            entry.box12bAmount = CsvUtils.getDouble(row, "box12bAmount");
+            entry.box12cCode = CsvUtils.get(row, "box12cCode");
+            entry.box12cAmount = CsvUtils.getDouble(row, "box12cAmount");
+            entry.box12dCode = CsvUtils.get(row, "box12dCode");
+            entry.box12dAmount = CsvUtils.getDouble(row, "box12dAmount");
+            entry.box14 = CsvUtils.get(row, "box14");
+            entry.state = CsvUtils.get(row, "state");
+            entry.stateWages = CsvUtils.getDouble(row, "stateWages");
+            entry.stateIncomeTax = CsvUtils.getDouble(row, "stateIncomeTax");
+            entry.notes = CsvUtils.get(row, "notes");
+            entries.add(entry);
+        }
+        return entries;
     }
 
     private static void writeReminders(Writer writer, List<Reminder> reminders) throws IOException {

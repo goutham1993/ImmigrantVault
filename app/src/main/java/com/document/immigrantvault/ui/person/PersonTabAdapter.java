@@ -14,6 +14,7 @@ import com.document.immigrantvault.ui.person.tabs.PetitionTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TimelineTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TravelTabFragment;
 import com.document.immigrantvault.ui.person.tabs.VisaTabFragment;
+import com.document.immigrantvault.ui.person.tabs.W2TabFragment;
 
 public class PersonTabAdapter extends FragmentStateAdapter {
 
@@ -43,10 +44,12 @@ public class PersonTabAdapter extends FragmentStateAdapter {
             case 6:
                 return EmployerTabFragment.newInstance(personId);
             case 7:
-                return PetitionTabFragment.newInstance(personId);
+                return W2TabFragment.newInstance(personId);
             case 8:
-                return TimelineTabFragment.newInstance(personId);
+                return PetitionTabFragment.newInstance(personId);
             case 9:
+                return TimelineTabFragment.newInstance(personId);
+            case 10:
             default:
                 return LinksTabFragment.newInstance(personId);
         }
@@ -54,6 +57,6 @@ public class PersonTabAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 10;
+        return 11;
     }
 }

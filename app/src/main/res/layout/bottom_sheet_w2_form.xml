@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/form_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/form_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:textAppearance="@style/TextAppearance.ImmigrantVault.FormTitle" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_tax_year_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/label_tax_year">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_tax_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="4" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_employer_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_employer_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_employer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_ein_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_ein">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_ein"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_wages_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_wages_box1">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_wages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_federal_tax_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_federal_tax_box2">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_federal_tax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_ss_wages_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_ss_wages_box3">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_ss_wages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_ss_tax_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_ss_tax_box4">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_ss_tax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_medicare_wages_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_medicare_wages_box5">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_medicare_wages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_medicare_tax_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_medicare_tax_box6">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_medicare_tax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12a_code_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12a_code">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12a_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12a_amount_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12a_amount">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12a_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12b_code_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12b_code">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12b_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12b_amount_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12b_amount">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12b_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12c_code_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12c_code">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12c_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12c_amount_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12c_amount">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12c_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12d_code_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12d_code">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12d_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box12d_amount_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box12d_amount">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box12d_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_box14_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_box14">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_box14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_state_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_state_box15">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapCharacters"
+                android:maxLength="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_state_wages_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_state_wages_box16">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_state_wages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_state_tax_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_state_tax_box17">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_state_tax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_notes_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_notes">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete"
+                style="@style/Widget.ImmigrantVault.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_delete"
+                android:textColor="?attr/colorError"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.ImmigrantVault.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/action_cancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/action_save" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

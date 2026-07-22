@@ -9,5 +9,6 @@ public enum SourceEntityType {
     TRAVEL,
     PETITION,
     VISA,
+    W2,
     MANUAL
 }

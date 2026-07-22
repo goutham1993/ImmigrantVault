@@ -109,6 +109,11 @@ final class CsvUtils {
         return value == null ? 0 : Integer.parseInt(value);
     }
 
+    static Double getDouble(Map<String, String> row, String key) {
+        String value = get(row, key);
+        return value == null ? null : Double.parseDouble(value);
+    }
+
     static boolean getBoolean(Map<String, String> row, String key) {
         String value = get(row, key);
         if (value == null) {
@@ -139,6 +144,10 @@ final class CsvUtils {
 
     static String formatInt(int value) {
         return String.valueOf(value);
+    }
+
+    static String formatDouble(Double value) {
+        return value == null ? "" : String.valueOf(value);
     }
 
     static String formatString(String value) {
