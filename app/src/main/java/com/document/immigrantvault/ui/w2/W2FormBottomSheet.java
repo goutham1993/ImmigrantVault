@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
+import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.databinding.BottomSheetW2FormBinding;
 import com.document.immigrantvault.util.UiUtils;
@@ -17,7 +20,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class W2FormBottomSheet extends BottomSheetDialogFragment {
 
@@ -28,6 +35,7 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
     private ImmigrantVaultApplication app;
     private long personId;
     private W2Entry editing;
+    private final List<String> employerNames = new ArrayList<>();
 
     public static W2FormBottomSheet newInstance(long personId, Long entryId) {
         W2FormBottomSheet sheet = new W2FormBottomSheet();
@@ -56,25 +64,61 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
 
-        if (requireArguments().containsKey(ARG_ENTRY_ID)) {
+        boolean editingExisting = requireArguments().containsKey(ARG_ENTRY_ID);
+        if (editingExisting) {
             binding.formTitle.setText(R.string.action_edit);
             binding.btnDelete.setVisibility(View.VISIBLE);
-            long id = requireArguments().getLong(ARG_ENTRY_ID);
-            app.getExecutor().execute(() -> {
-                W2Entry entry = app.getDatabase().w2Dao().getByIdSync(id);
-                if (entry != null) requireActivity().runOnUiThread(() -> populate(entry));
-            });
         } else {
             binding.formTitle.setText(R.string.add_w2);
             int year = Calendar.getInstance().get(Calendar.YEAR) - 1;
             binding.inputTaxYear.setText(String.valueOf(year));
         }
+
+        long entryId = editingExisting ? requireArguments().getLong(ARG_ENTRY_ID) : -1L;
+        app.getExecutor().execute(() -> {
+            List<EmployerEntry> employers = app.getDatabase().employerDao().getByPersonSync(personId);
+            List<String> names = uniqueEmployerNames(employers);
+            W2Entry entry = entryId >= 0 ? app.getDatabase().w2Dao().getByIdSync(entryId) : null;
+            requireActivity().runOnUiThread(() -> {
+                setupEmployerDropdown(names, entry != null ? entry.employerName : null);
+                if (entry != null) {
+                    populate(entry);
+                }
+            });
+        });
+    }
+
+    private void setupEmployerDropdown(List<String> names, String retainedName) {
+        employerNames.clear();
+        employerNames.addAll(names);
+        if (retainedName != null && !retainedName.isEmpty() && !employerNames.contains(retainedName)) {
+            employerNames.add(0, retainedName);
+        }
+        binding.inputEmployer.setAdapter(new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_dropdown_item_1line, employerNames));
+        if (employerNames.isEmpty()) {
+            binding.inputEmployerLayout.setError(getString(R.string.error_w2_no_employers));
+        }
+    }
+
+    private static List<String> uniqueEmployerNames(List<EmployerEntry> employers) {
+        Set<String> unique = new LinkedHashSet<>();
+        if (employers != null) {
+            for (EmployerEntry employer : employers) {
+                if (employer.employerName != null && !employer.employerName.trim().isEmpty()) {
+                    unique.add(employer.employerName.trim());
+                }
+            }
+        }
+        return new ArrayList<>(unique);
     }
 
     private void populate(W2Entry entry) {
         editing = entry;
         binding.inputTaxYear.setText(String.valueOf(entry.taxYear));
-        binding.inputEmployer.setText(entry.employerName);
+        if (entry.employerName != null) {
+            binding.inputEmployer.setText(entry.employerName, false);
+        }
         binding.inputEin.setText(entry.ein);
         setAmount(binding.inputWages, entry.wages);
         setAmount(binding.inputFederalTax, entry.federalIncomeTax);
@@ -107,8 +151,13 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
-        if (text(binding.inputEmployer).isEmpty()) {
-            binding.inputEmployerLayout.setError(getString(R.string.error_required));
+        String employerName = dropdownText(binding.inputEmployer);
+        if (employerNames.isEmpty()) {
+            binding.inputEmployerLayout.setError(getString(R.string.error_w2_no_employers));
+            return;
+        }
+        if (employerName.isEmpty() || !employerNames.contains(employerName)) {
+            binding.inputEmployerLayout.setError(getString(R.string.error_w2_select_employer));
             return;
         }
 
@@ -140,7 +189,7 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
         W2Entry entry = editing != null ? editing : new W2Entry();
         entry.personId = personId;
         entry.taxYear = taxYear;
-        entry.employerName = text(binding.inputEmployer);
+        entry.employerName = employerName;
         entry.ein = emptyToNull(text(binding.inputEin));
         entry.wages = wages;
         entry.federalIncomeTax = federalTax;
@@ -237,6 +286,10 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private String text(TextInputEditText e) {
+        return e.getText() != null ? e.getText().toString().trim() : "";
+    }
+
+    private String dropdownText(AutoCompleteTextView e) {
         return e.getText() != null ? e.getText().toString().trim() : "";
     }
 

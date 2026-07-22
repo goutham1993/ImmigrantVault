@@ -34,16 +34,17 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_employer_layout"
-            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/form_field_spacing"
             android:hint="@string/label_employer_name">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/input_employer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inputType="none" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

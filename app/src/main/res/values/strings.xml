@@ -109,6 +109,8 @@
     <string name="w2_tax_year_meta">%1$d</string>
     <string name="error_invalid_year">Enter a valid tax year</string>
     <string name="error_invalid_amount">Enter a valid amount</string>
+    <string name="error_w2_no_employers">Add an employer in the Employers tab first</string>
+    <string name="error_w2_select_employer">Select an employer from the list</string>
     <string name="label_institution">University / college</string>
     <string name="label_degree">Degree</string>
     <string name="label_field_of_study">Field / major</string>

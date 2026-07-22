@@ -26,6 +26,9 @@ public interface EmployerDao {
     @Query("SELECT * FROM employer_entries WHERE personId = :personId ORDER BY startDate DESC")
     LiveData<List<EmployerEntry>> getByPerson(long personId);
 
+    @Query("SELECT * FROM employer_entries WHERE personId = :personId ORDER BY startDate DESC")
+    List<EmployerEntry> getByPersonSync(long personId);
+
     @Query("SELECT * FROM employer_entries WHERE id = :id")
     EmployerEntry getByIdSync(long id);
 }
