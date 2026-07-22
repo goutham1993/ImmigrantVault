@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="folder_body_colors">
+        <item>@color/folder_blue_body</item>
+        <item>@color/folder_mint_body</item>
+        <item>@color/folder_gold_body</item>
+        <item>@color/folder_coral_body</item>
+        <item>@color/folder_lavender_body</item>
+        <item>@color/folder_sage_body</item>
+    </array>
+
+    <array name="folder_tab_colors">
+        <item>@color/folder_blue_tab</item>
+        <item>@color/folder_mint_tab</item>
+        <item>@color/folder_gold_tab</item>
+        <item>@color/folder_coral_tab</item>
+        <item>@color/folder_lavender_tab</item>
+        <item>@color/folder_sage_tab</item>
+    </array>
+
+    <array name="folder_on_colors">
+        <item>@color/folder_blue_on</item>
+        <item>@color/folder_mint_on</item>
+        <item>@color/folder_gold_on</item>
+        <item>@color/folder_coral_on</item>
+        <item>@color/folder_lavender_on</item>
+        <item>@color/folder_sage_on</item>
+    </array>
+</resources>

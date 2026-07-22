@@ -1,10 +1,14 @@
 package com.document.immigrantvault.ui.home;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.document.immigrantvault.R;
@@ -12,6 +16,7 @@ import com.document.immigrantvault.data.db.entity.Person;
 import com.document.immigrantvault.databinding.ItemPersonCardBinding;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
+import com.document.immigrantvault.util.FolderColorHelper;
 import com.document.immigrantvault.util.StatusHelper;
 
 import java.util.ArrayList;
@@ -65,6 +70,22 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
         }
 
         void bind(Person person) {
+            FolderColorHelper.FolderColors colors =
+                    FolderColorHelper.forPersonId(itemView.getContext(), person.id);
+
+            tintBackground(binding.folderTab, colors.tabColor);
+            tintBackground(binding.folderBody, colors.bodyColor);
+            tintBackground(binding.avatarText, colors.tabColor);
+
+            int secondary = ColorUtils.setAlphaComponent(colors.onColor, 0xB3);
+            binding.personName.setTextColor(colors.onColor);
+            binding.avatarText.setTextColor(colors.onColor);
+            binding.dateOfBirth.setTextColor(secondary);
+            binding.ssnLast4.setTextColor(secondary);
+            binding.visaType.setTextColor(colors.onColor);
+            binding.visaDates.setTextColor(secondary);
+            binding.daysRemaining.setTextColor(colors.onColor);
+
             String initial = person.name != null && !person.name.isEmpty()
                     ? person.name.substring(0, 1).toUpperCase() : "?";
             binding.avatarText.setText(initial);
@@ -105,6 +126,16 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
                     listener.onPersonClick(person);
                 }
             });
+        }
+
+        private void tintBackground(View view, @ColorInt int color) {
+            Drawable background = view.getBackground();
+            if (background == null) {
+                return;
+            }
+            Drawable tinted = DrawableCompat.wrap(background.mutate());
+            DrawableCompat.setTint(tinted, color);
+            view.setBackground(tinted);
         }
     }
 }

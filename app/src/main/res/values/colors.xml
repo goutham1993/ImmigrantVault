@@ -41,4 +41,29 @@
     <color name="chip_warning_bg">#FFF3D6</color>
     <color name="chip_expired_bg">#FFEBEE</color>
     <color name="chip_pending_bg">#E8EEF4</color>
+
+    <!-- Folder person cards (pastel bodies, richer tabs) -->
+    <color name="folder_blue_body">#D4E3F3</color>
+    <color name="folder_blue_tab">#9BB8D9</color>
+    <color name="folder_blue_on">#0A1F33</color>
+
+    <color name="folder_mint_body">#C8EDE7</color>
+    <color name="folder_mint_tab">#7BC4B8</color>
+    <color name="folder_mint_on">#0A3D36</color>
+
+    <color name="folder_gold_body">#FFF0C2</color>
+    <color name="folder_gold_tab">#E0B84A</color>
+    <color name="folder_gold_on">#4A3800</color>
+
+    <color name="folder_coral_body">#F9D9D3</color>
+    <color name="folder_coral_tab">#E08A7A</color>
+    <color name="folder_coral_on">#4A1F18</color>
+
+    <color name="folder_lavender_body">#E4E0F0</color>
+    <color name="folder_lavender_tab">#A89BC8</color>
+    <color name="folder_lavender_on">#2A2440</color>
+
+    <color name="folder_sage_body">#D8E8D4</color>
+    <color name="folder_sage_tab">#8FB88A</color>
+    <color name="folder_sage_on">#1E331C</color>
 </resources>

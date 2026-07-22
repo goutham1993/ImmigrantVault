@@ -18,4 +18,11 @@
     <!-- Elevation -->
     <dimen name="elevation_card">2dp</dimen>
     <dimen name="elevation_card_outlined">0dp</dimen>
+
+    <!-- Folder person cards -->
+    <dimen name="folder_tab_height">40dp</dimen>
+    <dimen name="folder_tab_min_width">120dp</dimen>
+    <dimen name="folder_tab_overlap">8dp</dimen>
+    <dimen name="folder_tab_overlap_negative">-8dp</dimen>
+    <dimen name="folder_body_elevation">3dp</dimen>
 </resources>
