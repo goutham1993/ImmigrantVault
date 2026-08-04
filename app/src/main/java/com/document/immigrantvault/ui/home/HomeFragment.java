@@ -49,6 +49,11 @@ public class HomeFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_home_to_personDetail, args);
         });
 
+        binding.btnMenu.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.settingsFragment));
+        binding.btnNotifications.setOnClickListener(v ->
+                Navigation.findNavController(view).navigate(R.id.remindersFragment));
+
         deadlineAdapter = new DeadlineAdapter();
         binding.deadlinesRecycler.setLayoutManager(
                 new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));

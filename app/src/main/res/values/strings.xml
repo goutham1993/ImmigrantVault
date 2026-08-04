@@ -20,6 +20,11 @@
 
     <!-- Home -->
     <string name="home_title">Your Family</string>
+    <string name="home_welcome">Welcome back!</string>
+    <string name="home_welcome_subtitle">Here\'s your immigration overview.</string>
+    <string name="home_menu_cd">Menu</string>
+    <string name="home_notifications_cd">Notifications</string>
+    <string name="home_hero_cd">Immigration overview illustration</string>
     <string name="home_deadlines_title">Upcoming Deadlines</string>
     <string name="home_empty_title">Welcome to ImmigrantVault</string>
     <string name="home_empty_subtitle">Add your basic details to start tracking your immigration status</string>

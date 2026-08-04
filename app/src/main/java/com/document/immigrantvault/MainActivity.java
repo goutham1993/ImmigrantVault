@@ -60,6 +60,25 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.bottomNav, navController);
 
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            boolean isHome = destination.getId() == R.id.homeFragment;
+            // Keep AppBarLayout in the hierarchy so CoordinatorLayout does not leave a
+            // stale top gap after tab switches; only hide the toolbar on Home.
+            binding.appBarLayout.setVisibility(android.view.View.VISIBLE);
+            binding.toolbar.setVisibility(isHome ? android.view.View.GONE : android.view.View.VISIBLE);
+            if (isHome) {
+                binding.appBarLayout.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                binding.appBarLayout.setElevation(0f);
+            } else {
+                int surface = com.google.android.material.color.MaterialColors.getColor(
+                        binding.appBarLayout, com.google.android.material.R.attr.colorSurface);
+                binding.appBarLayout.setBackgroundColor(surface);
+                binding.appBarLayout.setElevation(
+                        getResources().getDimension(com.google.android.material.R.dimen.design_appbar_elevation));
+            }
+            ViewCompat.requestApplyInsets(binding.appBarLayout);
+        });
+
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
