@@ -57,7 +57,7 @@ import com.document.immigrantvault.data.db.entity.W2Entry;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 17;
+    public static final int VERSION = 18;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -100,7 +100,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_13_14,
                             DatabaseMigrations.MIGRATION_14_15,
                             DatabaseMigrations.MIGRATION_15_16,
-                            DatabaseMigrations.MIGRATION_16_17
+                            DatabaseMigrations.MIGRATION_16_17,
+                            DatabaseMigrations.MIGRATION_17_18
                     )
                             .build();
                 }

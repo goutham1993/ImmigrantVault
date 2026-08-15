@@ -79,6 +79,7 @@ public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
     private void populate(EmployerEntry entry) {
         editing = entry;
         binding.inputEmployer.setText(entry.employerName);
+        binding.inputClient.setText(entry.client);
         binding.inputJob.setText(entry.jobTitle);
         binding.inputCity.setText(entry.city);
         binding.inputAddress.setText(entry.address);
@@ -119,6 +120,7 @@ public class EmployerFormBottomSheet extends BottomSheetDialogFragment {
         EmployerEntry entry = editing != null ? editing : new EmployerEntry();
         entry.personId = personId;
         entry.employerName = text(binding.inputEmployer);
+        entry.client = emptyToNull(text(binding.inputClient));
         entry.jobTitle = text(binding.inputJob);
         entry.city = emptyToNull(text(binding.inputCity));
         entry.address = emptyToNull(text(binding.inputAddress));

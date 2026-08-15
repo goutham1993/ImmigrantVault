@@ -24,6 +24,7 @@ public class EmployerEntry {
 
     public long personId;
     public String employerName;
+    public String client;
     public String jobTitle;
     public Date startDate;
     public Date endDate;

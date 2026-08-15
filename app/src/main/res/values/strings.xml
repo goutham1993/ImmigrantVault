@@ -90,6 +90,7 @@
     <string name="label_apartment_name">Apartment / building name (optional)</string>
     <string name="label_apartment_number">Apartment / unit number (optional)</string>
     <string name="label_employer_name">Employer name</string>
+    <string name="label_client">Client (optional)</string>
     <string name="label_job_title">Job title</string>
     <string name="label_employer_address">Employer address</string>
     <string name="label_tax_year">Tax year</string>

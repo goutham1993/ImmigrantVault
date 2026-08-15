@@ -31,6 +31,21 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_client_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_client">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_client"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_job_layout"
             style="@style/Widget.ImmigrantVault.TextInputLayout"
             android:layout_width="match_parent"

@@ -297,13 +297,14 @@ public final class CsvBackupSerializer {
 
     private static void writeEmployers(Writer writer, List<EmployerEntry> employers) throws IOException {
         CsvUtils.writeRow(writer,
-                "id", "personId", "employerName", "jobTitle", "startDate", "endDate",
+                "id", "personId", "employerName", "client", "jobTitle", "startDate", "endDate",
                 "isCurrent", "city", "address", "notes");
         for (EmployerEntry employer : employers) {
             CsvUtils.writeRow(writer,
                     CsvUtils.formatLong(employer.id),
                     CsvUtils.formatLong(employer.personId),
                     CsvUtils.formatString(employer.employerName),
+                    CsvUtils.formatString(employer.client),
                     CsvUtils.formatString(employer.jobTitle),
                     CsvUtils.formatDate(employer.startDate),
                     CsvUtils.formatDate(employer.endDate),
@@ -324,6 +325,7 @@ public final class CsvBackupSerializer {
             employer.id = CsvUtils.getLong(row, "id");
             employer.personId = CsvUtils.getLong(row, "personId");
             employer.employerName = CsvUtils.get(row, "employerName");
+            employer.client = CsvUtils.get(row, "client");
             employer.jobTitle = CsvUtils.get(row, "jobTitle");
             employer.startDate = CsvUtils.getDate(row, "startDate");
             employer.endDate = CsvUtils.getDate(row, "endDate");
