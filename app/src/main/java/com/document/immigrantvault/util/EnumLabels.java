@@ -22,6 +22,14 @@ public final class EnumLabels {
                 return "Spouse";
             case CHILD:
                 return "Child";
+            case FATHER:
+                return "Father";
+            case MOTHER:
+                return "Mother";
+            case SIBLING:
+                return "Sibling";
+            case FRIEND:
+                return "Friend";
             default:
                 return "Other";
         }

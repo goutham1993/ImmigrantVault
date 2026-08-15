@@ -51,11 +51,13 @@ import com.document.immigrantvault.data.db.entity.W2Entry;
                 Reminder.class,
                 TimelineEvent.class
         },
-        version = 16,
+        version = AppDatabase.VERSION,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
+
+    public static final int VERSION = 17;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -97,7 +99,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_12_13,
                             DatabaseMigrations.MIGRATION_13_14,
                             DatabaseMigrations.MIGRATION_14_15,
-                            DatabaseMigrations.MIGRATION_15_16
+                            DatabaseMigrations.MIGRATION_15_16,
+                            DatabaseMigrations.MIGRATION_16_17
                     )
                             .build();
                 }

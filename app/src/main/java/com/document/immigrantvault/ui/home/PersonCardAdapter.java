@@ -86,17 +86,22 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
             binding.visaDates.setTextColor(secondary);
             binding.daysRemaining.setTextColor(colors.onColor);
 
-            String initial = person.name != null && !person.name.isEmpty()
-                    ? person.name.substring(0, 1).toUpperCase() : "?";
+            String displayName = person.getDisplayName();
+            String initial = !displayName.isEmpty()
+                    ? displayName.substring(0, 1).toUpperCase() : "?";
             binding.avatarText.setText(initial);
-            binding.personName.setText(person.name);
+            binding.personName.setText(displayName);
             binding.relationshipChip.setText(EnumLabels.relationship(person.relationship));
             StatusHelper.applyVisaStatusChip(binding.statusChip, person.visaEndDate, itemView.getContext());
 
             if (person.dateOfBirth != null) {
-                binding.dateOfBirth.setText(
-                        itemView.getContext().getString(R.string.label_date_of_birth)
-                                + ": " + DateUtils.formatDate(person.dateOfBirth));
+                String dobText = itemView.getContext().getString(R.string.label_date_of_birth)
+                        + ": " + DateUtils.formatDate(person.dateOfBirth);
+                String age = DateUtils.formatAge(person.dateOfBirth);
+                if (!age.isEmpty()) {
+                    dobText += " · " + age;
+                }
+                binding.dateOfBirth.setText(dobText);
                 binding.dateOfBirth.setVisibility(View.VISIBLE);
             } else {
                 binding.dateOfBirth.setVisibility(View.GONE);

@@ -17,6 +17,7 @@ import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.databinding.BottomSheetPersonFormBinding;
 import com.document.immigrantvault.util.DatePickerHelper;
 import com.document.immigrantvault.util.EnumLabels;
+import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -54,6 +55,7 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        UiUtils.autoCapitalizeInputs(view);
         app = (ImmigrantVaultApplication) requireActivity().getApplication();
 
         setupRelationshipDropdown();
@@ -83,12 +85,11 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void setupRelationshipDropdown() {
-        String[] labels = {
-                EnumLabels.relationship(Relationship.SELF),
-                EnumLabels.relationship(Relationship.SPOUSE),
-                EnumLabels.relationship(Relationship.CHILD),
-                EnumLabels.relationship(Relationship.OTHER)
-        };
+        Relationship[] values = Relationship.values();
+        String[] labels = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            labels[i] = EnumLabels.relationship(values[i]);
+        }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_dropdown_item_1line, labels);
         AutoCompleteTextView dropdown = binding.inputRelationship;
@@ -98,7 +99,10 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
 
     private void populate(Person person) {
         editing = person;
-        binding.inputName.setText(person.name);
+        person.populateNamePartsFromLegacyIfNeeded();
+        binding.inputFirstName.setText(person.firstName);
+        binding.inputMiddleName.setText(person.middleName);
+        binding.inputLastName.setText(person.lastName);
         dateOfBirth = person.dateOfBirth;
         if (dateOfBirth != null) {
             binding.inputDateOfBirth.setText(
@@ -128,12 +132,15 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void save() {
-        String name = text(binding.inputName);
-        if (name.isEmpty()) {
-            binding.inputNameLayout.setError(getString(R.string.error_required));
+        String firstName = text(binding.inputFirstName);
+        String lastName = text(binding.inputLastName);
+        binding.inputFirstNameLayout.setError(
+                firstName.isEmpty() ? getString(R.string.error_required) : null);
+        binding.inputLastNameLayout.setError(
+                lastName.isEmpty() ? getString(R.string.error_required) : null);
+        if (firstName.isEmpty() || lastName.isEmpty()) {
             return;
         }
-        binding.inputNameLayout.setError(null);
 
         if (visaStart != null && visaEnd != null && !visaEnd.after(visaStart)) {
             binding.inputVisaEndLayout.setError(getString(R.string.error_date_range));
@@ -149,7 +156,7 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
         binding.inputSsnLast4Layout.setError(null);
 
         Person person = editing != null ? editing : new Person();
-        person.name = name;
+        person.setNameParts(firstName, text(binding.inputMiddleName), lastName);
         person.dateOfBirth = dateOfBirth;
         if (editing == null || editing.relationship != Relationship.SELF) {
             person.relationship = relationshipFromLabel(dropdownText(binding.inputRelationship));
@@ -172,14 +179,10 @@ public class PersonFormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private Relationship relationshipFromLabel(String label) {
-        if (EnumLabels.relationship(Relationship.SPOUSE).equals(label)) {
-            return Relationship.SPOUSE;
-        }
-        if (EnumLabels.relationship(Relationship.CHILD).equals(label)) {
-            return Relationship.CHILD;
-        }
-        if (EnumLabels.relationship(Relationship.SELF).equals(label)) {
-            return Relationship.SELF;
+        for (Relationship relationship : Relationship.values()) {
+            if (EnumLabels.relationship(relationship).equals(label)) {
+                return relationship;
+            }
         }
         return Relationship.OTHER;
     }

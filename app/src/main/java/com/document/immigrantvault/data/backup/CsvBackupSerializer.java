@@ -148,13 +148,17 @@ public final class CsvBackupSerializer {
 
     private static void writePersons(Writer writer, List<Person> persons) throws IOException {
         CsvUtils.writeRow(writer,
-                "id", "name", "dateOfBirth", "relationship", "currentVisaType",
+                "id", "name", "firstName", "middleName", "lastName",
+                "dateOfBirth", "relationship", "currentVisaType",
                 "visaStartDate", "visaEndDate", "aNumber", "ssnLast4", "countryOfBirth",
                 "currentEmployer", "currentRole", "notes", "sortOrder");
         for (Person person : persons) {
             CsvUtils.writeRow(writer,
                     CsvUtils.formatLong(person.id),
                     CsvUtils.formatString(person.name),
+                    CsvUtils.formatString(person.firstName),
+                    CsvUtils.formatString(person.middleName),
+                    CsvUtils.formatString(person.lastName),
                     CsvUtils.formatDate(person.dateOfBirth),
                     CsvUtils.formatEnum(person.relationship),
                     CsvUtils.formatString(person.currentVisaType),
@@ -179,6 +183,10 @@ public final class CsvBackupSerializer {
             Person person = new Person();
             person.id = CsvUtils.getLong(row, "id");
             person.name = CsvUtils.get(row, "name");
+            person.firstName = CsvUtils.get(row, "firstName");
+            person.middleName = CsvUtils.get(row, "middleName");
+            person.lastName = CsvUtils.get(row, "lastName");
+            person.populateNamePartsFromLegacyIfNeeded();
             person.dateOfBirth = CsvUtils.getDate(row, "dateOfBirth");
             person.relationship = CsvUtils.parseEnum(CsvUtils.get(row, "relationship"), Relationship.class);
             person.currentVisaType = CsvUtils.get(row, "currentVisaType");

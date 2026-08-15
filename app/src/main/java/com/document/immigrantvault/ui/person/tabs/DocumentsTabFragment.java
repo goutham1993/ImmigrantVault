@@ -78,7 +78,7 @@ public class DocumentsTabFragment extends Fragment {
                 items.add(new ListEntryAdapter.ListItem(
                         EnumLabels.documentType(doc.type),
                         doc.documentNumber,
-                        "Expires " + DateUtils.formatDate(doc.expiryDate)));
+                        DateUtils.formatIssueExpiry(doc.issueDate, doc.expiryDate)));
             }
             adapter.setItems(items);
             boolean isEmpty = documents.isEmpty();

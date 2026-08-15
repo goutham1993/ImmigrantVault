@@ -74,7 +74,7 @@ public class PersonRepository {
     public void ensureSelfExists() {
         executor.execute(() -> {
             if (database.personDao().countByRelationship(Relationship.SELF) == 0) {
-                Person self = new Person("Me", Relationship.SELF);
+                Person self = new Person("Me", "", Relationship.SELF);
                 self.sortOrder = 0;
                 database.personDao().insert(self);
             }

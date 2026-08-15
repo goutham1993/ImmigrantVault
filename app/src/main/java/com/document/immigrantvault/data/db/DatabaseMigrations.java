@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.document.immigrantvault.data.db.entity.Person;
+
 final class DatabaseMigrations {
 
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -221,6 +223,27 @@ final class DatabaseMigrations {
                     + ")");
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_w2_entries_personId` "
                     + "ON `w2_entries` (`personId`)");
+        }
+    };
+
+    static final Migration MIGRATION_16_17 = new Migration(16, 17) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("ALTER TABLE persons ADD COLUMN firstName TEXT");
+            db.execSQL("ALTER TABLE persons ADD COLUMN middleName TEXT");
+            db.execSQL("ALTER TABLE persons ADD COLUMN lastName TEXT");
+
+            try (Cursor cursor = db.query("SELECT id, name FROM persons")) {
+                int idIndex = cursor.getColumnIndexOrThrow("id");
+                int nameIndex = cursor.getColumnIndexOrThrow("name");
+                while (cursor.moveToNext()) {
+                    String[] parts = Person.splitLegacyName(cursor.getString(nameIndex));
+                    db.execSQL(
+                            "UPDATE persons SET firstName = ?, middleName = ?, lastName = ? WHERE id = ?",
+                            new Object[]{parts[0], parts[1], parts[2], cursor.getLong(idIndex)}
+                    );
+                }
+            }
         }
     };
 

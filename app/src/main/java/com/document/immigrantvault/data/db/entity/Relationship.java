@@ -4,5 +4,9 @@ public enum Relationship {
     SELF,
     SPOUSE,
     CHILD,
+    FATHER,
+    MOTHER,
+    SIBLING,
+    FRIEND,
     OTHER
 }

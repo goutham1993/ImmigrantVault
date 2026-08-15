@@ -47,7 +47,9 @@
     <string name="tab_links">Links</string>
 
     <!-- Form labels -->
-    <string name="label_name">Full name</string>
+    <string name="label_first_name">First name</string>
+    <string name="label_middle_name_optional">Middle name (optional)</string>
+    <string name="label_last_name">Last name</string>
     <string name="label_date_of_birth">Date of birth</string>
     <string name="label_relationship">Relationship</string>
     <string name="label_visa_type">Current visa type</string>

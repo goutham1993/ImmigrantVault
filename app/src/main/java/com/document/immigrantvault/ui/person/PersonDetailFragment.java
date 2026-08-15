@@ -74,7 +74,7 @@ public class PersonDetailFragment extends Fragment {
             }
             ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
             if (actionBar != null) {
-                actionBar.setTitle(person.name);
+                actionBar.setTitle(person.getDisplayName());
                 actionBar.setSubtitle(EnumLabels.relationship(person.relationship));
             }
         });

@@ -110,7 +110,8 @@ public class ReminderRepository {
                 ReminderKind.VISA_EXPIRY,
                 person.visaEndDate,
                 "Visa expiring soon",
-                typeLabel + " for " + person.name + " expires on " + DateUtils.formatDate(person.visaEndDate)
+                typeLabel + " for " + person.getDisplayName() + " expires on "
+                        + DateUtils.formatDate(person.visaEndDate)
         );
     }
 

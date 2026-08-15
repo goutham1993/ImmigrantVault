@@ -1,5 +1,6 @@
 package com.document.immigrantvault.data.backup;
 
+import com.document.immigrantvault.data.db.entity.Person;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -57,6 +58,10 @@ public final class JsonBackupSerializer {
         }
         if (backup.persons == null) {
             backup.persons = new java.util.ArrayList<>();
+        } else {
+            for (Person person : backup.persons) {
+                person.populateNamePartsFromLegacyIfNeeded();
+            }
         }
         if (backup.documents == null) {
             backup.documents = new java.util.ArrayList<>();

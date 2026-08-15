@@ -69,6 +69,10 @@ public class VisaTabFragment extends Fragment {
             for (VisaEntry e : entries) {
                 boolean ongoing = e.endDate == null;
                 String meta = DateUtils.formatEmploymentDateRange(e.startDate, e.endDate, ongoing);
+                String duration = DateUtils.formatYearsMonths(e.startDate, e.endDate, ongoing);
+                if (!duration.isEmpty()) {
+                    meta = meta + " · " + duration;
+                }
                 items.add(new ListEntryAdapter.ListItem(
                         EnumLabels.visaType(e.type), formatSubtitle(e), meta));
             }

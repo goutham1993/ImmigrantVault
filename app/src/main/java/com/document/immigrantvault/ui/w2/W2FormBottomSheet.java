@@ -57,6 +57,7 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        UiUtils.autoCapitalizeInputs(view);
         app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
 

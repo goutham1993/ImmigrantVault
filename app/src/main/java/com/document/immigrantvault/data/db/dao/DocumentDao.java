@@ -23,7 +23,7 @@ public interface DocumentDao {
     @Delete
     void delete(Document document);
 
-    @Query("SELECT * FROM documents WHERE personId = :personId ORDER BY expiryDate ASC")
+    @Query("SELECT * FROM documents WHERE personId = :personId ORDER BY expiryDate DESC")
     LiveData<List<Document>> getByPerson(long personId);
 
     @Query("SELECT * FROM documents WHERE id = :id")

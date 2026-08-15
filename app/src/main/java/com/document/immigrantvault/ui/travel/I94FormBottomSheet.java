@@ -13,6 +13,7 @@ import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.databinding.BottomSheetI94FormBinding;
 import com.document.immigrantvault.util.DatePickerHelper;
+import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -47,6 +48,7 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        UiUtils.autoCapitalizeInputs(view);
         app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
 

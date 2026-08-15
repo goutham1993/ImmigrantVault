@@ -21,6 +21,24 @@ public final class DateUtils {
         return DISPLAY_FORMAT.format(date);
     }
 
+    public static String formatAge(Date dateOfBirth) {
+        if (dateOfBirth == null) {
+            return "";
+        }
+        Date now = new Date();
+        if (dateOfBirth.after(now)) {
+            return "";
+        }
+        int[] parts = yearsAndMonthsBetween(dateOfBirth, now);
+        if (parts[0] > 0) {
+            return parts[0] == 1 ? "1 year old" : parts[0] + " years old";
+        }
+        if (parts[1] > 0) {
+            return parts[1] == 1 ? "1 month old" : parts[1] + " months old";
+        }
+        return "Less than 1 month old";
+    }
+
     public static int daysUntil(Date date) {
         if (date == null) {
             return Integer.MAX_VALUE;
@@ -70,6 +88,19 @@ public final class DateUtils {
         String startStr = formatDate(start);
         String endStr = isCurrent ? "Present" : formatDate(end);
         return startStr + " – " + endStr;
+    }
+
+    public static String formatIssueExpiry(Date issue, Date expiry) {
+        if (issue == null && expiry == null) {
+            return "";
+        }
+        if (issue == null) {
+            return "Expires " + formatDate(expiry);
+        }
+        if (expiry == null) {
+            return "Issued " + formatDate(issue);
+        }
+        return "Issued " + formatDate(issue) + " · Expires " + formatDate(expiry);
     }
 
     public static String formatTravelDateRange(Date departure, Date arrival) {
