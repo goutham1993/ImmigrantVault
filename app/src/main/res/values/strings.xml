@@ -41,7 +41,10 @@
     <string name="tab_travel">Travel</string>
     <string name="tab_addresses">Addresses</string>
     <string name="tab_employers">Employers</string>
+    <string name="tab_taxes">Taxes</string>
     <string name="tab_w2s">W-2s</string>
+    <string name="taxes_sub_w2s">W-2s</string>
+    <string name="taxes_sub_returns">Returns</string>
     <string name="tab_petitions">Petitions</string>
     <string name="tab_timeline">Timeline</string>
     <string name="tab_links">Links</string>
@@ -94,6 +97,13 @@
     <string name="label_job_title">Job title</string>
     <string name="label_employer_address">Employer address</string>
     <string name="label_tax_year">Tax year</string>
+    <string name="label_return_type">Return type</string>
+    <string name="label_tax_outcome">Refund or amount owed</string>
+    <string name="label_tax_amount">Amount</string>
+    <string name="label_agi_optional">AGI (optional)</string>
+    <string name="label_total_tax_optional">Total tax (optional)</string>
+    <string name="label_filed_date_optional">Filed date (optional)</string>
+    <string name="label_refund_received_optional">Refund received date (optional)</string>
     <string name="label_ein">EIN</string>
     <string name="label_wages_box1">Box 1 — Wages</string>
     <string name="label_federal_tax_box2">Box 2 — Federal income tax</string>
@@ -194,6 +204,11 @@
     <string name="empty_employers_subtitle">Record your employment for visa compliance</string>
     <string name="empty_w2s">No W-2 forms</string>
     <string name="empty_w2s_subtitle">Record wages and tax withholdings from each W-2</string>
+    <string name="empty_tax_returns">No tax returns</string>
+    <string name="empty_tax_returns_subtitle">Track federal and state refunds or amounts owed by year</string>
+    <string name="tax_return_state_title">State · %1$s</string>
+    <string name="tax_return_card_subtitle">%1$s · %2$s</string>
+    <string name="tax_return_card_meta_filed">%1$s · Filed %2$s</string>
     <string name="empty_visas">No visas</string>
     <string name="empty_visas_subtitle">Track visa types, validity dates, and numbers</string>
     <string name="empty_petitions">No petitions</string>
@@ -267,6 +282,7 @@
     <string name="add_address">Add address</string>
     <string name="add_employer">Add employer</string>
     <string name="add_w2">Add W-2</string>
+    <string name="add_tax_return">Add tax return</string>
     <string name="add_education">Add education</string>
     <string name="add_visa">Add visa</string>
     <string name="add_petition">Add petition</string>

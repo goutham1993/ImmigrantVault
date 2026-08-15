@@ -22,6 +22,9 @@ import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.VisaType;
 import com.document.immigrantvault.data.db.entity.W2Entry;
+import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
+import com.document.immigrantvault.data.db.entity.TaxReturnOutcome;
+import com.document.immigrantvault.data.db.entity.TaxReturnType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,6 +55,7 @@ public final class CsvBackupSerializer {
     private static final String VISAS = "visa_entries.csv";
     private static final String USEFUL_LINKS = "useful_links.csv";
     private static final String W2_ENTRIES = "w2_entries.csv";
+    private static final String TAX_RETURN_ENTRIES = "tax_return_entries.csv";
     private static final String REMINDERS = "reminders.csv";
     private static final String TIMELINE = "timeline_events.csv";
 
@@ -73,6 +77,7 @@ public final class CsvBackupSerializer {
             writeEntry(zip, VISAS, writer -> writeVisas(writer, backup.visaEntries));
             writeEntry(zip, USEFUL_LINKS, writer -> writeUsefulLinks(writer, backup.usefulLinks));
             writeEntry(zip, W2_ENTRIES, writer -> writeW2Entries(writer, backup.w2Entries));
+            writeEntry(zip, TAX_RETURN_ENTRIES, writer -> writeTaxReturnEntries(writer, backup.taxReturnEntries));
             writeEntry(zip, REMINDERS, writer -> writeReminders(writer, backup.reminders));
             writeEntry(zip, TIMELINE, writer -> writeTimeline(writer, backup.timelineEvents));
             zip.finish();
@@ -114,6 +119,7 @@ public final class CsvBackupSerializer {
             backup.visaEntries = readVisas(entries.get(VISAS));
             backup.usefulLinks = readUsefulLinks(entries.get(USEFUL_LINKS));
             backup.w2Entries = readW2Entries(entries.get(W2_ENTRIES));
+            backup.taxReturnEntries = readTaxReturnEntries(entries.get(TAX_RETURN_ENTRIES));
             backup.reminders = readReminders(entries.get(REMINDERS));
             backup.timelineEvents = readTimeline(entries.get(TIMELINE));
             return backup;
@@ -637,6 +643,54 @@ public final class CsvBackupSerializer {
             entry.state = CsvUtils.get(row, "state");
             entry.stateWages = CsvUtils.getDouble(row, "stateWages");
             entry.stateIncomeTax = CsvUtils.getDouble(row, "stateIncomeTax");
+            entry.notes = CsvUtils.get(row, "notes");
+            entries.add(entry);
+        }
+        return entries;
+    }
+
+    private static void writeTaxReturnEntries(Writer writer, List<TaxReturnEntry> entries) throws IOException {
+        CsvUtils.writeRow(writer,
+                "id", "personId", "taxYear", "returnType", "state", "outcome",
+                "amount", "agi", "totalTax", "filedDate", "refundReceivedDate", "notes");
+        if (entries == null) {
+            return;
+        }
+        for (TaxReturnEntry entry : entries) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(entry.id),
+                    CsvUtils.formatLong(entry.personId),
+                    CsvUtils.formatInt(entry.taxYear),
+                    CsvUtils.formatEnum(entry.returnType),
+                    CsvUtils.formatString(entry.state),
+                    CsvUtils.formatEnum(entry.outcome),
+                    CsvUtils.formatDouble(entry.amount),
+                    CsvUtils.formatDouble(entry.agi),
+                    CsvUtils.formatDouble(entry.totalTax),
+                    CsvUtils.formatDate(entry.filedDate),
+                    CsvUtils.formatDate(entry.refundReceivedDate),
+                    CsvUtils.formatString(entry.notes));
+        }
+    }
+
+    private static List<TaxReturnEntry> readTaxReturnEntries(byte[] data) throws IOException {
+        if (data == null) {
+            return new ArrayList<>();
+        }
+        List<TaxReturnEntry> entries = new ArrayList<>();
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            TaxReturnEntry entry = new TaxReturnEntry();
+            entry.id = CsvUtils.getLong(row, "id");
+            entry.personId = CsvUtils.getLong(row, "personId");
+            entry.taxYear = CsvUtils.getInt(row, "taxYear");
+            entry.returnType = CsvUtils.parseEnum(CsvUtils.get(row, "returnType"), TaxReturnType.class);
+            entry.state = CsvUtils.get(row, "state");
+            entry.outcome = CsvUtils.parseEnum(CsvUtils.get(row, "outcome"), TaxReturnOutcome.class);
+            entry.amount = CsvUtils.getDouble(row, "amount");
+            entry.agi = CsvUtils.getDouble(row, "agi");
+            entry.totalTax = CsvUtils.getDouble(row, "totalTax");
+            entry.filedDate = CsvUtils.getDate(row, "filedDate");
+            entry.refundReceivedDate = CsvUtils.getDate(row, "refundReceivedDate");
             entry.notes = CsvUtils.get(row, "notes");
             entries.add(entry);
         }

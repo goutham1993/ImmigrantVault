@@ -20,6 +20,7 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
+import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
 
 import java.util.List;
 
@@ -59,6 +60,9 @@ public interface BackupDao {
     @Query("SELECT * FROM w2_entries")
     List<W2Entry> getAllW2Sync();
 
+    @Query("SELECT * FROM tax_return_entries")
+    List<TaxReturnEntry> getAllTaxReturnsSync();
+
     @Query("SELECT * FROM reminders")
     List<Reminder> getAllRemindersSync();
 
@@ -88,6 +92,9 @@ public interface BackupDao {
 
     @Query("DELETE FROM w2_entries")
     void deleteAllW2Entries();
+
+    @Query("DELETE FROM tax_return_entries")
+    void deleteAllTaxReturnEntries();
 
     @Query("DELETE FROM education_entries")
     void deleteAllEducationEntries();
@@ -138,6 +145,9 @@ public interface BackupDao {
     void insertW2Entries(List<W2Entry> entries);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertTaxReturnEntries(List<TaxReturnEntry> entries);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertReminders(List<Reminder> reminders);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -157,6 +167,7 @@ public interface BackupDao {
         backup.visaEntries = getAllVisasSync();
         backup.usefulLinks = getAllUsefulLinksSync();
         backup.w2Entries = getAllW2Sync();
+        backup.taxReturnEntries = getAllTaxReturnsSync();
         backup.reminders = getAllRemindersSync();
         backup.timelineEvents = getAllTimelineEventsSync();
         return backup;
@@ -172,6 +183,7 @@ public interface BackupDao {
         deleteAllVisaEntries();
         deleteAllUsefulLinks();
         deleteAllW2Entries();
+        deleteAllTaxReturnEntries();
         deleteAllEducationEntries();
         deleteAllEmployerEntries();
         deleteAllAddressEntries();
@@ -210,6 +222,9 @@ public interface BackupDao {
         }
         if (backup.w2Entries != null && !backup.w2Entries.isEmpty()) {
             insertW2Entries(backup.w2Entries);
+        }
+        if (backup.taxReturnEntries != null && !backup.taxReturnEntries.isEmpty()) {
+            insertTaxReturnEntries(backup.taxReturnEntries);
         }
         if (backup.reminders != null && !backup.reminders.isEmpty()) {
             insertReminders(backup.reminders);

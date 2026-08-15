@@ -4,6 +4,8 @@ import com.document.immigrantvault.data.db.entity.DocumentType;
 import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.PetitionType;
 import com.document.immigrantvault.data.db.entity.Relationship;
+import com.document.immigrantvault.data.db.entity.TaxReturnOutcome;
+import com.document.immigrantvault.data.db.entity.TaxReturnType;
 import com.document.immigrantvault.data.db.entity.VisaType;
 
 public final class EnumLabels {
@@ -136,6 +138,34 @@ public final class EnumLabels {
                 return "TN";
             default:
                 return "Other";
+        }
+    }
+
+    public static String taxReturnType(TaxReturnType type) {
+        if (type == null) {
+            return "Return";
+        }
+        switch (type) {
+            case FEDERAL:
+                return "Federal";
+            case STATE:
+                return "State";
+            default:
+                return "Return";
+        }
+    }
+
+    public static String taxReturnOutcome(TaxReturnOutcome outcome) {
+        if (outcome == null) {
+            return "Unknown";
+        }
+        switch (outcome) {
+            case REFUND:
+                return "Refund";
+            case AMOUNT_OWED:
+                return "Amount owed";
+            default:
+                return "Unknown";
         }
     }
 }

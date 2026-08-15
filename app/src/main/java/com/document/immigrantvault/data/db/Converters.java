@@ -9,6 +9,8 @@ import com.document.immigrantvault.data.db.entity.PetitionType;
 import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.data.db.entity.ReminderKind;
 import com.document.immigrantvault.data.db.entity.SourceEntityType;
+import com.document.immigrantvault.data.db.entity.TaxReturnOutcome;
+import com.document.immigrantvault.data.db.entity.TaxReturnType;
 import com.document.immigrantvault.data.db.entity.TimelineEventType;
 import com.document.immigrantvault.data.db.entity.VisaType;
 
@@ -114,5 +116,25 @@ public class Converters {
     @TypeConverter
     public static VisaType stringToVisaType(String value) {
         return value == null ? null : VisaType.valueOf(value);
+    }
+
+    @TypeConverter
+    public static String taxReturnTypeToString(TaxReturnType value) {
+        return value == null ? null : value.name();
+    }
+
+    @TypeConverter
+    public static TaxReturnType stringToTaxReturnType(String value) {
+        return value == null ? null : TaxReturnType.valueOf(value);
+    }
+
+    @TypeConverter
+    public static String taxReturnOutcomeToString(TaxReturnOutcome value) {
+        return value == null ? null : value.name();
+    }
+
+    @TypeConverter
+    public static TaxReturnOutcome stringToTaxReturnOutcome(String value) {
+        return value == null ? null : TaxReturnOutcome.valueOf(value);
     }
 }

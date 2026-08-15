@@ -254,6 +254,29 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_18_19 = new Migration(18, 19) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `tax_return_entries` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`taxYear` INTEGER NOT NULL, "
+                    + "`returnType` TEXT, "
+                    + "`state` TEXT, "
+                    + "`outcome` TEXT, "
+                    + "`amount` REAL, "
+                    + "`agi` REAL, "
+                    + "`totalTax` REAL, "
+                    + "`filedDate` INTEGER, "
+                    + "`refundReceivedDate` INTEGER, "
+                    + "`notes` TEXT, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_tax_return_entries_personId` "
+                    + "ON `tax_return_entries` (`personId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

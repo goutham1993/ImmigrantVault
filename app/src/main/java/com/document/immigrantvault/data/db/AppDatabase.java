@@ -21,6 +21,7 @@ import com.document.immigrantvault.data.db.dao.TravelDao;
 import com.document.immigrantvault.data.db.dao.UsefulLinkDao;
 import com.document.immigrantvault.data.db.dao.VisaDao;
 import com.document.immigrantvault.data.db.dao.W2Dao;
+import com.document.immigrantvault.data.db.dao.TaxReturnDao;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
@@ -34,6 +35,7 @@ import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
+import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
 
 @Database(
         entities = {
@@ -48,6 +50,7 @@ import com.document.immigrantvault.data.db.entity.W2Entry;
                 VisaEntry.class,
                 UsefulLink.class,
                 W2Entry.class,
+                TaxReturnEntry.class,
                 Reminder.class,
                 TimelineEvent.class
         },
@@ -57,7 +60,7 @@ import com.document.immigrantvault.data.db.entity.W2Entry;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 18;
+    public static final int VERSION = 19;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -73,6 +76,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract VisaDao visaDao();
     public abstract UsefulLinkDao usefulLinkDao();
     public abstract W2Dao w2Dao();
+    public abstract TaxReturnDao taxReturnDao();
     public abstract ReminderDao reminderDao();
     public abstract TimelineDao timelineDao();
 
@@ -101,7 +105,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_14_15,
                             DatabaseMigrations.MIGRATION_15_16,
                             DatabaseMigrations.MIGRATION_16_17,
-                            DatabaseMigrations.MIGRATION_17_18
+                            DatabaseMigrations.MIGRATION_17_18,
+                            DatabaseMigrations.MIGRATION_18_19
                     )
                             .build();
                 }

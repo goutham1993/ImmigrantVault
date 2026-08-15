@@ -13,5 +13,6 @@ public enum TimelineEventType {
     PETITION_FILED,
     PETITION_STATUS,
     W2_ADDED,
+    TAX_RETURN_ADDED,
     NOTE
 }

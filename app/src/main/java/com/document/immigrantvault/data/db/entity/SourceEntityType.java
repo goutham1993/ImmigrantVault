@@ -10,5 +10,6 @@ public enum SourceEntityType {
     PETITION,
     VISA,
     W2,
+    TAX_RETURN,
     MANUAL
 }

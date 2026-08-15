@@ -11,10 +11,10 @@ import com.document.immigrantvault.ui.person.tabs.EmployerTabFragment;
 import com.document.immigrantvault.ui.person.tabs.LinksTabFragment;
 import com.document.immigrantvault.ui.person.tabs.OverviewTabFragment;
 import com.document.immigrantvault.ui.person.tabs.PetitionTabFragment;
+import com.document.immigrantvault.ui.person.tabs.TaxesTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TimelineTabFragment;
 import com.document.immigrantvault.ui.person.tabs.TravelTabFragment;
 import com.document.immigrantvault.ui.person.tabs.VisaTabFragment;
-import com.document.immigrantvault.ui.person.tabs.W2TabFragment;
 
 public class PersonTabAdapter extends FragmentStateAdapter {
 
@@ -44,7 +44,7 @@ public class PersonTabAdapter extends FragmentStateAdapter {
             case 6:
                 return EmployerTabFragment.newInstance(personId);
             case 7:
-                return W2TabFragment.newInstance(personId);
+                return TaxesTabFragment.newInstance(personId);
             case 8:
                 return PetitionTabFragment.newInstance(personId);
             case 9:

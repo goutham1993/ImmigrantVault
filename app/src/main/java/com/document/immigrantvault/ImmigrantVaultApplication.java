@@ -17,6 +17,7 @@ import com.document.immigrantvault.data.repository.TravelRepository;
 import com.document.immigrantvault.data.repository.UsefulLinkRepository;
 import com.document.immigrantvault.data.repository.VisaRepository;
 import com.document.immigrantvault.data.repository.W2Repository;
+import com.document.immigrantvault.data.repository.TaxReturnRepository;
 import com.document.immigrantvault.util.ReminderScheduler;
 import com.document.immigrantvault.util.ThemePreferences;
 
@@ -38,6 +39,7 @@ public class ImmigrantVaultApplication extends Application {
     private VisaRepository visaRepository;
     private UsefulLinkRepository usefulLinkRepository;
     private W2Repository w2Repository;
+    private TaxReturnRepository taxReturnRepository;
     private ReminderRepository reminderRepository;
     private TimelineRepository timelineRepository;
     private ExportImportRepository exportImportRepository;
@@ -59,6 +61,7 @@ public class ImmigrantVaultApplication extends Application {
         visaRepository = new VisaRepository(database, executor);
         usefulLinkRepository = new UsefulLinkRepository(database, executor);
         w2Repository = new W2Repository(database, executor);
+        taxReturnRepository = new TaxReturnRepository(database, executor);
         reminderRepository = new ReminderRepository(database, executor);
         timelineRepository = new TimelineRepository(database, executor);
         exportImportRepository = new ExportImportRepository(database, executor);
@@ -116,6 +119,10 @@ public class ImmigrantVaultApplication extends Application {
 
     public W2Repository getW2Repository() {
         return w2Repository;
+    }
+
+    public TaxReturnRepository getTaxReturnRepository() {
+        return taxReturnRepository;
     }
 
     public ReminderRepository getReminderRepository() {
