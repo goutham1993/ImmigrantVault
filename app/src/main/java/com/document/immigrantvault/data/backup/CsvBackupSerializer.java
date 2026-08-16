@@ -506,7 +506,7 @@ public final class CsvBackupSerializer {
 
     private static void writeVisas(Writer writer, List<VisaEntry> entries) throws IOException {
         CsvUtils.writeRow(writer,
-                "id", "personId", "type", "visaNumber", "controlNumber",
+                "id", "personId", "type", "visaNumber", "controlNumber", "employer",
                 "startDate", "endDate", "notes");
         for (VisaEntry entry : entries) {
             CsvUtils.writeRow(writer,
@@ -515,6 +515,7 @@ public final class CsvBackupSerializer {
                     CsvUtils.formatEnum(entry.type),
                     CsvUtils.formatString(entry.visaNumber),
                     CsvUtils.formatString(entry.controlNumber),
+                    CsvUtils.formatString(entry.employer),
                     CsvUtils.formatDate(entry.startDate),
                     CsvUtils.formatDate(entry.endDate),
                     CsvUtils.formatString(entry.notes));
@@ -533,6 +534,7 @@ public final class CsvBackupSerializer {
             entry.type = CsvUtils.parseEnum(CsvUtils.get(row, "type"), VisaType.class);
             entry.visaNumber = CsvUtils.get(row, "visaNumber");
             entry.controlNumber = CsvUtils.get(row, "controlNumber");
+            entry.employer = CsvUtils.get(row, "employer");
             entry.startDate = CsvUtils.getDate(row, "startDate");
             entry.endDate = CsvUtils.getDate(row, "endDate");
             entry.notes = CsvUtils.get(row, "notes");

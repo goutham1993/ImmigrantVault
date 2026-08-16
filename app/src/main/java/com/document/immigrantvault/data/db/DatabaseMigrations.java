@@ -277,6 +277,15 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_19_20 = new Migration(19, 20) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            if (!columnExists(db, "visa_entries", "employer")) {
+                db.execSQL("ALTER TABLE visa_entries ADD COLUMN employer TEXT");
+            }
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

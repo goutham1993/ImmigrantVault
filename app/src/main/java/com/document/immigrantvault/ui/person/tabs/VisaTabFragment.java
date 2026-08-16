@@ -19,8 +19,10 @@ import com.document.immigrantvault.ui.common.ListEntryAdapter;
 import com.document.immigrantvault.ui.visa.VisaFormBottomSheet;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
+import com.document.immigrantvault.util.StatusHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class VisaTabFragment extends Fragment {
@@ -65,16 +67,28 @@ public class VisaTabFragment extends Fragment {
         ImmigrantVaultApplication app = (ImmigrantVaultApplication) requireActivity().getApplication();
         app.getVisaRepository().getByPerson(personId).observe(getViewLifecycleOwner(), list -> {
             entries = list != null ? list : new ArrayList<>();
+            int latestIndex = indexOfLatest(entries);
             List<ListEntryAdapter.ListItem> items = new ArrayList<>();
-            for (VisaEntry e : entries) {
+            for (int i = 0; i < entries.size(); i++) {
+                VisaEntry e = entries.get(i);
                 boolean ongoing = e.endDate == null;
                 String meta = DateUtils.formatEmploymentDateRange(e.startDate, e.endDate, ongoing);
                 String duration = DateUtils.formatYearsMonths(e.startDate, e.endDate, ongoing);
                 if (!duration.isEmpty()) {
                     meta = meta + " · " + duration;
                 }
+                String badge = null;
+                int badgeTextColor = 0;
+                int badgeBackground = 0;
+                if (i == latestIndex) {
+                    StatusHelper.VisaStatus status = StatusHelper.visaStatus(e.endDate);
+                    badge = getString(status.labelRes);
+                    badgeTextColor = status.textColorRes;
+                    badgeBackground = status.backgroundColorRes;
+                }
                 items.add(new ListEntryAdapter.ListItem(
-                        EnumLabels.visaType(e.type), formatSubtitle(e), meta));
+                        EnumLabels.visaType(e.type), formatSubtitle(e), meta,
+                        badge, badgeTextColor, badgeBackground));
             }
             adapter.setItems(items);
             boolean isEmpty = entries.isEmpty();
@@ -85,9 +99,33 @@ public class VisaTabFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /** Latest visa by start date; entries without a start date only win if nothing else has one. */
+    private static int indexOfLatest(List<VisaEntry> entries) {
+        int latest = -1;
+        for (int i = 0; i < entries.size(); i++) {
+            Date startDate = entries.get(i).startDate;
+            if (startDate == null) {
+                continue;
+            }
+            if (latest < 0 || startDate.after(entries.get(latest).startDate)) {
+                latest = i;
+            }
+        }
+        if (latest < 0 && !entries.isEmpty()) {
+            latest = 0;
+        }
+        return latest;
+    }
+
     private String formatSubtitle(VisaEntry entry) {
         StringBuilder sb = new StringBuilder();
+        if (entry.employer != null && !entry.employer.isEmpty()) {
+            sb.append(entry.employer);
+        }
         if (entry.visaNumber != null && !entry.visaNumber.isEmpty()) {
+            if (sb.length() > 0) {
+                sb.append(" · ");
+            }
             sb.append(entry.visaNumber);
         }
         if (entry.controlNumber != null && !entry.controlNumber.isEmpty()) {

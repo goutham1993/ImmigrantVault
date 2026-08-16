@@ -60,7 +60,7 @@ import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 19;
+    public static final int VERSION = 20;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -106,7 +106,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_15_16,
                             DatabaseMigrations.MIGRATION_16_17,
                             DatabaseMigrations.MIGRATION_17_18,
-                            DatabaseMigrations.MIGRATION_18_19
+                            DatabaseMigrations.MIGRATION_18_19,
+                            DatabaseMigrations.MIGRATION_19_20
                     )
                             .build();
                 }

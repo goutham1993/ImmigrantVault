@@ -26,6 +26,7 @@ public class VisaEntry {
     public VisaType type;
     public String visaNumber;
     public String controlNumber;
+    public String employer;
     public Date startDate;
     public Date endDate;
     public String notes;

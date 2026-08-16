@@ -1,9 +1,12 @@
 package com.document.immigrantvault.ui.common;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,11 +29,24 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
         public final String title;
         public final String subtitle;
         public final String meta;
+        public final String badge;
+        @ColorRes
+        public final int badgeTextColorRes;
+        @ColorRes
+        public final int badgeBackgroundColorRes;
 
         public ListItem(String title, String subtitle, String meta) {
+            this(title, subtitle, meta, null, 0, 0);
+        }
+
+        public ListItem(String title, String subtitle, String meta, String badge,
+                        @ColorRes int badgeTextColorRes, @ColorRes int badgeBackgroundColorRes) {
             this.title = title;
             this.subtitle = subtitle;
             this.meta = meta;
+            this.badge = badge;
+            this.badgeTextColorRes = badgeTextColorRes;
+            this.badgeBackgroundColorRes = badgeBackgroundColorRes;
         }
     }
 
@@ -88,6 +104,7 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
                     item.subtitle != null && !item.subtitle.isEmpty() ? View.VISIBLE : View.GONE);
             binding.itemMeta.setVisibility(
                     item.meta != null && !item.meta.isEmpty() ? View.VISIBLE : View.GONE);
+            bindBadge(item);
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onItemClick(position);
@@ -100,6 +117,23 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
                 }
                 return false;
             });
+        }
+
+        private void bindBadge(ListItem item) {
+            if (item.badge == null || item.badge.isEmpty()) {
+                binding.itemBadge.setVisibility(View.GONE);
+                return;
+            }
+            Context context = itemView.getContext();
+            binding.itemBadge.setVisibility(View.VISIBLE);
+            binding.itemBadge.setText(item.badge);
+            if (item.badgeTextColorRes != 0) {
+                binding.itemBadge.setTextColor(context.getColor(item.badgeTextColorRes));
+            }
+            if (item.badgeBackgroundColorRes != 0) {
+                binding.itemBadge.setBackgroundTintList(ColorStateList.valueOf(
+                        context.getColor(item.badgeBackgroundColorRes)));
+            }
         }
     }
 }

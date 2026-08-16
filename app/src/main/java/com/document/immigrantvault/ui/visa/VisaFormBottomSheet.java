@@ -96,6 +96,7 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         binding.inputType.setText(EnumLabels.visaType(entry.type), false);
         binding.inputVisaNumber.setText(entry.visaNumber);
         binding.inputControlNumber.setText(entry.controlNumber);
+        binding.inputEmployer.setText(entry.employer);
         binding.inputNotes.setText(entry.notes);
         startDate = entry.startDate;
         endDate = entry.endDate;
@@ -120,6 +121,7 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         entry.type = typeFromLabel(text(binding.inputType));
         entry.visaNumber = emptyToNull(text(binding.inputVisaNumber));
         entry.controlNumber = emptyToNull(text(binding.inputControlNumber));
+        entry.employer = emptyToNull(text(binding.inputEmployer));
         entry.startDate = startDate;
         entry.endDate = endDate;
         entry.notes = emptyToNull(text(binding.inputNotes));
