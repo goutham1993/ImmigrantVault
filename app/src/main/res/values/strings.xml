@@ -17,6 +17,19 @@
     <string name="lock_pin_mismatch">PINs do not match. Try again.</string>
     <string name="lock_pin_invalid">PIN must be 4–6 digits</string>
     <string name="lock_auth_failed">Incorrect PIN</string>
+    <string name="lock_forgot_pin">Forgot PIN?</string>
+    <string name="lock_forgot_title">Reset PIN</string>
+    <string name="lock_forgot_message">Resetting your PIN erases all vault data on this device. Export a backup first if you want to restore it after creating a new PIN.</string>
+    <string name="lock_forgot_backup_then_reset">Back up then reset</string>
+    <string name="lock_forgot_reset_without_backup">Reset without backup</string>
+    <string name="lock_forgot_wipe_confirm_title">Erase all data?</string>
+    <string name="lock_forgot_wipe_confirm_message">All people, documents, and records will be permanently deleted. This cannot be undone.</string>
+    <string name="lock_forgot_wipe_confirm">Erase and reset</string>
+    <string name="lock_forgot_restore_title">Import your backup?</string>
+    <string name="lock_forgot_restore_message">Choose the backup file you exported to restore your records.</string>
+    <string name="lock_forgot_restore_yes">Import backup</string>
+    <string name="lock_forgot_restore_no">Skip</string>
+    <string name="lock_forgot_reset_working">Resetting…</string>
 
     <!-- Home -->
     <string name="home_title">Your Family</string>

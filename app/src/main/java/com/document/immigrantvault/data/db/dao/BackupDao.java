@@ -174,7 +174,7 @@ public interface BackupDao {
     }
 
     @Transaction
-    default void replaceAll(VaultBackup backup) {
+    default void clearAll() {
         deleteAllTimelineEvents();
         deleteAllReminders();
         deleteAllTravelEntries();
@@ -189,6 +189,11 @@ public interface BackupDao {
         deleteAllAddressEntries();
         deleteAllDocuments();
         deleteAllPersons();
+    }
+
+    @Transaction
+    default void replaceAll(VaultBackup backup) {
+        clearAll();
 
         if (backup.persons != null && !backup.persons.isEmpty()) {
             insertPersons(backup.persons);

@@ -105,9 +105,22 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/lock_use_biometric"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/forgot_pin_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/unlock_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/forgot_pin_button"
+        style="@style/Widget.ImmigrantVault.Button.Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/lock_forgot_pin"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/biometric_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,6 +42,13 @@ public class ExportImportRepository {
         });
     }
 
+    public Future<Void> clearAllAsync() {
+        return executor.submit(() -> {
+            backupDao.clearAll();
+            return null;
+        });
+    }
+
     private VaultBackup parseBackup(byte[] data, String mimeType) throws ExportImportException {
         if (mimeType != null && (mimeType.contains("json") || mimeType.endsWith("/json"))) {
             return JsonBackupSerializer.fromBytes(data);

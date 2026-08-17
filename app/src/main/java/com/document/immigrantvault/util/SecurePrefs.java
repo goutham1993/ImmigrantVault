@@ -15,6 +15,7 @@ public class SecurePrefs {
     private static final String KEY_PIN_HASH = "pin_hash";
     private static final String KEY_PIN_SET = "pin_set";
     private static final String KEY_BIOMETRIC_ENABLED = "biometric_enabled";
+    private static final String KEY_PENDING_RESTORE_OFFER = "pending_restore_offer";
 
     private final SharedPreferences prefs;
 
@@ -46,6 +47,13 @@ public class SecurePrefs {
                 .apply();
     }
 
+    public void clearPin() {
+        prefs.edit()
+                .remove(KEY_PIN_HASH)
+                .putBoolean(KEY_PIN_SET, false)
+                .apply();
+    }
+
     public boolean verifyPin(String pin) {
         String stored = prefs.getString(KEY_PIN_HASH, null);
         if (stored == null) {
@@ -60,6 +68,18 @@ public class SecurePrefs {
 
     public void setBiometricEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, enabled).apply();
+    }
+
+    public void setPendingRestoreOffer(boolean pending) {
+        prefs.edit().putBoolean(KEY_PENDING_RESTORE_OFFER, pending).apply();
+    }
+
+    public boolean consumePendingRestoreOffer() {
+        boolean pending = prefs.getBoolean(KEY_PENDING_RESTORE_OFFER, false);
+        if (pending) {
+            prefs.edit().putBoolean(KEY_PENDING_RESTORE_OFFER, false).apply();
+        }
+        return pending;
     }
 
     public static String hashPin(String pin) {
