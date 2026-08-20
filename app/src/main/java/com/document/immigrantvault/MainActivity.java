@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        ImmigrantVaultApplication app = (ImmigrantVaultApplication) getApplication();
-        app.getPersonRepository().ensureSelfExists();
     }
 
     @Override
