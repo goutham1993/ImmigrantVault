@@ -3,6 +3,7 @@
 
     <!-- Navigation -->
     <string name="nav_home">Home</string>
+    <string name="nav_files">Files</string>
     <string name="nav_reminders">Reminders</string>
     <string name="nav_settings">Settings</string>
 
@@ -301,4 +302,52 @@
     <string name="add_petition">Add petition</string>
     <string name="add_link">Add link</string>
     <string name="edit_person">Edit profile</string>
+
+    <!-- Files -->
+    <string name="files_more_actions">More actions</string>
+    <string name="files_file_count">%1$d files</string>
+    <string name="files_file_count_one">1 file</string>
+    <string name="files_no_files">No files</string>
+    <string name="files_empty_people">No people yet</string>
+    <string name="files_empty_people_subtitle">Add a family member on the Home tab to start saving their documents</string>
+    <string name="files_empty_folders">No folders yet</string>
+    <string name="files_empty_folders_subtitle">Create a folder to organise saved documents</string>
+    <string name="files_empty_folder">This folder is empty</string>
+    <string name="files_empty_folder_subtitle">Scan, photograph, or upload a document to save it here</string>
+    <string name="files_add_folder">New folder</string>
+    <string name="files_rename_folder">Rename folder</string>
+    <string name="files_folder_name">Folder name</string>
+    <string name="files_delete_folder_title">Delete folder?</string>
+    <string name="files_delete_folder_message">The folder and every document inside it will be permanently deleted.</string>
+    <string name="files_add_title">Add a document</string>
+    <string name="files_add_scan">Scan document</string>
+    <string name="files_add_scan_subtitle">Use the camera with auto-crop and multi-page support</string>
+    <string name="files_add_photo">Choose photo</string>
+    <string name="files_add_photo_subtitle">Pick an image from your gallery</string>
+    <string name="files_add_upload">Choose file</string>
+    <string name="files_add_upload_subtitle">Pick a PDF or image from your device</string>
+    <string name="files_save_title">Save document</string>
+    <string name="files_document_name">Document name</string>
+    <string name="files_folder">Folder</string>
+    <string name="files_rename_file">Rename document</string>
+    <string name="files_move_file">Move to folder</string>
+    <string name="files_share_file">Share</string>
+    <string name="files_saved">Document saved</string>
+    <string name="files_renamed">Renamed</string>
+    <string name="files_moved">Moved</string>
+    <string name="files_deleted">Deleted</string>
+    <string name="files_save_failed">Could not save the document</string>
+    <string name="files_scan_unavailable">Document scanning is unavailable on this device</string>
+    <string name="files_no_viewer">No app on this device can open this file</string>
+    <string name="files_preview_unavailable">Preview unavailable</string>
+    <string name="files_pages">%1$d pages</string>
+    <string name="files_default_folder_passport">Passport &amp; IDs</string>
+    <string name="files_default_folder_visas">Visas</string>
+    <string name="files_default_folder_travel">I-94 &amp; Travel</string>
+    <string name="files_default_folder_education">Education</string>
+    <string name="files_default_folder_employment">Employment</string>
+    <string name="files_default_folder_taxes">Taxes</string>
+    <string name="files_default_folder_petitions">Petitions</string>
+    <string name="files_default_folder_other">Other</string>
+    <string name="files_backup_note">Saved documents are included in CSV (ZIP) backups only.</string>
 </resources>

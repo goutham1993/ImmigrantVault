@@ -19,8 +19,11 @@ import com.document.immigrantvault.data.repository.UsefulLinkRepository;
 import com.document.immigrantvault.data.repository.VisaRepository;
 import com.document.immigrantvault.data.repository.W2Repository;
 import com.document.immigrantvault.data.repository.TaxReturnRepository;
+import com.document.immigrantvault.data.repository.VaultFileRepository;
+import com.document.immigrantvault.data.repository.VaultFolderRepository;
 import com.document.immigrantvault.util.ReminderScheduler;
 import com.document.immigrantvault.util.ThemePreferences;
+import com.document.immigrantvault.util.VaultFileStorage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +47,9 @@ public class ImmigrantVaultApplication extends Application {
     private ReminderRepository reminderRepository;
     private TimelineRepository timelineRepository;
     private ExportImportRepository exportImportRepository;
+    private VaultFileStorage vaultFileStorage;
+    private VaultFolderRepository vaultFolderRepository;
+    private VaultFileRepository vaultFileRepository;
 
     @Override
     public void onCreate() {
@@ -51,7 +57,8 @@ public class ImmigrantVaultApplication extends Application {
         ThemePreferences.applySaved(this);
         database = AppDatabase.getInstance(this);
         executor = Executors.newFixedThreadPool(4);
-        personRepository = new PersonRepository(database, executor);
+        vaultFileStorage = new VaultFileStorage(this);
+        personRepository = new PersonRepository(database, executor, vaultFileStorage);
         documentRepository = new DocumentRepository(database, executor);
         addressRepository = new AddressRepository(database, executor);
         employerRepository = new EmployerRepository(database, executor);
@@ -65,8 +72,11 @@ public class ImmigrantVaultApplication extends Application {
         taxReturnRepository = new TaxReturnRepository(database, executor);
         reminderRepository = new ReminderRepository(database, executor);
         timelineRepository = new TimelineRepository(database, executor);
-        exportImportRepository = new ExportImportRepository(database, executor);
+        exportImportRepository = new ExportImportRepository(database, executor, vaultFileStorage);
+        vaultFolderRepository = new VaultFolderRepository(database, executor, vaultFileStorage);
+        vaultFileRepository = new VaultFileRepository(database, executor, vaultFileStorage);
         reminderRepository.reconcileOverlappingVisaReminders();
+        vaultFileRepository.sweepOrphans();
         ReminderScheduler.schedule(this);
         DemoDataSeeder.initialize(this);
     }
@@ -137,5 +147,17 @@ public class ImmigrantVaultApplication extends Application {
 
     public ExportImportRepository getExportImportRepository() {
         return exportImportRepository;
+    }
+
+    public VaultFileStorage getVaultFileStorage() {
+        return vaultFileStorage;
+    }
+
+    public VaultFolderRepository getVaultFolderRepository() {
+        return vaultFolderRepository;
+    }
+
+    public VaultFileRepository getVaultFileRepository() {
+        return vaultFileRepository;
     }
 }

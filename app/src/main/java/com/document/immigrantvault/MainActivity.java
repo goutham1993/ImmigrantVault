@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         Set<Integer> topLevel = new HashSet<>();
         topLevel.add(R.id.homeFragment);
+        topLevel.add(R.id.filesFragment);
         topLevel.add(R.id.remindersFragment);
         topLevel.add(R.id.settingsFragment);
 
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
                 navController.navigate(R.id.homeFragment);
+            } else if (id == R.id.nav_files) {
+                navController.navigate(R.id.filesFragment);
             } else if (id == R.id.nav_reminders) {
                 navController.navigate(R.id.remindersFragment);
             } else if (id == R.id.nav_settings) {

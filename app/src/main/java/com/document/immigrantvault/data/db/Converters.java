@@ -3,6 +3,7 @@ package com.document.immigrantvault.data.db;
 import androidx.room.TypeConverter;
 
 import com.document.immigrantvault.data.db.entity.DocumentType;
+import com.document.immigrantvault.data.db.entity.FileSource;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
 import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.PetitionType;
@@ -136,5 +137,15 @@ public class Converters {
     @TypeConverter
     public static TaxReturnOutcome stringToTaxReturnOutcome(String value) {
         return value == null ? null : TaxReturnOutcome.valueOf(value);
+    }
+
+    @TypeConverter
+    public static String fileSourceToString(FileSource value) {
+        return value == null ? null : value.name();
+    }
+
+    @TypeConverter
+    public static FileSource stringToFileSource(String value) {
+        return value == null ? null : FileSource.valueOf(value);
     }
 }

@@ -14,6 +14,8 @@ import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
+import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.data.db.entity.VaultFolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,4 +43,6 @@ public class VaultBackup {
     public List<TaxReturnEntry> taxReturnEntries = new ArrayList<>();
     public List<Reminder> reminders = new ArrayList<>();
     public List<TimelineEvent> timelineEvents = new ArrayList<>();
+    public List<VaultFolder> vaultFolders = new ArrayList<>();
+    public List<VaultFile> vaultFiles = new ArrayList<>();
 }

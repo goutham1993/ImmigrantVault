@@ -21,6 +21,8 @@ import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
+import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.data.db.entity.VaultFolder;
 
 import java.util.List;
 
@@ -68,6 +70,18 @@ public interface BackupDao {
 
     @Query("SELECT * FROM timeline_events")
     List<TimelineEvent> getAllTimelineEventsSync();
+
+    @Query("SELECT * FROM vault_folders")
+    List<VaultFolder> getAllVaultFoldersSync();
+
+    @Query("SELECT * FROM vault_files")
+    List<VaultFile> getAllVaultFilesSync();
+
+    @Query("DELETE FROM vault_files")
+    void deleteAllVaultFiles();
+
+    @Query("DELETE FROM vault_folders")
+    void deleteAllVaultFolders();
 
     @Query("DELETE FROM timeline_events")
     void deleteAllTimelineEvents();
@@ -153,6 +167,12 @@ public interface BackupDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTimelineEvents(List<TimelineEvent> events);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertVaultFolders(List<VaultFolder> folders);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertVaultFiles(List<VaultFile> files);
+
     default VaultBackup exportAll() {
         VaultBackup backup = new VaultBackup();
         backup.exportedAt = System.currentTimeMillis();
@@ -170,11 +190,15 @@ public interface BackupDao {
         backup.taxReturnEntries = getAllTaxReturnsSync();
         backup.reminders = getAllRemindersSync();
         backup.timelineEvents = getAllTimelineEventsSync();
+        backup.vaultFolders = getAllVaultFoldersSync();
+        backup.vaultFiles = getAllVaultFilesSync();
         return backup;
     }
 
     @Transaction
     default void clearAll() {
+        deleteAllVaultFiles();
+        deleteAllVaultFolders();
         deleteAllTimelineEvents();
         deleteAllReminders();
         deleteAllTravelEntries();
@@ -236,6 +260,13 @@ public interface BackupDao {
         }
         if (backup.timelineEvents != null && !backup.timelineEvents.isEmpty()) {
             insertTimelineEvents(backup.timelineEvents);
+        }
+        // Folders must land before the files that reference them.
+        if (backup.vaultFolders != null && !backup.vaultFolders.isEmpty()) {
+            insertVaultFolders(backup.vaultFolders);
+        }
+        if (backup.vaultFiles != null && !backup.vaultFiles.isEmpty()) {
+            insertVaultFiles(backup.vaultFiles);
         }
     }
 }

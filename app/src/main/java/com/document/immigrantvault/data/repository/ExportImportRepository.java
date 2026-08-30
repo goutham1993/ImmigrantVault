@@ -1,5 +1,6 @@
 package com.document.immigrantvault.data.repository;
 
+import com.document.immigrantvault.data.backup.BackupPayload;
 import com.document.immigrantvault.data.backup.CsvBackupSerializer;
 import com.document.immigrantvault.data.backup.ExportFormat;
 import com.document.immigrantvault.data.backup.ExportImportException;
@@ -7,7 +8,10 @@ import com.document.immigrantvault.data.backup.JsonBackupSerializer;
 import com.document.immigrantvault.data.backup.VaultBackup;
 import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.db.dao.BackupDao;
+import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.util.VaultFileStorage;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -15,11 +19,14 @@ public class ExportImportRepository {
 
     private final BackupDao backupDao;
     private final ExecutorService executor;
+    private final VaultFileStorage vaultFileStorage;
     private final int databaseVersion;
 
-    public ExportImportRepository(AppDatabase database, ExecutorService executor) {
+    public ExportImportRepository(AppDatabase database, ExecutorService executor,
+                                  VaultFileStorage vaultFileStorage) {
         this.backupDao = database.backupDao();
         this.executor = executor;
+        this.vaultFileStorage = vaultFileStorage;
         this.databaseVersion = AppDatabase.VERSION;
     }
 
@@ -30,14 +37,19 @@ public class ExportImportRepository {
             if (format == ExportFormat.JSON) {
                 return JsonBackupSerializer.toBytes(backup);
             }
-            return CsvBackupSerializer.toBytes(backup);
+            BackupPayload payload = new BackupPayload(backup);
+            collectBinaries(payload);
+            return CsvBackupSerializer.toBytes(payload);
         });
     }
 
     public Future<Void> importAsync(byte[] data, String mimeType) {
         return executor.submit(() -> {
-            VaultBackup backup = parseBackup(data, mimeType);
-            backupDao.replaceAll(backup);
+            BackupPayload payload = parseBackup(data, mimeType);
+            backupDao.replaceAll(payload.backup);
+            // The database is now authoritative, so start from a clean file tree either way.
+            vaultFileStorage.deleteAll();
+            restoreBinaries(payload);
             return null;
         });
     }
@@ -45,13 +57,50 @@ public class ExportImportRepository {
     public Future<Void> clearAllAsync() {
         return executor.submit(() -> {
             backupDao.clearAll();
+            vaultFileStorage.deleteAll();
             return null;
         });
     }
 
-    private VaultBackup parseBackup(byte[] data, String mimeType) throws ExportImportException {
+    /** Reads each saved document off disk. Rows whose bytes are missing are skipped. */
+    private void collectBinaries(BackupPayload payload) {
+        if (payload.backup.vaultFiles == null) {
+            return;
+        }
+        for (VaultFile file : payload.backup.vaultFiles) {
+            if (file.storedName == null
+                    || !vaultFileStorage.exists(file.personId, file.storedName)) {
+                continue;
+            }
+            try {
+                payload.files.put(
+                        BackupPayload.key(file.personId, file.storedName),
+                        vaultFileStorage.read(file.personId, file.storedName));
+            } catch (Exception ignored) {
+                // An unreadable file should not abort the rest of the export.
+            }
+        }
+    }
+
+    private void restoreBinaries(BackupPayload payload) {
+        for (Map.Entry<String, byte[]> entry : payload.files.entrySet()) {
+            String key = entry.getKey();
+            int slash = key.indexOf('/');
+            if (slash <= 0 || slash == key.length() - 1) {
+                continue;
+            }
+            try {
+                long personId = Long.parseLong(key.substring(0, slash));
+                vaultFileStorage.write(entry.getValue(), personId, key.substring(slash + 1));
+            } catch (Exception ignored) {
+                // Skip malformed or unwritable entries; the metadata row still imports.
+            }
+        }
+    }
+
+    private BackupPayload parseBackup(byte[] data, String mimeType) throws ExportImportException {
         if (mimeType != null && (mimeType.contains("json") || mimeType.endsWith("/json"))) {
-            return JsonBackupSerializer.fromBytes(data);
+            return new BackupPayload(JsonBackupSerializer.fromBytes(data));
         }
         if (mimeType != null && (mimeType.contains("zip") || mimeType.contains("csv"))) {
             return CsvBackupSerializer.fromBytes(data);
@@ -59,9 +108,9 @@ public class ExportImportRepository {
         return detectFormat(data);
     }
 
-    private VaultBackup detectFormat(byte[] data) throws ExportImportException {
+    private BackupPayload detectFormat(byte[] data) throws ExportImportException {
         if (data.length > 0 && data[0] == '{') {
-            return JsonBackupSerializer.fromBytes(data);
+            return new BackupPayload(JsonBackupSerializer.fromBytes(data));
         }
         if (data.length > 1 && data[0] == 'P' && data[1] == 'K') {
             return CsvBackupSerializer.fromBytes(data);
