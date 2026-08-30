@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.security.crypto)
     implementation(libs.gson)
     implementation(libs.mlkit.document.scanner)
+    implementation(libs.mlkit.text.recognition)
     implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

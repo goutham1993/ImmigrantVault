@@ -12,7 +12,11 @@ import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.databinding.BottomSheetI94FormBinding;
+import com.document.immigrantvault.extraction.FormScanController;
+import com.document.immigrantvault.extraction.I94Extraction;
+import com.document.immigrantvault.extraction.I94FieldParser;
 import com.document.immigrantvault.util.DatePickerHelper;
+import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
@@ -25,6 +29,7 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
 
     private BottomSheetI94FormBinding binding;
     private ImmigrantVaultApplication app;
+    private FormScanController scanController;
     private long personId;
     private Date arrivalDate;
     private Date admitUntil;
@@ -35,6 +40,14 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
         args.putLong(ARG_PERSON_ID, personId);
         sheet.setArguments(args);
         return sheet;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (ImmigrantVaultApplication) requireActivity().getApplication();
+        scanController = new FormScanController(this, app);
+        scanController.register();
     }
 
     @Nullable
@@ -49,7 +62,6 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UiUtils.autoCapitalizeInputs(view);
-        app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
 
         binding.formTitle.setText(R.string.add_i94);
@@ -57,6 +69,7 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
         DatePickerHelper.bind(requireContext(), binding.inputAdmit, null, d -> admitUntil = d);
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
+        binding.btnScan.setOnClickListener(v -> startScan());
 
         app.getExecutor().execute(() -> {
             I94Entry existing = app.getDatabase().i94Dao().getByPersonSync(personId);
@@ -64,6 +77,45 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
                 requireActivity().runOnUiThread(() -> populate(existing));
             }
         });
+    }
+
+    private void startScan() {
+        scanController.startScan(binding.scanProgress, binding.btnScan, binding.getRoot(), ocr -> {
+            I94Extraction extraction = I94FieldParser.parse(ocr);
+            if (!extraction.hasAnyField()) {
+                scanController.showFailed();
+                return;
+            }
+            applyExtraction(extraction);
+            scanController.showFilled();
+        });
+    }
+
+    private void applyExtraction(@NonNull I94Extraction extraction) {
+        if (extraction.i94Number != null) {
+            binding.inputI94.setText(extraction.i94Number);
+        }
+        if (extraction.documentNumber != null) {
+            binding.inputDocument.setText(extraction.documentNumber);
+        }
+        if (extraction.countryOfCitizenship != null) {
+            binding.inputCitizenship.setText(extraction.countryOfCitizenship);
+        }
+        if (extraction.portOfEntry != null) {
+            binding.inputPort.setText(extraction.portOfEntry);
+        }
+        if (extraction.classOfAdmission != null) {
+            binding.inputClass.setText(extraction.classOfAdmission);
+        }
+        if (extraction.arrivalDate != null) {
+            arrivalDate = extraction.arrivalDate;
+            binding.inputArrival.setText(DateUtils.formatDate(arrivalDate));
+            binding.inputArrivalLayout.setError(null);
+        }
+        if (extraction.admitUntilDate != null) {
+            admitUntil = extraction.admitUntilDate;
+            binding.inputAdmit.setText(DateUtils.formatDate(admitUntil));
+        }
     }
 
     private void populate(I94Entry entry) {
@@ -76,12 +128,10 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
         arrivalDate = entry.arrivalDate;
         admitUntil = entry.admitUntilDate;
         if (arrivalDate != null) {
-            binding.inputArrival.setText(
-                    com.document.immigrantvault.util.DateUtils.formatDate(arrivalDate));
+            binding.inputArrival.setText(DateUtils.formatDate(arrivalDate));
         }
         if (admitUntil != null) {
-            binding.inputAdmit.setText(
-                    com.document.immigrantvault.util.DateUtils.formatDate(admitUntil));
+            binding.inputAdmit.setText(DateUtils.formatDate(admitUntil));
         }
     }
 

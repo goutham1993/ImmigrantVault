@@ -15,6 +15,9 @@ import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.databinding.BottomSheetW2FormBinding;
+import com.document.immigrantvault.extraction.FormScanController;
+import com.document.immigrantvault.extraction.W2Extraction;
+import com.document.immigrantvault.extraction.W2FieldParser;
 import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class W2FormBottomSheet extends BottomSheetDialogFragment {
@@ -33,6 +37,7 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
 
     private BottomSheetW2FormBinding binding;
     private ImmigrantVaultApplication app;
+    private FormScanController scanController;
     private long personId;
     private W2Entry editing;
     private final List<String> employerNames = new ArrayList<>();
@@ -44,6 +49,14 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
         if (entryId != null) args.putLong(ARG_ENTRY_ID, entryId);
         sheet.setArguments(args);
         return sheet;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (ImmigrantVaultApplication) requireActivity().getApplication();
+        scanController = new FormScanController(this, app);
+        scanController.register();
     }
 
     @Nullable
@@ -58,12 +71,12 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UiUtils.autoCapitalizeInputs(view);
-        app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
 
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
+        binding.btnScan.setOnClickListener(v -> startScan());
 
         boolean editingExisting = requireArguments().containsKey(ARG_ENTRY_ID);
         if (editingExisting) {
@@ -87,6 +100,99 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
                 }
             });
         });
+    }
+
+    private void startScan() {
+        scanController.startScan(binding.scanProgress, binding.btnScan, binding.getRoot(), ocr -> {
+            W2Extraction extraction = W2FieldParser.parse(ocr);
+            if (!extraction.hasAnyField()) {
+                scanController.showFailed();
+                return;
+            }
+            applyExtraction(extraction);
+            scanController.showFilled();
+        });
+    }
+
+    private void applyExtraction(@NonNull W2Extraction extraction) {
+        if (extraction.taxYear != null) {
+            binding.inputTaxYear.setText(String.valueOf(extraction.taxYear));
+            binding.inputTaxYearLayout.setError(null);
+        }
+        if (extraction.employerName != null) {
+            applyEmployerName(extraction.employerName);
+        }
+        if (extraction.ein != null) {
+            binding.inputEin.setText(extraction.ein);
+        }
+        setAmountIfPresent(binding.inputWages, extraction.wages);
+        setAmountIfPresent(binding.inputFederalTax, extraction.federalIncomeTax);
+        setAmountIfPresent(binding.inputSsWages, extraction.socialSecurityWages);
+        setAmountIfPresent(binding.inputSsTax, extraction.socialSecurityTax);
+        setAmountIfPresent(binding.inputMedicareWages, extraction.medicareWages);
+        setAmountIfPresent(binding.inputMedicareTax, extraction.medicareTax);
+        if (extraction.box12aCode != null) {
+            binding.inputBox12aCode.setText(extraction.box12aCode);
+        }
+        setAmountIfPresent(binding.inputBox12aAmount, extraction.box12aAmount);
+        if (extraction.box12bCode != null) {
+            binding.inputBox12bCode.setText(extraction.box12bCode);
+        }
+        setAmountIfPresent(binding.inputBox12bAmount, extraction.box12bAmount);
+        if (extraction.box12cCode != null) {
+            binding.inputBox12cCode.setText(extraction.box12cCode);
+        }
+        setAmountIfPresent(binding.inputBox12cAmount, extraction.box12cAmount);
+        if (extraction.box12dCode != null) {
+            binding.inputBox12dCode.setText(extraction.box12dCode);
+        }
+        setAmountIfPresent(binding.inputBox12dAmount, extraction.box12dAmount);
+        if (extraction.box14 != null) {
+            binding.inputBox14.setText(extraction.box14);
+        }
+        if (extraction.state != null) {
+            binding.inputState.setText(extraction.state);
+        }
+        setAmountIfPresent(binding.inputStateWages, extraction.stateWages);
+        setAmountIfPresent(binding.inputStateTax, extraction.stateIncomeTax);
+    }
+
+    private void applyEmployerName(@NonNull String scannedName) {
+        String matched = matchEmployer(scannedName);
+        String toUse = matched != null ? matched : scannedName.trim();
+        if (!employerNames.contains(toUse)) {
+            employerNames.add(0, toUse);
+            binding.inputEmployer.setAdapter(new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_dropdown_item_1line, employerNames));
+        }
+        binding.inputEmployer.setText(toUse, false);
+        binding.inputEmployerLayout.setError(null);
+    }
+
+    @Nullable
+    private String matchEmployer(@NonNull String scannedName) {
+        String needle = scannedName.trim().toLowerCase(Locale.US);
+        if (needle.isEmpty()) {
+            return null;
+        }
+        for (String name : employerNames) {
+            if (name.equalsIgnoreCase(needle)) {
+                return name;
+            }
+        }
+        for (String name : employerNames) {
+            String lower = name.toLowerCase(Locale.US);
+            if (lower.contains(needle) || needle.contains(lower)) {
+                return name;
+            }
+        }
+        return null;
+    }
+
+    private void setAmountIfPresent(TextInputEditText editText, @Nullable Double value) {
+        if (value != null) {
+            setAmount(editText, value);
+        }
     }
 
     private void setupEmployerDropdown(List<String> names, String retainedName) {
