@@ -5,6 +5,7 @@ import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.DocumentType;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
 import com.document.immigrantvault.data.db.entity.EmployerEntry;
+import com.document.immigrantvault.data.db.entity.FileSource;
 import com.document.immigrantvault.data.db.entity.I94Entry;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
 import com.document.immigrantvault.data.db.entity.Person;
@@ -19,6 +20,8 @@ import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TimelineEventType;
 import com.document.immigrantvault.data.db.entity.TravelEntry;
 import com.document.immigrantvault.data.db.entity.UsefulLink;
+import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.data.db.entity.VaultFolder;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.VisaType;
 import com.document.immigrantvault.data.db.entity.W2Entry;
@@ -35,8 +38,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -58,11 +63,16 @@ public final class CsvBackupSerializer {
     private static final String TAX_RETURN_ENTRIES = "tax_return_entries.csv";
     private static final String REMINDERS = "reminders.csv";
     private static final String TIMELINE = "timeline_events.csv";
+    private static final String VAULT_FOLDERS = "vault_folders.csv";
+    private static final String VAULT_FILES = "vault_files.csv";
+    private static final String FILES_PREFIX = "files/";
+    private static final String SAVED_PREFIX = "saved_documents/";
 
     private CsvBackupSerializer() {
     }
 
-    public static byte[] toBytes(VaultBackup backup) throws ExportImportException {
+    public static byte[] toBytes(BackupPayload payload) throws ExportImportException {
+        VaultBackup backup = payload.backup;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              ZipOutputStream zip = new ZipOutputStream(outputStream)) {
             writeEntry(zip, MANIFEST, writer -> CsvUtils.writeManifest(writer, backup));
@@ -80,6 +90,9 @@ public final class CsvBackupSerializer {
             writeEntry(zip, TAX_RETURN_ENTRIES, writer -> writeTaxReturnEntries(writer, backup.taxReturnEntries));
             writeEntry(zip, REMINDERS, writer -> writeReminders(writer, backup.reminders));
             writeEntry(zip, TIMELINE, writer -> writeTimeline(writer, backup.timelineEvents));
+            writeEntry(zip, VAULT_FOLDERS, writer -> writeVaultFolders(writer, backup.vaultFolders));
+            writeEntry(zip, VAULT_FILES, writer -> writeVaultFiles(writer, backup.vaultFiles));
+            writeBinaries(zip, payload);
             zip.finish();
             return outputStream.toByteArray();
         } catch (IOException e) {
@@ -87,13 +100,21 @@ public final class CsvBackupSerializer {
         }
     }
 
-    public static VaultBackup fromBytes(byte[] data) throws ExportImportException {
+    public static BackupPayload fromBytes(byte[] data) throws ExportImportException {
         Map<String, byte[]> entries = new HashMap<>();
+        Map<String, byte[]> binaries = new HashMap<>();
         try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(data))) {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
-                    entries.put(entry.getName(), readEntry(zip));
+                    String name = entry.getName();
+                    if (name.startsWith(SAVED_PREFIX)) {
+                        binaries.put(legacyKeyFromSavedPath(name), readEntry(zip));
+                    } else if (name.startsWith(FILES_PREFIX)) {
+                        binaries.put(name.substring(FILES_PREFIX.length()), readEntry(zip));
+                    } else {
+                        entries.put(name, readEntry(zip));
+                    }
                 }
                 zip.closeEntry();
             }
@@ -122,7 +143,12 @@ public final class CsvBackupSerializer {
             backup.taxReturnEntries = readTaxReturnEntries(entries.get(TAX_RETURN_ENTRIES));
             backup.reminders = readReminders(entries.get(REMINDERS));
             backup.timelineEvents = readTimeline(entries.get(TIMELINE));
-            return backup;
+            backup.vaultFolders = readVaultFolders(entries.get(VAULT_FOLDERS));
+            backup.vaultFiles = readVaultFiles(entries.get(VAULT_FILES));
+
+            BackupPayload payload = new BackupPayload(backup);
+            payload.files.putAll(binaries);
+            return payload;
         } catch (ExportImportException e) {
             throw e;
         } catch (Exception e) {
@@ -134,11 +160,162 @@ public final class CsvBackupSerializer {
         void write(Writer writer) throws IOException;
     }
 
+    private static void writeVaultFolders(Writer writer, List<VaultFolder> folders) throws IOException {
+        CsvUtils.writeRow(writer, "id", "personId", "name", "sortOrder", "isSystem", "createdAt");
+        if (folders == null) {
+            return;
+        }
+        for (VaultFolder folder : folders) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(folder.id),
+                    CsvUtils.formatLong(folder.personId),
+                    CsvUtils.formatString(folder.name),
+                    CsvUtils.formatInt(folder.sortOrder),
+                    CsvUtils.formatBoolean(folder.isSystem),
+                    CsvUtils.formatDate(folder.createdAt));
+        }
+    }
+
+    private static List<VaultFolder> readVaultFolders(byte[] data) throws IOException {
+        List<VaultFolder> folders = new ArrayList<>();
+        if (data == null) {
+            return folders;
+        }
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            VaultFolder folder = new VaultFolder();
+            folder.id = CsvUtils.getLong(row, "id");
+            folder.personId = CsvUtils.getLong(row, "personId");
+            folder.name = CsvUtils.get(row, "name");
+            folder.sortOrder = CsvUtils.getInt(row, "sortOrder");
+            folder.isSystem = CsvUtils.getBoolean(row, "isSystem");
+            folder.createdAt = CsvUtils.getDate(row, "createdAt");
+            folders.add(folder);
+        }
+        return folders;
+    }
+
+    private static void writeVaultFiles(Writer writer, List<VaultFile> files) throws IOException {
+        CsvUtils.writeRow(writer,
+                "id", "folderId", "personId", "displayName", "storedName", "mimeType",
+                "sizeBytes", "pageCount", "source", "createdAt", "updatedAt");
+        if (files == null) {
+            return;
+        }
+        for (VaultFile file : files) {
+            CsvUtils.writeRow(writer,
+                    CsvUtils.formatLong(file.id),
+                    CsvUtils.formatLong(file.folderId),
+                    CsvUtils.formatLong(file.personId),
+                    CsvUtils.formatString(file.displayName),
+                    CsvUtils.formatString(file.storedName),
+                    CsvUtils.formatString(file.mimeType),
+                    CsvUtils.formatLong(file.sizeBytes),
+                    CsvUtils.formatInt(file.pageCount),
+                    CsvUtils.formatEnum(file.source),
+                    CsvUtils.formatDate(file.createdAt),
+                    CsvUtils.formatDate(file.updatedAt));
+        }
+    }
+
+    private static List<VaultFile> readVaultFiles(byte[] data) throws IOException {
+        List<VaultFile> files = new ArrayList<>();
+        if (data == null) {
+            return files;
+        }
+        for (Map<String, String> row : CsvUtils.readTable(new ByteArrayInputStream(data))) {
+            VaultFile file = new VaultFile();
+            file.id = CsvUtils.getLong(row, "id");
+            file.folderId = CsvUtils.getLong(row, "folderId");
+            file.personId = CsvUtils.getLong(row, "personId");
+            file.displayName = CsvUtils.get(row, "displayName");
+            file.storedName = CsvUtils.get(row, "storedName");
+            file.mimeType = CsvUtils.get(row, "mimeType");
+            file.sizeBytes = CsvUtils.getLong(row, "sizeBytes");
+            file.pageCount = CsvUtils.getInt(row, "pageCount");
+            file.source = CsvUtils.parseEnum(CsvUtils.get(row, "source"), FileSource.class);
+            file.createdAt = CsvUtils.getDate(row, "createdAt");
+            file.updatedAt = CsvUtils.getDate(row, "updatedAt");
+            files.add(file);
+        }
+        return files;
+    }
+
+    private static void writeBinaries(ZipOutputStream zip, BackupPayload payload) throws IOException {
+        Set<String> written = new HashSet<>();
+        if (payload.backup != null && payload.backup.vaultFiles != null) {
+            for (VaultFile file : payload.backup.vaultFiles) {
+                if (file.storedName == null) {
+                    continue;
+                }
+                String key = BackupPayload.key(file.personId, file.storedName);
+                byte[] data = payload.files.get(key);
+                if (data == null) {
+                    continue;
+                }
+                zip.putNextEntry(new ZipEntry(visibleZipPath(file)));
+                zip.write(data);
+                zip.closeEntry();
+                written.add(key);
+            }
+        }
+        for (Map.Entry<String, byte[]> file : payload.files.entrySet()) {
+            if (written.contains(file.getKey())) {
+                continue;
+            }
+            zip.putNextEntry(new ZipEntry(FILES_PREFIX + file.getKey()));
+            zip.write(file.getValue());
+            zip.closeEntry();
+        }
+    }
+
+    /**
+     * {@code saved_documents/{personId}/{displayName}__{storedName}} so the ZIP shows a real
+     * image/PDF name while restore can still recover the on-disk stored name.
+     */
+    static String visibleZipPath(VaultFile file) {
+        String display = sanitizeFileName(file.displayName);
+        if (display.isEmpty()) {
+            display = "document";
+        }
+        return SAVED_PREFIX + file.personId + "/" + display + "__" + file.storedName;
+    }
+
+    static String legacyKeyFromSavedPath(String zipPath) {
+        String rest = zipPath.startsWith(SAVED_PREFIX)
+                ? zipPath.substring(SAVED_PREFIX.length())
+                : zipPath;
+        int slash = rest.indexOf('/');
+        if (slash <= 0 || slash == rest.length() - 1) {
+            return rest;
+        }
+        String personId = rest.substring(0, slash);
+        String fileName = rest.substring(slash + 1);
+        int separator = fileName.lastIndexOf("__");
+        String storedName = separator >= 0 ? fileName.substring(separator + 2) : fileName;
+        return personId + "/" + storedName;
+    }
+
+    static String sanitizeFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+        String cleaned = name.replaceAll("[\\\\/:*?\"<>|\\x00-\\x1F]", "_").trim();
+        while (cleaned.endsWith(".")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 1).trim();
+        }
+        if (cleaned.length() > 80) {
+            cleaned = cleaned.substring(0, 80).trim();
+        }
+        return cleaned;
+    }
+
     private static void writeEntry(ZipOutputStream zip, String name, ZipWriter writer) throws IOException {
-        zip.putNextEntry(new ZipEntry(name));
-        Writer outputWriter = new OutputStreamWriter(zip, StandardCharsets.UTF_8);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        Writer outputWriter = new OutputStreamWriter(buffer, StandardCharsets.UTF_8);
         writer.write(outputWriter);
         outputWriter.flush();
+        zip.putNextEntry(new ZipEntry(name));
+        zip.write(buffer.toByteArray());
         zip.closeEntry();
     }
 

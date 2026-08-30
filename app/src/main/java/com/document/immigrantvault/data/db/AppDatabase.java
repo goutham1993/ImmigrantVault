@@ -22,6 +22,8 @@ import com.document.immigrantvault.data.db.dao.UsefulLinkDao;
 import com.document.immigrantvault.data.db.dao.VisaDao;
 import com.document.immigrantvault.data.db.dao.W2Dao;
 import com.document.immigrantvault.data.db.dao.TaxReturnDao;
+import com.document.immigrantvault.data.db.dao.VaultFileDao;
+import com.document.immigrantvault.data.db.dao.VaultFolderDao;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
@@ -36,6 +38,8 @@ import com.document.immigrantvault.data.db.entity.UsefulLink;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
+import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.data.db.entity.VaultFolder;
 
 @Database(
         entities = {
@@ -52,7 +56,9 @@ import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
                 W2Entry.class,
                 TaxReturnEntry.class,
                 Reminder.class,
-                TimelineEvent.class
+                TimelineEvent.class,
+                VaultFolder.class,
+                VaultFile.class
         },
         version = AppDatabase.VERSION,
         exportSchema = false
@@ -60,7 +66,7 @@ import com.document.immigrantvault.data.db.entity.TaxReturnEntry;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 20;
+    public static final int VERSION = 21;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -79,6 +85,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TaxReturnDao taxReturnDao();
     public abstract ReminderDao reminderDao();
     public abstract TimelineDao timelineDao();
+    public abstract VaultFolderDao vaultFolderDao();
+    public abstract VaultFileDao vaultFileDao();
 
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
@@ -107,7 +115,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_16_17,
                             DatabaseMigrations.MIGRATION_17_18,
                             DatabaseMigrations.MIGRATION_18_19,
-                            DatabaseMigrations.MIGRATION_19_20
+                            DatabaseMigrations.MIGRATION_19_20,
+                            DatabaseMigrations.MIGRATION_20_21
                     )
                             .build();
                 }

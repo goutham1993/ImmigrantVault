@@ -286,6 +286,43 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_20_21 = new Migration(20, 21) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `vault_folders` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`name` TEXT, "
+                    + "`sortOrder` INTEGER NOT NULL, "
+                    + "`isSystem` INTEGER NOT NULL, "
+                    + "`createdAt` INTEGER, "
+                    + "FOREIGN KEY(`personId`) REFERENCES `persons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_vault_folders_personId` "
+                    + "ON `vault_folders` (`personId`)");
+
+            db.execSQL("CREATE TABLE IF NOT EXISTS `vault_files` ("
+                    + "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`folderId` INTEGER NOT NULL, "
+                    + "`personId` INTEGER NOT NULL, "
+                    + "`displayName` TEXT, "
+                    + "`storedName` TEXT, "
+                    + "`mimeType` TEXT, "
+                    + "`sizeBytes` INTEGER NOT NULL, "
+                    + "`pageCount` INTEGER NOT NULL, "
+                    + "`source` TEXT, "
+                    + "`createdAt` INTEGER, "
+                    + "`updatedAt` INTEGER, "
+                    + "FOREIGN KEY(`folderId`) REFERENCES `vault_folders`(`id`) "
+                    + "ON UPDATE NO ACTION ON DELETE CASCADE"
+                    + ")");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_vault_files_folderId` "
+                    + "ON `vault_files` (`folderId`)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_vault_files_personId` "
+                    + "ON `vault_files` (`personId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

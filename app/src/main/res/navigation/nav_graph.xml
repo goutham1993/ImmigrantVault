@@ -14,6 +14,48 @@
     </fragment>
 
     <fragment
+        android:id="@+id/filesFragment"
+        android:name="com.document.immigrantvault.ui.files.FilesFragment"
+        android:label="@string/nav_files">
+        <action
+            android:id="@+id/action_files_to_browser"
+            app:destination="@id/fileBrowserFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fileBrowserFragment"
+        android:name="com.document.immigrantvault.ui.files.FileBrowserFragment"
+        android:label="@string/nav_files">
+        <argument
+            android:name="personId"
+            app:argType="long" />
+        <argument
+            android:name="folderId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+        <argument
+            android:name="title"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_browser_to_browser"
+            app:destination="@id/fileBrowserFragment" />
+        <action
+            android:id="@+id/action_browser_to_viewer"
+            app:destination="@id/fileViewerFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fileViewerFragment"
+        android:name="com.document.immigrantvault.ui.files.FileViewerFragment"
+        android:label="@string/nav_files">
+        <argument
+            android:name="fileId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
         android:id="@+id/remindersFragment"
         android:name="com.document.immigrantvault.ui.reminder.RemindersFragment"
         android:label="@string/nav_reminders" />
