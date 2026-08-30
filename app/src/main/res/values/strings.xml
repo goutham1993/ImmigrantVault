@@ -175,9 +175,11 @@
     <string name="action_get_i94">Get latest I-94</string>
     <string name="action_mark_checked">Mark as checked today</string>
     <string name="action_scan">Scan</string>
+    <string name="action_upload">Upload</string>
     <string name="form_scanning">Reading document…</string>
     <string name="form_scan_failed">Couldn\'t read fields — enter manually</string>
-    <string name="form_scan_filled">Fields filled from scan — please review</string>
+    <string name="form_fill_filled">Fields filled — please review</string>
+    <string name="form_upload_pdf_unsupported">PDF can\'t be read for form fill — scan or upload a photo</string>
     <string name="receipt_copied">Receipt number copied</string>
 
     <!-- Status -->

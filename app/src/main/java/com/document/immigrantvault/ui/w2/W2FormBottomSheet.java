@@ -16,6 +16,7 @@ import com.document.immigrantvault.data.db.entity.EmployerEntry;
 import com.document.immigrantvault.data.db.entity.W2Entry;
 import com.document.immigrantvault.databinding.BottomSheetW2FormBinding;
 import com.document.immigrantvault.extraction.FormScanController;
+import com.document.immigrantvault.extraction.OcrText;
 import com.document.immigrantvault.extraction.W2Extraction;
 import com.document.immigrantvault.extraction.W2FieldParser;
 import com.document.immigrantvault.util.UiUtils;
@@ -77,6 +78,7 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
         binding.btnScan.setOnClickListener(v -> startScan());
+        binding.btnUpload.setOnClickListener(v -> startUpload());
 
         boolean editingExisting = requireArguments().containsKey(ARG_ENTRY_ID);
         if (editingExisting) {
@@ -103,15 +105,31 @@ public class W2FormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void startScan() {
-        scanController.startScan(binding.scanProgress, binding.btnScan, binding.getRoot(), ocr -> {
-            W2Extraction extraction = W2FieldParser.parse(ocr);
-            if (!extraction.hasAnyField()) {
-                scanController.showFailed();
-                return;
-            }
-            applyExtraction(extraction);
-            scanController.showFilled();
-        });
+        scanController.startScan(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void startUpload() {
+        scanController.startUpload(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void handleOcrResult(@NonNull OcrText ocr) {
+        W2Extraction extraction = W2FieldParser.parse(ocr);
+        if (!extraction.hasAnyField()) {
+            scanController.showFailed();
+            return;
+        }
+        applyExtraction(extraction);
+        scanController.showFilled();
     }
 
     private void applyExtraction(@NonNull W2Extraction extraction) {

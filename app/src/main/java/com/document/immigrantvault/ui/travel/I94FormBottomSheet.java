@@ -15,6 +15,7 @@ import com.document.immigrantvault.databinding.BottomSheetI94FormBinding;
 import com.document.immigrantvault.extraction.FormScanController;
 import com.document.immigrantvault.extraction.I94Extraction;
 import com.document.immigrantvault.extraction.I94FieldParser;
+import com.document.immigrantvault.extraction.OcrText;
 import com.document.immigrantvault.util.DatePickerHelper;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.UiUtils;
@@ -70,6 +71,7 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnScan.setOnClickListener(v -> startScan());
+        binding.btnUpload.setOnClickListener(v -> startUpload());
 
         app.getExecutor().execute(() -> {
             I94Entry existing = app.getDatabase().i94Dao().getByPersonSync(personId);
@@ -80,15 +82,31 @@ public class I94FormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void startScan() {
-        scanController.startScan(binding.scanProgress, binding.btnScan, binding.getRoot(), ocr -> {
-            I94Extraction extraction = I94FieldParser.parse(ocr);
-            if (!extraction.hasAnyField()) {
-                scanController.showFailed();
-                return;
-            }
-            applyExtraction(extraction);
-            scanController.showFilled();
-        });
+        scanController.startScan(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void startUpload() {
+        scanController.startUpload(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void handleOcrResult(@NonNull OcrText ocr) {
+        I94Extraction extraction = I94FieldParser.parse(ocr);
+        if (!extraction.hasAnyField()) {
+            scanController.showFailed();
+            return;
+        }
+        applyExtraction(extraction);
+        scanController.showFilled();
     }
 
     private void applyExtraction(@NonNull I94Extraction extraction) {

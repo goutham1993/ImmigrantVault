@@ -17,11 +17,15 @@ import com.document.immigrantvault.R;
 import com.document.immigrantvault.util.DocumentScanHelper;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Locale;
+
 /**
- * Scan → on-device OCR → callback. Does not persist the image anywhere in the vault.
+ * Scan or upload → on-device OCR → callback. Does not persist the image anywhere in the vault.
  * Call {@link #register()} from the host fragment's {@code onCreate}.
  */
 public final class FormScanController {
+
+    private static final String[] UPLOAD_MIME_TYPES = {"image/*", "application/pdf"};
 
     public interface OcrCallback {
         void onOcrResult(@NonNull OcrText text);
@@ -32,11 +36,12 @@ public final class FormScanController {
 
     private ActivityResultLauncher<IntentSenderRequest> scanLauncher;
     private ActivityResultLauncher<PickVisualMediaRequest> pickImageLauncher;
+    private ActivityResultLauncher<String[]> openDocumentLauncher;
 
     @Nullable
     private View progressView;
     @Nullable
-    private View scanButton;
+    private View[] actionButtons;
     @Nullable
     private View anchorView;
     @Nullable
@@ -69,24 +74,29 @@ public final class FormScanController {
                         setBusy(false);
                     }
                 });
+
+        openDocumentLauncher = host.registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri != null) {
+                        processImage(uri);
+                    } else {
+                        setBusy(false);
+                    }
+                });
     }
 
     /**
-     * @param progressView optional progress indicator shown while OCR runs
-     * @param scanButton   optional Scan control disabled while busy
-     * @param anchorView   view used for Snackbars (form root)
+     * @param actionButtons Scan/Upload controls disabled while busy (may be null entries)
      */
     public void startScan(@Nullable View progressView,
-                          @Nullable View scanButton,
                           @Nullable View anchorView,
-                          @NonNull OcrCallback callback) {
+                          @NonNull OcrCallback callback,
+                          @Nullable View... actionButtons) {
         if (busy || !host.isAdded()) {
             return;
         }
-        this.progressView = progressView;
-        this.scanButton = scanButton;
-        this.anchorView = anchorView;
-        this.pendingCallback = callback;
+        beginFill(progressView, anchorView, callback, actionButtons);
         setBusy(true);
 
         DocumentScanHelper.start(
@@ -99,10 +109,40 @@ public final class FormScanController {
                                 .build()));
     }
 
+    /**
+     * @param actionButtons Scan/Upload controls disabled while busy (may be null entries)
+     */
+    public void startUpload(@Nullable View progressView,
+                            @Nullable View anchorView,
+                            @NonNull OcrCallback callback,
+                            @Nullable View... actionButtons) {
+        if (busy || !host.isAdded()) {
+            return;
+        }
+        beginFill(progressView, anchorView, callback, actionButtons);
+        setBusy(true);
+        openDocumentLauncher.launch(UPLOAD_MIME_TYPES);
+    }
+
+    private void beginFill(@Nullable View progressView,
+                           @Nullable View anchorView,
+                           @NonNull OcrCallback callback,
+                           @Nullable View[] actionButtons) {
+        this.progressView = progressView;
+        this.anchorView = anchorView;
+        this.pendingCallback = callback;
+        this.actionButtons = actionButtons;
+    }
+
     private void processImage(@NonNull Uri uri) {
         OcrCallback callback = pendingCallback;
         if (callback == null || !host.isAdded()) {
             setBusy(false);
+            return;
+        }
+        if (!isSupportedForOcr(uri)) {
+            setBusy(false);
+            showUnsupportedFile();
             return;
         }
         setBusy(true);
@@ -131,6 +171,21 @@ public final class FormScanController {
         });
     }
 
+    private boolean isSupportedForOcr(@NonNull Uri uri) {
+        String type = host.requireContext().getContentResolver().getType(uri);
+        if (type != null) {
+            if ("application/pdf".equals(type)) {
+                return false;
+            }
+            return type.startsWith("image/");
+        }
+        String segment = uri.getLastPathSegment();
+        if (segment != null && segment.toLowerCase(Locale.US).endsWith(".pdf")) {
+            return false;
+        }
+        return true;
+    }
+
     public void showFailed() {
         CharSequence message = host.getString(R.string.form_scan_failed);
         if (anchorView != null) {
@@ -140,8 +195,17 @@ public final class FormScanController {
         }
     }
 
+    public void showUnsupportedFile() {
+        CharSequence message = host.getString(R.string.form_upload_pdf_unsupported);
+        if (anchorView != null) {
+            Snackbar.make(anchorView, message, Snackbar.LENGTH_LONG).show();
+        } else if (host.getContext() != null) {
+            Toast.makeText(host.getContext(), message, Toast.LENGTH_LONG).show();
+        }
+    }
+
     public void showFilled() {
-        CharSequence message = host.getString(R.string.form_scan_filled);
+        CharSequence message = host.getString(R.string.form_fill_filled);
         if (anchorView != null) {
             Snackbar.make(anchorView, message, Snackbar.LENGTH_SHORT).show();
         } else if (host.getContext() != null) {
@@ -157,8 +221,12 @@ public final class FormScanController {
                 progressView.setContentDescription(host.getString(R.string.form_scanning));
             }
         }
-        if (scanButton != null) {
-            scanButton.setEnabled(!value);
+        if (actionButtons != null) {
+            for (View button : actionButtons) {
+                if (button != null) {
+                    button.setEnabled(!value);
+                }
+            }
         }
     }
 }

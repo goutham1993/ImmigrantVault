@@ -18,6 +18,7 @@ import com.document.immigrantvault.databinding.BottomSheetDocumentFormBinding;
 import com.document.immigrantvault.extraction.DocumentExtraction;
 import com.document.immigrantvault.extraction.DocumentFieldParser;
 import com.document.immigrantvault.extraction.FormScanController;
+import com.document.immigrantvault.extraction.OcrText;
 import com.document.immigrantvault.util.DatePickerHelper;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
@@ -81,6 +82,7 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
         binding.btnScan.setOnClickListener(v -> startScan());
+        binding.btnUpload.setOnClickListener(v -> startUpload());
 
         if (requireArguments().containsKey(ARG_DOCUMENT_ID)) {
             long docId = requireArguments().getLong(ARG_DOCUMENT_ID);
@@ -99,16 +101,32 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void startScan() {
-        scanController.startScan(binding.scanProgress, binding.btnScan, binding.getRoot(), ocr -> {
-            DocumentType selected = typeFromLabel(dropdownText(binding.inputType));
-            DocumentExtraction extraction = DocumentFieldParser.parse(ocr, selected);
-            if (!extraction.hasAnyField()) {
-                scanController.showFailed();
-                return;
-            }
-            applyExtraction(extraction);
-            scanController.showFilled();
-        });
+        scanController.startScan(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void startUpload() {
+        scanController.startUpload(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void handleOcrResult(@NonNull OcrText ocr) {
+        DocumentType selected = typeFromLabel(dropdownText(binding.inputType));
+        DocumentExtraction extraction = DocumentFieldParser.parse(ocr, selected);
+        if (!extraction.hasAnyField()) {
+            scanController.showFailed();
+            return;
+        }
+        applyExtraction(extraction);
+        scanController.showFilled();
     }
 
     private void applyExtraction(@NonNull DocumentExtraction extraction) {
