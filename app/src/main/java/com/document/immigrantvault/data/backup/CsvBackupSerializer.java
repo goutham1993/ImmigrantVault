@@ -38,8 +38,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -64,6 +66,7 @@ public final class CsvBackupSerializer {
     private static final String VAULT_FOLDERS = "vault_folders.csv";
     private static final String VAULT_FILES = "vault_files.csv";
     private static final String FILES_PREFIX = "files/";
+    private static final String SAVED_PREFIX = "saved_documents/";
 
     private CsvBackupSerializer() {
     }
@@ -105,7 +108,9 @@ public final class CsvBackupSerializer {
             while ((entry = zip.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
                     String name = entry.getName();
-                    if (name.startsWith(FILES_PREFIX)) {
+                    if (name.startsWith(SAVED_PREFIX)) {
+                        binaries.put(legacyKeyFromSavedPath(name), readEntry(zip));
+                    } else if (name.startsWith(FILES_PREFIX)) {
                         binaries.put(name.substring(FILES_PREFIX.length()), readEntry(zip));
                     } else {
                         entries.put(name, readEntry(zip));
@@ -236,18 +241,81 @@ public final class CsvBackupSerializer {
     }
 
     private static void writeBinaries(ZipOutputStream zip, BackupPayload payload) throws IOException {
+        Set<String> written = new HashSet<>();
+        if (payload.backup != null && payload.backup.vaultFiles != null) {
+            for (VaultFile file : payload.backup.vaultFiles) {
+                if (file.storedName == null) {
+                    continue;
+                }
+                String key = BackupPayload.key(file.personId, file.storedName);
+                byte[] data = payload.files.get(key);
+                if (data == null) {
+                    continue;
+                }
+                zip.putNextEntry(new ZipEntry(visibleZipPath(file)));
+                zip.write(data);
+                zip.closeEntry();
+                written.add(key);
+            }
+        }
         for (Map.Entry<String, byte[]> file : payload.files.entrySet()) {
+            if (written.contains(file.getKey())) {
+                continue;
+            }
             zip.putNextEntry(new ZipEntry(FILES_PREFIX + file.getKey()));
             zip.write(file.getValue());
             zip.closeEntry();
         }
     }
 
+    /**
+     * {@code saved_documents/{personId}/{displayName}__{storedName}} so the ZIP shows a real
+     * image/PDF name while restore can still recover the on-disk stored name.
+     */
+    static String visibleZipPath(VaultFile file) {
+        String display = sanitizeFileName(file.displayName);
+        if (display.isEmpty()) {
+            display = "document";
+        }
+        return SAVED_PREFIX + file.personId + "/" + display + "__" + file.storedName;
+    }
+
+    static String legacyKeyFromSavedPath(String zipPath) {
+        String rest = zipPath.startsWith(SAVED_PREFIX)
+                ? zipPath.substring(SAVED_PREFIX.length())
+                : zipPath;
+        int slash = rest.indexOf('/');
+        if (slash <= 0 || slash == rest.length() - 1) {
+            return rest;
+        }
+        String personId = rest.substring(0, slash);
+        String fileName = rest.substring(slash + 1);
+        int separator = fileName.lastIndexOf("__");
+        String storedName = separator >= 0 ? fileName.substring(separator + 2) : fileName;
+        return personId + "/" + storedName;
+    }
+
+    static String sanitizeFileName(String name) {
+        if (name == null) {
+            return "";
+        }
+        String cleaned = name.replaceAll("[\\\\/:*?\"<>|\\x00-\\x1F]", "_").trim();
+        while (cleaned.endsWith(".")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 1).trim();
+        }
+        if (cleaned.length() > 80) {
+            cleaned = cleaned.substring(0, 80).trim();
+        }
+        return cleaned;
+    }
+
     private static void writeEntry(ZipOutputStream zip, String name, ZipWriter writer) throws IOException {
-        zip.putNextEntry(new ZipEntry(name));
-        Writer outputWriter = new OutputStreamWriter(zip, StandardCharsets.UTF_8);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        Writer outputWriter = new OutputStreamWriter(buffer, StandardCharsets.UTF_8);
         writer.write(outputWriter);
         outputWriter.flush();
+        zip.putNextEntry(new ZipEntry(name));
+        zip.write(buffer.toByteArray());
         zip.closeEntry();
     }
 

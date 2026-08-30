@@ -2,7 +2,6 @@ package com.document.immigrantvault;
 
 import android.app.Application;
 
-import com.document.immigrantvault.data.demo.DemoDataSeeder;
 import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.repository.ExportImportRepository;
 import com.document.immigrantvault.data.repository.AddressRepository;
@@ -78,7 +77,7 @@ public class ImmigrantVaultApplication extends Application {
         reminderRepository.reconcileOverlappingVisaReminders();
         vaultFileRepository.sweepOrphans();
         ReminderScheduler.schedule(this);
-        DemoDataSeeder.initialize(this);
+        personRepository.removeSeededDemoPeople();
     }
 
     public AppDatabase getDatabase() {

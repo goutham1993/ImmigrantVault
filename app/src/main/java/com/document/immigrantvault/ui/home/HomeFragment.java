@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
+import com.document.immigrantvault.data.db.entity.Person;
 import com.document.immigrantvault.databinding.FragmentHomeBinding;
 import com.document.immigrantvault.databinding.ViewEmptyStateBinding;
 import com.document.immigrantvault.ui.ViewModelFactory;
@@ -48,6 +51,7 @@ public class HomeFragment extends Fragment {
             args.putLong("personId", person.id);
             Navigation.findNavController(view).navigate(R.id.action_home_to_personDetail, args);
         });
+        personAdapter.setOnPersonLongClickListener(this::confirmDeletePerson);
 
         binding.btnMenu.setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.settingsFragment));
@@ -87,6 +91,22 @@ public class HomeFragment extends Fragment {
             binding.deadlinesTitle.setVisibility(hasDeadlines ? View.VISIBLE : View.GONE);
             binding.deadlinesRecycler.setVisibility(hasDeadlines ? View.VISIBLE : View.GONE);
         });
+    }
+
+    private void confirmDeletePerson(Person person) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_confirm_title)
+                .setMessage(getString(R.string.delete_person_confirm, person.getDisplayName()))
+                .setPositiveButton(R.string.action_delete, (dialog, which) ->
+                        viewModel.deletePerson(person, () -> {
+                            if (!isAdded()) {
+                                return;
+                            }
+                            Toast.makeText(requireContext(), R.string.files_deleted,
+                                    Toast.LENGTH_SHORT).show();
+                        }))
+                .setNegativeButton(R.string.action_cancel, null)
+                .show();
     }
 
     private void showPersonForm(Long personId) {

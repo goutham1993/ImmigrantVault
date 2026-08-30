@@ -11,6 +11,7 @@ import com.document.immigrantvault.data.db.dao.BackupDao;
 import com.document.immigrantvault.data.db.entity.VaultFile;
 import com.document.immigrantvault.util.VaultFileStorage;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -64,21 +65,49 @@ public class ExportImportRepository {
 
     /** Reads each saved document off disk. Rows whose bytes are missing are skipped. */
     private void collectBinaries(BackupPayload payload) {
-        if (payload.backup.vaultFiles == null) {
+        if (payload.backup.vaultFiles != null) {
+            for (VaultFile file : payload.backup.vaultFiles) {
+                addBinary(payload, file.personId, file.storedName);
+            }
+        }
+        // Pick up anything still on disk if a row was missed or the stored name drifted.
+        File root = vaultFileStorage.getRoot();
+        File[] personDirs = root.listFiles();
+        if (personDirs == null) {
             return;
         }
-        for (VaultFile file : payload.backup.vaultFiles) {
-            if (file.storedName == null
-                    || !vaultFileStorage.exists(file.personId, file.storedName)) {
+        for (File personDir : personDirs) {
+            if (!personDir.isDirectory()) {
                 continue;
             }
+            long personId;
             try {
-                payload.files.put(
-                        BackupPayload.key(file.personId, file.storedName),
-                        vaultFileStorage.read(file.personId, file.storedName));
-            } catch (Exception ignored) {
-                // An unreadable file should not abort the rest of the export.
+                personId = Long.parseLong(personDir.getName());
+            } catch (NumberFormatException ignored) {
+                continue;
             }
+            File[] stored = personDir.listFiles();
+            if (stored == null) {
+                continue;
+            }
+            for (File onDisk : stored) {
+                if (onDisk.isFile()) {
+                    addBinary(payload, personId, onDisk.getName());
+                }
+            }
+        }
+    }
+
+    private void addBinary(BackupPayload payload, long personId, String storedName) {
+        String key = BackupPayload.key(personId, storedName);
+        if (storedName == null || payload.files.containsKey(key)
+                || !vaultFileStorage.exists(personId, storedName)) {
+            return;
+        }
+        try {
+            payload.files.put(key, vaultFileStorage.read(personId, storedName));
+        } catch (Exception ignored) {
+            // An unreadable file should not abort the rest of the export.
         }
     }
 

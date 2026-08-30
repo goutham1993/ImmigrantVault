@@ -259,8 +259,12 @@
     <string name="settings_export">Export data</string>
     <string name="settings_import">Import data</string>
     <string name="settings_export_format_title">Choose export format</string>
-    <string name="settings_export_json">JSON (.json)</string>
-    <string name="settings_export_csv">CSV (.zip archive)</string>
+    <string name="settings_export_format_message">Scanned and uploaded files are only included when you choose CSV (ZIP). JSON keeps records only.</string>
+    <string name="settings_export_json">JSON</string>
+    <string name="settings_export_csv">CSV (ZIP)</string>
+    <string name="settings_export_csv_option">CSV (ZIP)\nIncludes saved documents — recommended</string>
+    <string name="settings_export_json_option">JSON\nRecords only — files are not included</string>
+    <string name="settings_export_continue">Export</string>
     <string name="settings_import_confirm_title">Replace existing data?</string>
     <string name="settings_import_confirm_message">Importing will replace all records currently stored in ImmigrantVault. This cannot be undone.</string>
     <string name="settings_import_confirm">Import</string>
@@ -349,5 +353,9 @@
     <string name="files_default_folder_taxes">Taxes</string>
     <string name="files_default_folder_petitions">Petitions</string>
     <string name="files_default_folder_other">Other</string>
-    <string name="files_backup_note">Saved documents are included in CSV (ZIP) backups only.</string>
+    <string name="files_backup_note_title">Files are not in JSON backups</string>
+    <string name="files_backup_note">Choose CSV (ZIP) when you export if you want scanned or uploaded documents included. JSON backups skip those files.</string>
+    <string name="files_search_hint">Search documents</string>
+    <string name="files_search_no_results">No matches</string>
+    <string name="files_search_no_results_subtitle">Nothing in this folder matches \"%1$s\"</string>
 </resources>

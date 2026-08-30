@@ -1,10 +1,15 @@
 package com.document.immigrantvault.ui.files;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -35,6 +40,7 @@ import com.document.immigrantvault.util.VaultFileSharing;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -56,6 +62,8 @@ public class FileBrowserFragment extends Fragment {
     private VaultRowAdapter folderAdapter;
     private VaultFileAdapter fileAdapter;
     private List<VaultFolder> folders = new ArrayList<>();
+    private List<VaultFile> folderFiles = new ArrayList<>();
+    private String searchQuery = "";
     private final Map<Long, Integer> folderCounts = new HashMap<>();
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickImageLauncher;
@@ -271,6 +279,8 @@ public class FileBrowserFragment extends Fragment {
                 .newInstance()
                 .show(getParentFragmentManager(), AddFileBottomSheet.TAG));
 
+        setUpSearch();
+
         AddFileBottomSheet.setResultListener(this, choice -> {
             switch (choice) {
                 case SCAN:
@@ -290,10 +300,81 @@ public class FileBrowserFragment extends Fragment {
 
         app.getVaultFileRepository().getByFolder(folderId)
                 .observe(getViewLifecycleOwner(), files -> {
-                    List<VaultFile> list = files != null ? files : new ArrayList<>();
-                    fileAdapter.setFiles(list);
-                    toggleEmptyState(list.isEmpty());
+                    folderFiles = files != null ? files : new ArrayList<>();
+                    renderFiles();
                 });
+    }
+
+    private void setUpSearch() {
+        binding.searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                searchQuery = editable.toString().trim();
+                renderFiles();
+            }
+        });
+        binding.searchInput.setOnEditorActionListener((view, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void renderFiles() {
+        if (binding == null || fileAdapter == null) {
+            return;
+        }
+        List<VaultFile> visible = filterFiles();
+        fileAdapter.setFiles(visible);
+
+        // The field stays visible while a query is active so an empty result can still be cleared.
+        boolean searchable = !folderFiles.isEmpty() || !searchQuery.isEmpty();
+        binding.searchLayout.setVisibility(searchable ? View.VISIBLE : View.GONE);
+
+        ViewEmptyStateBinding empty = binding.emptyState;
+        if (visible.isEmpty() && !searchQuery.isEmpty()) {
+            empty.emptyIcon.setImageResource(R.drawable.ic_search);
+            empty.emptyTitle.setText(R.string.files_search_no_results);
+            empty.emptySubtitle.setText(getString(R.string.files_search_no_results_subtitle, searchQuery));
+        } else {
+            empty.emptyIcon.setImageResource(R.drawable.ic_file);
+            empty.emptyTitle.setText(R.string.files_empty_folder);
+            empty.emptySubtitle.setText(R.string.files_empty_folder_subtitle);
+        }
+        toggleEmptyState(visible.isEmpty());
+    }
+
+    private List<VaultFile> filterFiles() {
+        if (searchQuery.isEmpty()) {
+            return folderFiles;
+        }
+        String needle = searchQuery.toLowerCase(Locale.getDefault());
+        List<VaultFile> matches = new ArrayList<>();
+        for (VaultFile file : folderFiles) {
+            if (file.displayName != null
+                    && file.displayName.toLowerCase(Locale.getDefault()).contains(needle)) {
+                matches.add(file);
+            }
+        }
+        return matches;
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager manager = (InputMethodManager)
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (manager != null) {
+            manager.hideSoftInputFromWindow(binding.searchInput.getWindowToken(), 0);
+        }
     }
 
     private void startScan() {

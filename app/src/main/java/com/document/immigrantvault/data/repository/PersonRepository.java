@@ -77,6 +77,24 @@ public class PersonRepository {
         }
     }
 
+    /** Removes people inserted by the old debug seeder (tagged in notes). */
+    public void removeSeededDemoPeople() {
+        executor.execute(() -> {
+            for (Person person : database.personDao().getAllSync()) {
+                if (person.notes != null && person.notes.contains("[immigrant-vault-demo-v1]")) {
+                    reminderRepository.deleteByPersonId(person.id);
+                    database.personDao().delete(person);
+                    vaultFileStorage.deletePersonDir(person.id);
+                }
+            }
+            if (database.personDao().countByRelationship(Relationship.SELF) == 0) {
+                Person self = new Person("Me", "", Relationship.SELF);
+                self.sortOrder = 0;
+                database.personDao().insert(self);
+            }
+        });
+    }
+
     public void ensureSelfExists() {
         executor.execute(() -> {
             if (database.personDao().countByRelationship(Relationship.SELF) == 0) {

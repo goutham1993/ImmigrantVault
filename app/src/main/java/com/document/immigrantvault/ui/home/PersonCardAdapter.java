@@ -28,8 +28,13 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
         void onPersonClick(Person person);
     }
 
+    public interface OnPersonLongClickListener {
+        void onPersonLongClick(Person person);
+    }
+
     private final List<Person> items = new ArrayList<>();
     private OnPersonClickListener listener;
+    private OnPersonLongClickListener longClickListener;
 
     public void setItems(List<Person> persons) {
         items.clear();
@@ -41,6 +46,10 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
 
     public void setOnPersonClickListener(OnPersonClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnPersonLongClickListener(OnPersonLongClickListener listener) {
+        this.longClickListener = listener;
     }
 
     @NonNull
@@ -130,6 +139,13 @@ public class PersonCardAdapter extends RecyclerView.Adapter<PersonCardAdapter.Vi
                 if (listener != null) {
                     listener.onPersonClick(person);
                 }
+            });
+            itemView.setOnLongClickListener(v -> {
+                if (longClickListener != null) {
+                    longClickListener.onPersonLongClick(person);
+                    return true;
+                }
+                return false;
             });
         }
 

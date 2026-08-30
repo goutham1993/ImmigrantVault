@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +45,12 @@ public class LockActivity extends AppCompatActivity {
     private AlertDialog progressDialog;
     private Future<?> activeTask;
 
-    private final ActivityResultLauncher<String> createDocumentLauncher =
-            registerForActivityResult(new ActivityResultContracts.CreateDocument(), this::handleExportResult);
+    private final ActivityResultLauncher<String> createJsonLauncher =
+            registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"),
+                    this::handleExportResult);
+    private final ActivityResultLauncher<String> createZipLauncher =
+            registerForActivityResult(new ActivityResultContracts.CreateDocument("application/zip"),
+                    this::handleExportResult);
 
     private final ActivityResultLauncher<String[]> openDocumentLauncher =
             registerForActivityResult(new ActivityResultContracts.OpenDocument(), this::handleImportSelection);
@@ -143,16 +148,28 @@ public class LockActivity extends AppCompatActivity {
     }
 
     private void showExportFormatDialog() {
+        View content = getLayoutInflater().inflate(R.layout.dialog_export_format, null, false);
+        RadioGroup group = content.findViewById(R.id.export_format_group);
+
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.settings_export_format_title)
-                .setItems(new CharSequence[]{
-                        getString(R.string.settings_export_json),
-                        getString(R.string.settings_export_csv)
-                }, (dialog, which) -> {
-                    pendingExportFormat = which == 0 ? ExportFormat.JSON : ExportFormat.CSV;
-                    createDocumentLauncher.launch(pendingExportFormat.buildFileName());
+                .setView(content)
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.settings_export_continue, (dialog, which) -> {
+                    ExportFormat format = group.getCheckedRadioButtonId() == R.id.option_json
+                            ? ExportFormat.JSON
+                            : ExportFormat.CSV;
+                    startExport(format);
                 })
                 .show();
+    }
+
+    private void startExport(ExportFormat format) {
+        pendingExportFormat = format;
+        ActivityResultLauncher<String> launcher = format == ExportFormat.JSON
+                ? createJsonLauncher
+                : createZipLauncher;
+        launcher.launch(format.buildFileName());
     }
 
     private void showWipeWithoutBackupConfirm() {
