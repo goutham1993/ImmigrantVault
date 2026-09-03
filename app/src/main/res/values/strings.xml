@@ -36,8 +36,6 @@
     <string name="home_title">Your Family</string>
     <string name="home_welcome">Welcome back!</string>
     <string name="home_welcome_subtitle">Here\'s your immigration overview.</string>
-    <string name="home_menu_cd">Menu</string>
-    <string name="home_notifications_cd">Notifications</string>
     <string name="home_hero_cd">Immigration overview illustration</string>
     <string name="home_deadlines_title">Upcoming Deadlines</string>
     <string name="home_empty_title">Welcome to ImmigrantVault</string>
@@ -176,6 +174,12 @@
     <string name="action_check_status">Check status on USCIS</string>
     <string name="action_get_i94">Get latest I-94</string>
     <string name="action_mark_checked">Mark as checked today</string>
+    <string name="action_scan">Scan</string>
+    <string name="action_upload">Upload</string>
+    <string name="form_scanning">Reading document…</string>
+    <string name="form_scan_failed">Couldn\'t read fields — enter manually</string>
+    <string name="form_fill_filled">Fields filled — please review</string>
+    <string name="form_upload_pdf_unsupported">PDF can\'t be read for form fill — scan or upload a photo</string>
     <string name="receipt_copied">Receipt number copied</string>
 
     <!-- Status -->

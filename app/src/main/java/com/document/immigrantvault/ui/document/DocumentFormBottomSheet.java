@@ -15,7 +15,12 @@ import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.DocumentType;
 import com.document.immigrantvault.databinding.BottomSheetDocumentFormBinding;
+import com.document.immigrantvault.extraction.DocumentExtraction;
+import com.document.immigrantvault.extraction.DocumentFieldParser;
+import com.document.immigrantvault.extraction.FormScanController;
+import com.document.immigrantvault.extraction.OcrText;
 import com.document.immigrantvault.util.DatePickerHelper;
+import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
 import com.document.immigrantvault.util.UiUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -30,6 +35,7 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
 
     private BottomSheetDocumentFormBinding binding;
     private ImmigrantVaultApplication app;
+    private FormScanController scanController;
     private long personId;
     private Document editing;
     private Date issueDate;
@@ -46,6 +52,14 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         return sheet;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (ImmigrantVaultApplication) requireActivity().getApplication();
+        scanController = new FormScanController(this, app);
+        scanController.register();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -58,7 +72,6 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         UiUtils.autoCapitalizeInputs(view);
-        app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
 
         setupTypeDropdown();
@@ -68,6 +81,8 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
+        binding.btnScan.setOnClickListener(v -> startScan());
+        binding.btnUpload.setOnClickListener(v -> startUpload());
 
         if (requireArguments().containsKey(ARG_DOCUMENT_ID)) {
             long docId = requireArguments().getLong(ARG_DOCUMENT_ID);
@@ -82,6 +97,63 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         } else {
             binding.formTitle.setText(R.string.add_document);
             updatePassportFields(typeFromLabel(dropdownText(binding.inputType)));
+        }
+    }
+
+    private void startScan() {
+        scanController.startScan(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void startUpload() {
+        scanController.startUpload(
+                binding.scanProgress,
+                binding.getRoot(),
+                this::handleOcrResult,
+                binding.btnScan,
+                binding.btnUpload);
+    }
+
+    private void handleOcrResult(@NonNull OcrText ocr) {
+        DocumentType selected = typeFromLabel(dropdownText(binding.inputType));
+        DocumentExtraction extraction = DocumentFieldParser.parse(ocr, selected);
+        if (!extraction.hasAnyField()) {
+            scanController.showFailed();
+            return;
+        }
+        applyExtraction(extraction);
+        scanController.showFilled();
+    }
+
+    private void applyExtraction(@NonNull DocumentExtraction extraction) {
+        if (extraction.type != null) {
+            binding.inputType.setText(EnumLabels.documentType(extraction.type), false);
+            updatePassportFields(extraction.type);
+        }
+        if (extraction.documentNumber != null) {
+            binding.inputNumber.setText(extraction.documentNumber);
+            binding.inputNumberLayout.setError(null);
+        }
+        if (extraction.issuingCountry != null) {
+            binding.inputAuthority.setText(extraction.issuingCountry);
+        }
+        if (extraction.placeOfIssue != null) {
+            binding.inputPlaceOfIssue.setText(extraction.placeOfIssue);
+        }
+        if (extraction.nationality != null) {
+            binding.inputNationality.setText(extraction.nationality);
+        }
+        if (extraction.issueDate != null) {
+            issueDate = extraction.issueDate;
+            binding.inputIssueDate.setText(DateUtils.formatDate(issueDate));
+        }
+        if (extraction.expiryDate != null) {
+            expiryDate = extraction.expiryDate;
+            binding.inputExpiryDate.setText(DateUtils.formatDate(expiryDate));
         }
     }
 
@@ -121,12 +193,10 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         issueDate = doc.issueDate;
         expiryDate = doc.expiryDate;
         if (issueDate != null) {
-            binding.inputIssueDate.setText(
-                    com.document.immigrantvault.util.DateUtils.formatDate(issueDate));
+            binding.inputIssueDate.setText(DateUtils.formatDate(issueDate));
         }
         if (expiryDate != null) {
-            binding.inputExpiryDate.setText(
-                    com.document.immigrantvault.util.DateUtils.formatDate(expiryDate));
+            binding.inputExpiryDate.setText(DateUtils.formatDate(expiryDate));
         }
     }
 

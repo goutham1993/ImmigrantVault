@@ -17,6 +17,7 @@ viewpager2 = "1.1.0"
 securityCrypto = "1.1.0-alpha06"
 gson = "2.11.0"
 mlkitDocumentScanner = "16.0.0"
+mlkitTextRecognition = "16.0.1"
 glide = "4.16.0"
 
 [libraries]
@@ -40,6 +41,7 @@ viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref =
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 mlkit-document-scanner = { group = "com.google.android.gms", name = "play-services-mlkit-document-scanner", version.ref = "mlkitDocumentScanner" }
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 
 [plugins]
