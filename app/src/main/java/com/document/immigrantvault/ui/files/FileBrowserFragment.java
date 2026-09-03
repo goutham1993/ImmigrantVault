@@ -70,7 +70,9 @@ public class FileBrowserFragment extends Fragment {
     private ActivityResultLauncher<String[]> openDocumentLauncher;
     private ActivityResultLauncher<IntentSenderRequest> scanLauncher;
     private ActivityResultLauncher<Uri> takePictureLauncher;
+    private ActivityResultLauncher<VaultFileSharing.CreateNamedDocument.Request> createDocumentLauncher;
     private Uri pendingCameraUri;
+    private long pendingDownloadFileId = -1L;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +81,16 @@ public class FileBrowserFragment extends Fragment {
         personId = args.getLong(ARG_PERSON_ID);
         folderId = args.getLong(ARG_FOLDER_ID, -1L);
         title = args.getString(ARG_TITLE);
+        if (savedInstanceState != null) {
+            pendingDownloadFileId = savedInstanceState.getLong("pendingDownloadFileId", -1L);
+        }
         registerLaunchers();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("pendingDownloadFileId", pendingDownloadFileId);
     }
 
     private void registerLaunchers() {
@@ -110,6 +121,29 @@ public class FileBrowserFragment extends Fragment {
                         promptSave(pendingCameraUri, "image/jpeg", 1, FileSource.SCAN);
                     }
                     pendingCameraUri = null;
+                });
+
+        createDocumentLauncher = registerForActivityResult(
+                new VaultFileSharing.CreateNamedDocument(),
+                uri -> {
+                    long fileId = pendingDownloadFileId;
+                    pendingDownloadFileId = -1L;
+                    if (uri == null || fileId < 0 || !isAdded()) {
+                        return;
+                    }
+                    ImmigrantVaultApplication application =
+                            (ImmigrantVaultApplication) requireActivity().getApplication();
+                    application.getVaultFileRepository().exportTo(fileId, uri, new RepositoryCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            toast(R.string.files_downloaded);
+                        }
+
+                        @Override
+                        public void onError(Exception error) {
+                            toast(R.string.files_download_failed);
+                        }
+                    });
                 });
     }
 
@@ -421,8 +455,16 @@ public class FileBrowserFragment extends Fragment {
                         .show(getParentFragmentManager(), "file_rename");
                 return true;
             }
+            if (id == R.id.action_copy_file) {
+                showCopyDialog(file);
+                return true;
+            }
             if (id == R.id.action_move_file) {
                 showMoveDialog(file);
+                return true;
+            }
+            if (id == R.id.action_download_file) {
+                startDownload(file);
                 return true;
             }
             if (id == R.id.action_share_file) {
@@ -441,10 +483,64 @@ public class FileBrowserFragment extends Fragment {
     }
 
     private void showMoveDialog(VaultFile file) {
+        pickFolder(R.string.files_move_file, file.folderId, target ->
+                app.getVaultFileRepository().move(file.id, target.id, new RepositoryCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        toast(R.string.files_moved);
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        toast(R.string.files_save_failed);
+                    }
+                }));
+    }
+
+    private void showCopyDialog(VaultFile file) {
+        pickFolder(R.string.files_copy_file, -1L, target -> {
+            String displayName = file.displayName;
+            if (target.id == file.folderId) {
+                displayName = getString(R.string.files_copy_name,
+                        file.displayName != null ? file.displayName : "");
+            }
+            app.getVaultFileRepository().copyToFolder(file.id, target.id, displayName,
+                    new RepositoryCallback<Long>() {
+                        @Override
+                        public void onSuccess(Long result) {
+                            toast(R.string.files_copied);
+                        }
+
+                        @Override
+                        public void onError(Exception error) {
+                            toast(R.string.files_save_failed);
+                        }
+                    });
+        });
+    }
+
+    private void startDownload(VaultFile file) {
+        if (!app.getVaultFileStorage().exists(file.personId, file.storedName)) {
+            toast(R.string.files_download_failed);
+            return;
+        }
+        pendingDownloadFileId = file.id;
+        createDocumentLauncher.launch(new VaultFileSharing.CreateNamedDocument.Request(
+                file.mimeType,
+                FileFormat.downloadFileName(file)));
+    }
+
+    private interface FolderPickListener {
+        void onFolderPicked(VaultFolder folder);
+    }
+
+    private void pickFolder(int titleRes, long excludeFolderId, FolderPickListener listener) {
         app.getExecutor().execute(() -> {
-            List<VaultFolder> targets =
-                    app.getDatabase().vaultFolderDao().getByPersonSync(personId);
-            targets.removeIf(folder -> folder.id == file.folderId);
+            List<VaultFolder> targets = new ArrayList<>(
+                    app.getDatabase().vaultFolderDao().getByPersonSync(personId));
+            if (excludeFolderId >= 0) {
+                targets.removeIf(folder -> folder.id == excludeFolderId);
+            }
             if (!isAdded()) {
                 return;
             }
@@ -461,19 +557,8 @@ public class FileBrowserFragment extends Fragment {
                     names[i] = targets.get(i).name;
                 }
                 new AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.files_move_file)
-                        .setItems(names, (dialog, which) -> app.getVaultFileRepository()
-                                .move(file.id, targets.get(which).id, new RepositoryCallback<Void>() {
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                        toast(R.string.files_moved);
-                                    }
-
-                                    @Override
-                                    public void onError(Exception error) {
-                                        toast(R.string.files_save_failed);
-                                    }
-                                }))
+                        .setTitle(titleRes)
+                        .setItems(names, (dialog, which) -> listener.onFolderPicked(targets.get(which)))
                         .setNegativeButton(R.string.action_cancel, null)
                         .show();
             });

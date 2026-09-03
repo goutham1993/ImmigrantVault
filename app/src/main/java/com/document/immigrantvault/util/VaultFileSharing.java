@@ -1,10 +1,14 @@
 package com.document.immigrantvault.util;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.document.immigrantvault.data.db.entity.VaultFile;
@@ -56,6 +60,40 @@ public final class VaultFileSharing {
             return true;
         } catch (ActivityNotFoundException e) {
             return false;
+        }
+    }
+
+    /** SAF "Save as" picker that accepts a MIME type and suggested file name. */
+    public static final class CreateNamedDocument extends ActivityResultContract<CreateNamedDocument.Request, Uri> {
+
+        public static final class Request {
+            public final String mimeType;
+            public final String fileName;
+
+            public Request(String mimeType, String fileName) {
+                this.mimeType = mimeType;
+                this.fileName = fileName;
+            }
+        }
+
+        @NonNull
+        @Override
+        public Intent createIntent(@NonNull Context context, @NonNull Request input) {
+            String mimeType = input.mimeType != null && !input.mimeType.isEmpty()
+                    ? input.mimeType : "*/*";
+            return new Intent(Intent.ACTION_CREATE_DOCUMENT)
+                    .addCategory(Intent.CATEGORY_OPENABLE)
+                    .setType(mimeType)
+                    .putExtra(Intent.EXTRA_TITLE, input.fileName);
+        }
+
+        @Nullable
+        @Override
+        public Uri parseResult(int resultCode, @Nullable Intent intent) {
+            if (resultCode != Activity.RESULT_OK || intent == null) {
+                return null;
+            }
+            return intent.getData();
         }
     }
 }

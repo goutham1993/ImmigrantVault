@@ -75,6 +75,38 @@ public class VaultFileStorage {
         return storedName;
     }
 
+    /** Duplicates a stored file and returns the new stored name. */
+    public String copy(long personId, String storedName, String mimeType) throws IOException {
+        File source = resolve(personId, storedName);
+        if (!source.exists()) {
+            throw new IOException("Missing vault file: " + storedName);
+        }
+        String copiedName = generateStoredName(mimeType);
+        File target = resolve(personId, copiedName);
+        try (InputStream in = new java.io.FileInputStream(source)) {
+            writeStream(in, target);
+        }
+        return copiedName;
+    }
+
+    public void exportTo(Uri destination, long personId, String storedName) throws IOException {
+        File source = resolve(personId, storedName);
+        if (!source.exists()) {
+            throw new IOException("Missing vault file: " + storedName);
+        }
+        try (InputStream in = new java.io.FileInputStream(source);
+             OutputStream out = context.getContentResolver().openOutputStream(destination)) {
+            if (out == null) {
+                throw new IOException("Could not open destination.");
+            }
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        }
+    }
+
     public String generateStoredName(String mimeType) {
         String extension = extensionFor(mimeType);
         return UUID.randomUUID() + (extension != null ? "." + extension : "");

@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes;
 
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.util.VaultFileStorage;
 
 import java.util.Locale;
 
@@ -79,5 +80,23 @@ public final class FileFormat {
             return String.format(Locale.getDefault(), "%.0f KB", bytes / 1024.0);
         }
         return String.format(Locale.getDefault(), "%.1f MB", bytes / (1024.0 * 1024.0));
+    }
+
+    /** Suggested file name for the system save picker, with a type-appropriate extension. */
+    public static String downloadFileName(VaultFile file) {
+        String name = file != null && file.displayName != null ? file.displayName.trim() : "";
+        if (name.isEmpty()) {
+            name = "document";
+        }
+        name = name.replaceAll("[\\\\/:*?\"<>|]", "_");
+        String mimeType = file != null ? file.mimeType : null;
+        String extension = VaultFileStorage.extensionFor(mimeType);
+        if (extension != null) {
+            String suffix = "." + extension;
+            if (!name.toLowerCase(Locale.US).endsWith(suffix)) {
+                name += suffix;
+            }
+        }
+        return name;
     }
 }

@@ -4,8 +4,14 @@
         android:id="@+id/action_rename_file"
         android:title="@string/files_rename_file" />
     <item
+        android:id="@+id/action_copy_file"
+        android:title="@string/files_copy_file" />
+    <item
         android:id="@+id/action_move_file"
         android:title="@string/files_move_file" />
+    <item
+        android:id="@+id/action_download_file"
+        android:title="@string/files_download_file" />
     <item
         android:id="@+id/action_share_file"
         android:title="@string/files_share_file" />

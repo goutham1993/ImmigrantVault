@@ -114,6 +114,65 @@ public class VaultFileRepository {
         });
     }
 
+    /**
+     * Duplicates the file bytes and metadata into {@code targetFolderId}. The original row is
+     * left untouched. {@code displayName} is used as-is so the UI can add a "(copy)" suffix
+     * when duplicating into the same folder.
+     */
+    public void copyToFolder(long fileId, long targetFolderId, String displayName,
+                             RepositoryCallback<Long> callback) {
+        executor.execute(() -> {
+            String copiedName = null;
+            long personId = -1L;
+            try {
+                VaultFile file = database.vaultFileDao().getByIdSync(fileId);
+                if (file == null) {
+                    postError(callback, new IllegalStateException("File no longer exists."));
+                    return;
+                }
+                personId = file.personId;
+                copiedName = storage.copy(file.personId, file.storedName, file.mimeType);
+
+                VaultFile copy = new VaultFile();
+                copy.personId = file.personId;
+                copy.folderId = targetFolderId;
+                copy.displayName = displayName != null && !displayName.isEmpty()
+                        ? displayName : file.displayName;
+                copy.storedName = copiedName;
+                copy.mimeType = file.mimeType;
+                copy.sizeBytes = storage.sizeOf(file.personId, copiedName);
+                copy.pageCount = file.pageCount;
+                copy.source = file.source;
+                copy.createdAt = new Date();
+                copy.updatedAt = copy.createdAt;
+
+                long id = database.vaultFileDao().insert(copy);
+                postSuccess(callback, id);
+            } catch (Exception e) {
+                if (copiedName != null && personId >= 0) {
+                    storage.delete(personId, copiedName);
+                }
+                postError(callback, e);
+            }
+        });
+    }
+
+    public void exportTo(long fileId, Uri destination, RepositoryCallback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                VaultFile file = database.vaultFileDao().getByIdSync(fileId);
+                if (file == null) {
+                    postError(callback, new IllegalStateException("File no longer exists."));
+                    return;
+                }
+                storage.exportTo(destination, file.personId, file.storedName);
+                postSuccess(callback, null);
+            } catch (Exception e) {
+                postError(callback, e);
+            }
+        });
+    }
+
     public void delete(VaultFile file, RepositoryCallback<Void> callback) {
         executor.execute(() -> {
             try {

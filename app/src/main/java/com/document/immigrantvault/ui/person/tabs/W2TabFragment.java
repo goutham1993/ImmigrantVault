@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.W2Entry;
-import com.document.immigrantvault.databinding.FragmentListTabBinding;
+import com.document.immigrantvault.databinding.FragmentW2TabBinding;
 import com.document.immigrantvault.databinding.ViewEmptyStateBinding;
 import com.document.immigrantvault.ui.common.ListEntryAdapter;
 import com.document.immigrantvault.ui.w2.W2FormBottomSheet;
@@ -49,7 +49,7 @@ public class W2TabFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        FragmentListTabBinding binding = FragmentListTabBinding.inflate(inflater, container, false);
+        FragmentW2TabBinding binding = FragmentW2TabBinding.inflate(inflater, container, false);
         adapter = new ListEntryAdapter();
         binding.listRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.listRecycler.setAdapter(adapter);
@@ -77,8 +77,47 @@ public class W2TabFragment extends Fragment {
             binding.listRecycler.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
             empty.getRoot().setVisibility(isEmpty ? View.VISIBLE : View.GONE);
             binding.fabAdd.setVisibility(View.VISIBLE);
+            bindTotals(binding, entries);
         });
         return binding.getRoot();
+    }
+
+    private void bindTotals(FragmentW2TabBinding binding, List<W2Entry> w2Entries) {
+        if (w2Entries.isEmpty()) {
+            binding.w2TotalsCard.setVisibility(View.GONE);
+            return;
+        }
+
+        double wages = 0d;
+        double federal = 0d;
+        double socialSecurity = 0d;
+        double medicare = 0d;
+        double state = 0d;
+        int minYear = Integer.MAX_VALUE;
+        int maxYear = Integer.MIN_VALUE;
+
+        for (W2Entry entry : w2Entries) {
+            wages += amountOrZero(entry.wages);
+            federal += amountOrZero(entry.federalIncomeTax);
+            socialSecurity += amountOrZero(entry.socialSecurityTax);
+            medicare += amountOrZero(entry.medicareTax);
+            state += amountOrZero(entry.stateIncomeTax);
+            minYear = Math.min(minYear, entry.taxYear);
+            maxYear = Math.max(maxYear, entry.taxYear);
+        }
+
+        if (minYear == maxYear) {
+            binding.w2TotalsYears.setText(getString(R.string.w2_tax_year_meta, minYear));
+        } else {
+            binding.w2TotalsYears.setText(getString(R.string.w2_totals_year_range, minYear, maxYear));
+        }
+        binding.w2TotalWages.setText(currencyFormat.format(wages));
+        binding.w2TotalFederal.setText(currencyFormat.format(federal));
+        binding.w2TotalSs.setText(currencyFormat.format(socialSecurity));
+        binding.w2TotalMedicare.setText(currencyFormat.format(medicare));
+        binding.w2TotalState.setText(currencyFormat.format(state));
+        binding.w2TotalTax.setText(currencyFormat.format(federal + socialSecurity + medicare + state));
+        binding.w2TotalsCard.setVisibility(View.VISIBLE);
     }
 
     private String formatTaxSubtitle(W2Entry entry) {
