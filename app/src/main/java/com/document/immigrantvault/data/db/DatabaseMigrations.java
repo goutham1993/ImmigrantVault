@@ -323,6 +323,36 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_21_22 = new Migration(21, 22) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            // Reminders only: wipe auto-generated rows for the opt-in model.
+            // Documents, visas, people, petitions, and all other tables are untouched.
+            db.execSQL("DELETE FROM reminders");
+        }
+    };
+
+    static final Migration MIGRATION_22_23 = new Migration(22, 23) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            if (!columnExists(db, "petitions", "priorityDate")) {
+                db.execSQL("ALTER TABLE petitions ADD COLUMN priorityDate INTEGER");
+            }
+            if (!columnExists(db, "petitions", "preferenceCategory")) {
+                db.execSQL("ALTER TABLE petitions ADD COLUMN preferenceCategory TEXT");
+            }
+            if (!columnExists(db, "petitions", "countryOfChargeability")) {
+                db.execSQL("ALTER TABLE petitions ADD COLUMN countryOfChargeability TEXT");
+            }
+            if (!columnExists(db, "petitions", "interviewDate")) {
+                db.execSQL("ALTER TABLE petitions ADD COLUMN interviewDate INTEGER");
+            }
+            if (!columnExists(db, "petitions", "oathDate")) {
+                db.execSQL("ALTER TABLE petitions ADD COLUMN oathDate INTEGER");
+            }
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

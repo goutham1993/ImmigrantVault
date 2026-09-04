@@ -30,6 +30,11 @@ public class Petition {
     public Date lastCheckedDate;
     public int checkIntervalDays;
     public String notes;
+    public Date priorityDate;
+    public PreferenceCategory preferenceCategory;
+    public String countryOfChargeability;
+    public Date interviewDate;
+    public Date oathDate;
 
     public Petition() {
         this.status = PetitionStatus.PENDING;

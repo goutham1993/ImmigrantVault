@@ -106,6 +106,38 @@
             android:gravity="start|center_vertical"
             android:text="@string/settings_link_processing" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/link_visa_bulletin"
+            style="@style/Widget.ImmigrantVault.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_link_visa_bulletin" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/link_visa_bulletin_dates"
+            style="@style/Widget.ImmigrantVault.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_link_visa_bulletin_dates" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/link_green_card"
+            style="@style/Widget.ImmigrantVault.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_link_green_card" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/link_n400"
+            style="@style/Widget.ImmigrantVault.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:text="@string/settings_link_n400" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

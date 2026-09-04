@@ -71,6 +71,14 @@ public class SettingsFragment extends Fragment {
                 UiUtils.openUrl(requireContext(), LinkConstants.USCIS_CASE_STATUS_URL));
         binding.linkProcessing.setOnClickListener(v ->
                 UiUtils.openUrl(requireContext(), LinkConstants.USCIS_PROCESSING_TIMES_URL));
+        binding.linkVisaBulletin.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.VISA_BULLETIN_URL));
+        binding.linkVisaBulletinDates.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.VISA_BULLETIN_DATES_URL));
+        binding.linkGreenCard.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.USCIS_GREEN_CARD_URL));
+        binding.linkN400.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.USCIS_N400_URL));
 
         binding.buttonExport.setOnClickListener(v -> showExportFormatDialog());
         binding.buttonImport.setOnClickListener(v -> startImport());

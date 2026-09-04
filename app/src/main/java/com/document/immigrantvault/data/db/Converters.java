@@ -7,6 +7,7 @@ import com.document.immigrantvault.data.db.entity.FileSource;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
 import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.PetitionType;
+import com.document.immigrantvault.data.db.entity.PreferenceCategory;
 import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.data.db.entity.ReminderKind;
 import com.document.immigrantvault.data.db.entity.SourceEntityType;
@@ -67,6 +68,16 @@ public class Converters {
     @TypeConverter
     public static PetitionStatus stringToPetitionStatus(String value) {
         return value == null ? null : PetitionStatus.valueOf(value);
+    }
+
+    @TypeConverter
+    public static String preferenceCategoryToString(PreferenceCategory value) {
+        return value == null ? null : value.name();
+    }
+
+    @TypeConverter
+    public static PreferenceCategory stringToPreferenceCategory(String value) {
+        return value == null ? null : PreferenceCategory.valueOf(value);
     }
 
     @TypeConverter

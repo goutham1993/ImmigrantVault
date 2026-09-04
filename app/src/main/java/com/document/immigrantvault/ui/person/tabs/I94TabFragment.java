@@ -80,8 +80,14 @@ public class I94TabFragment extends Fragment {
                 ? entry.i94Number
                 : getString(R.string.travel_no_i94_number);
         binding.i94Number.setText(getString(R.string.travel_i94_number, i94Number));
+        UiUtils.bindCopyOnLongPress(binding.i94Number, entry.i94Number,
+                getString(R.string.i94_number_copied));
+
         binding.i94Document.setText(getString(R.string.travel_document_number,
                 valueOrDefault(entry.documentNumber, R.string.travel_no_document_number)));
+        UiUtils.bindCopyOnLongPress(binding.i94Document, entry.documentNumber,
+                getString(R.string.document_number_copied));
+
         binding.i94Citizenship.setText(getString(R.string.travel_country_of_citizenship,
                 valueOrDefault(entry.countryOfCitizenship, R.string.travel_no_country_of_citizenship)));
         binding.i94Arrival.setText(getString(R.string.travel_arrived,

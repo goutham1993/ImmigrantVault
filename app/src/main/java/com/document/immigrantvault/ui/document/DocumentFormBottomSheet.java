@@ -14,6 +14,9 @@ import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.DocumentType;
+import com.document.immigrantvault.data.db.entity.LinkedEntityType;
+import com.document.immigrantvault.data.db.entity.Reminder;
+import com.document.immigrantvault.data.repository.ReminderRepository;
 import com.document.immigrantvault.databinding.BottomSheetDocumentFormBinding;
 import com.document.immigrantvault.extraction.DocumentExtraction;
 import com.document.immigrantvault.extraction.DocumentFieldParser;
@@ -40,6 +43,7 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
     private Document editing;
     private Date issueDate;
     private Date expiryDate;
+    private int selectedLeadDays = ReminderRepository.DEFAULT_LEAD_DAYS;
 
     public static DocumentFormBottomSheet newInstance(long personId, Long documentId) {
         DocumentFormBottomSheet sheet = new DocumentFormBottomSheet();
@@ -75,9 +79,14 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         personId = requireArguments().getLong(ARG_PERSON_ID);
 
         setupTypeDropdown();
+        setupLeadDaysDropdown();
         DatePickerHelper.bind(requireContext(), binding.inputIssueDate, null, d -> issueDate = d);
-        DatePickerHelper.bind(requireContext(), binding.inputExpiryDate, null, d -> expiryDate = d);
+        DatePickerHelper.bind(requireContext(), binding.inputExpiryDate, null, d -> {
+            expiryDate = d;
+            updateReminderUi();
+        });
 
+        binding.switchRemind.setOnCheckedChangeListener((buttonView, isChecked) -> updateReminderUi());
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
@@ -90,13 +99,16 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
             binding.btnDelete.setVisibility(View.VISIBLE);
             app.getExecutor().execute(() -> {
                 Document doc = app.getDatabase().documentDao().getByIdSync(docId);
+                Reminder reminder = app.getReminderRepository()
+                        .getByLinkedSync(LinkedEntityType.DOCUMENT, docId);
                 if (doc != null) {
-                    requireActivity().runOnUiThread(() -> populate(doc));
+                    requireActivity().runOnUiThread(() -> populate(doc, reminder));
                 }
             });
         } else {
             binding.formTitle.setText(R.string.add_document);
             updatePassportFields(typeFromLabel(dropdownText(binding.inputType)));
+            updateReminderUi();
         }
     }
 
@@ -154,6 +166,7 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         if (extraction.expiryDate != null) {
             expiryDate = extraction.expiryDate;
             binding.inputExpiryDate.setText(DateUtils.formatDate(expiryDate));
+            updateReminderUi();
         }
     }
 
@@ -172,6 +185,42 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
                 updatePassportFields(types[position]));
     }
 
+    private void setupLeadDaysDropdown() {
+        String[] labels = new String[ReminderRepository.LEAD_DAY_OPTIONS.length];
+        for (int i = 0; i < ReminderRepository.LEAD_DAY_OPTIONS.length; i++) {
+            labels[i] = getString(R.string.remind_lead_days, ReminderRepository.LEAD_DAY_OPTIONS[i]);
+        }
+        binding.inputLeadDays.setAdapter(new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_dropdown_item_1line, labels));
+        setLeadDaysSelection(ReminderRepository.DEFAULT_LEAD_DAYS);
+        binding.inputLeadDays.setOnItemClickListener((parent, view, position, id) ->
+                selectedLeadDays = ReminderRepository.LEAD_DAY_OPTIONS[position]);
+    }
+
+    private void setLeadDaysSelection(int leadDays) {
+        selectedLeadDays = leadDays;
+        for (int i = 0; i < ReminderRepository.LEAD_DAY_OPTIONS.length; i++) {
+            if (ReminderRepository.LEAD_DAY_OPTIONS[i] == leadDays) {
+                binding.inputLeadDays.setText(
+                        getString(R.string.remind_lead_days, leadDays), false);
+                return;
+            }
+        }
+        selectedLeadDays = ReminderRepository.DEFAULT_LEAD_DAYS;
+        binding.inputLeadDays.setText(
+                getString(R.string.remind_lead_days, selectedLeadDays), false);
+    }
+
+    private void updateReminderUi() {
+        boolean hasExpiry = expiryDate != null;
+        binding.switchRemind.setEnabled(hasExpiry);
+        if (!hasExpiry) {
+            binding.switchRemind.setChecked(false);
+        }
+        binding.inputLeadDaysLayout.setVisibility(
+                hasExpiry && binding.switchRemind.isChecked() ? View.VISIBLE : View.GONE);
+    }
+
     private void updatePassportFields(DocumentType type) {
         boolean isPassport = type == DocumentType.PASSPORT;
         binding.inputAuthorityLayout.setHint(isPassport
@@ -181,7 +230,7 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         binding.inputNationalityLayout.setVisibility(isPassport ? View.VISIBLE : View.GONE);
     }
 
-    private void populate(Document doc) {
+    private void populate(Document doc, Reminder reminder) {
         editing = doc;
         binding.inputType.setText(EnumLabels.documentType(doc.type), false);
         updatePassportFields(doc.type);
@@ -198,6 +247,14 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         if (expiryDate != null) {
             binding.inputExpiryDate.setText(DateUtils.formatDate(expiryDate));
         }
+        if (reminder != null && reminder.enabled) {
+            binding.switchRemind.setChecked(true);
+            setLeadDaysSelection(reminder.leadDays);
+        } else {
+            binding.switchRemind.setChecked(false);
+            setLeadDaysSelection(ReminderRepository.DEFAULT_LEAD_DAYS);
+        }
+        updateReminderUi();
     }
 
     private DocumentType typeFromLabel(String label) {
@@ -234,10 +291,14 @@ public class DocumentFormBottomSheet extends BottomSheetDialogFragment {
         doc.expiryDate = expiryDate;
         doc.notes = text(binding.inputNotes);
 
+        Integer leadDays = (expiryDate != null && binding.switchRemind.isChecked())
+                ? selectedLeadDays
+                : null;
+
         if (editing == null) {
-            app.getDocumentRepository().insert(doc, this::dismiss);
+            app.getDocumentRepository().insert(doc, leadDays, this::dismiss);
         } else {
-            app.getDocumentRepository().update(doc, this::dismiss);
+            app.getDocumentRepository().update(doc, leadDays, this::dismiss);
         }
     }
 

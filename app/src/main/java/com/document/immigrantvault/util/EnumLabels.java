@@ -3,6 +3,7 @@ package com.document.immigrantvault.util;
 import com.document.immigrantvault.data.db.entity.DocumentType;
 import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.PetitionType;
+import com.document.immigrantvault.data.db.entity.PreferenceCategory;
 import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.data.db.entity.TaxReturnOutcome;
 import com.document.immigrantvault.data.db.entity.TaxReturnType;
@@ -102,6 +103,34 @@ public final class EnumLabels {
                 return "Denied";
             case RFE:
                 return "RFE";
+            default:
+                return "Other";
+        }
+    }
+
+    public static String preferenceCategory(PreferenceCategory category) {
+        if (category == null) {
+            return "Other";
+        }
+        switch (category) {
+            case EB_1A:
+                return "EB-1A";
+            case EB_1B:
+                return "EB-1B";
+            case EB_1C:
+                return "EB-1C";
+            case EB_2:
+                return "EB-2";
+            case EB_2_NIW:
+                return "EB-2 NIW";
+            case EB_3:
+                return "EB-3";
+            case EB_4:
+                return "EB-4";
+            case EB_5:
+                return "EB-5";
+            case FAMILY:
+                return "Family";
             default:
                 return "Other";
         }

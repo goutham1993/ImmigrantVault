@@ -74,7 +74,6 @@ public class ImmigrantVaultApplication extends Application {
         exportImportRepository = new ExportImportRepository(database, executor, vaultFileStorage);
         vaultFolderRepository = new VaultFolderRepository(database, executor, vaultFileStorage);
         vaultFileRepository = new VaultFileRepository(database, executor, vaultFileStorage);
-        reminderRepository.reconcileOverlappingVisaReminders();
         vaultFileRepository.sweepOrphans();
         ReminderScheduler.schedule(this);
         personRepository.removeSeededDemoPeople();

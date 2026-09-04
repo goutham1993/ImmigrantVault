@@ -1,5 +1,9 @@
 package com.document.immigrantvault.util;
 
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -91,16 +95,40 @@ public final class DateUtils {
     }
 
     public static String formatIssueExpiry(Date issue, Date expiry) {
+        return formatIssueExpiry(issue, expiry, 0).toString();
+    }
+
+    /**
+     * Formats issue/expiry dates. When {@code futureExpiryColor} is non-zero and the expiry
+     * is today or later, only the "Expires …" portion is colored.
+     */
+    public static CharSequence formatIssueExpiry(Date issue, Date expiry, int futureExpiryColor) {
         if (issue == null && expiry == null) {
             return "";
-        }
-        if (issue == null) {
-            return "Expires " + formatDate(expiry);
         }
         if (expiry == null) {
             return "Issued " + formatDate(issue);
         }
-        return "Issued " + formatDate(issue) + " · Expires " + formatDate(expiry);
+        String expiryPart = "Expires " + formatDate(expiry);
+        boolean highlight = futureExpiryColor != 0 && daysUntil(expiry) >= 0;
+        if (issue == null) {
+            if (!highlight) {
+                return expiryPart;
+            }
+            SpannableString span = new SpannableString(expiryPart);
+            span.setSpan(new ForegroundColorSpan(futureExpiryColor), 0, expiryPart.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return span;
+        }
+        String full = "Issued " + formatDate(issue) + " · " + expiryPart;
+        if (!highlight) {
+            return full;
+        }
+        int start = full.length() - expiryPart.length();
+        SpannableString span = new SpannableString(full);
+        span.setSpan(new ForegroundColorSpan(futureExpiryColor), start, full.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return span;
     }
 
     public static String formatTravelDateRange(Date departure, Date arrival) {

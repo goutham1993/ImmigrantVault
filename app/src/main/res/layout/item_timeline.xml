@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="12dp">
+    android:paddingEnd="4dp">
 
+    <!-- Vertical rail: connector + dot -->
     <LinearLayout
-        android:layout_width="72dp"
-        android:layout_height="wrap_content"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/timeline_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceLabelMedium"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="Mar 15" />
-
-        <TextView
-            android:id="@+id/timeline_year"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="2026" />
+        <View
+            android:id="@+id/timeline_line_top"
+            android:layout_width="2dp"
+            android:layout_height="6dp"
+            android:background="?attr/colorOutlineVariant" />
 
         <View
+            android:id="@+id/timeline_dot"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_timeline_dot" />
+
+        <View
+            android:id="@+id/timeline_line_bottom"
             android:layout_width="2dp"
             android:layout_height="0dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
             android:background="?attr/colorOutlineVariant"
-            android:minHeight="24dp" />
+            android:minHeight="20dp" />
 
     </LinearLayout>
 
@@ -45,14 +42,25 @@
         android:layout_marginStart="12dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingBottom="16dp">
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/timeline_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            tools:text="May 18" />
 
         <TextView
             android:id="@+id/timeline_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleSmall"
-            tools:text="Passport expires" />
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnSurface"
+            tools:text="H-1B petition approved" />
 
         <TextView
             android:id="@+id/timeline_description"
@@ -61,7 +69,17 @@
             android:layout_marginTop="2dp"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="AB1234567" />
+            tools:text="USCIS · Receipt IOE0912345678" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/timeline_chips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:visibility="gone"
+            app:chipSpacingHorizontal="8dp"
+            app:singleLine="false"
+            tools:visibility="visible" />
 
     </LinearLayout>
 

@@ -66,7 +66,7 @@ import com.document.immigrantvault.data.db.entity.VaultFolder;
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    public static final int VERSION = 21;
+    public static final int VERSION = 23;
 
     private static volatile AppDatabase INSTANCE;
 
@@ -116,7 +116,9 @@ public abstract class AppDatabase extends RoomDatabase {
                             DatabaseMigrations.MIGRATION_17_18,
                             DatabaseMigrations.MIGRATION_18_19,
                             DatabaseMigrations.MIGRATION_19_20,
-                            DatabaseMigrations.MIGRATION_20_21
+                            DatabaseMigrations.MIGRATION_20_21,
+                            DatabaseMigrations.MIGRATION_21_22,
+                            DatabaseMigrations.MIGRATION_22_23
                     )
                             .build();
                 }

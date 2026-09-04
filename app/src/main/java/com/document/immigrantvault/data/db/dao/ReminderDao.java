@@ -39,4 +39,7 @@ public interface ReminderDao {
 
     @Query("SELECT * FROM reminders WHERE id = :id")
     Reminder getByIdSync(long id);
+
+    @Query("SELECT * FROM reminders WHERE linkedType = :linkedType AND linkedId = :linkedId LIMIT 1")
+    Reminder getByLinkedSync(LinkedEntityType linkedType, long linkedId);
 }

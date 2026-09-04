@@ -5,9 +5,6 @@ import androidx.lifecycle.LiveData;
 import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
-import com.document.immigrantvault.data.db.entity.Person;
-import com.document.immigrantvault.data.db.entity.Petition;
-import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.ReminderKind;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
@@ -24,7 +21,8 @@ import java.util.concurrent.ExecutorService;
 
 public class ReminderRepository {
 
-    private static final int[] DEFAULT_LEAD_DAYS = {30, 14, 7};
+    public static final int[] LEAD_DAY_OPTIONS = {7, 14, 30};
+    public static final int DEFAULT_LEAD_DAYS = 14;
 
     private final AppDatabase database;
     private final ExecutorService executor;
@@ -36,6 +34,10 @@ public class ReminderRepository {
 
     public LiveData<List<Reminder>> getAllEnabled() {
         return database.reminderDao().getAllEnabled();
+    }
+
+    public Reminder getByLinkedSync(LinkedEntityType linkedType, long linkedId) {
+        return database.reminderDao().getByLinkedSync(linkedType, linkedId);
     }
 
     public void update(Reminder reminder) {
@@ -53,117 +55,57 @@ public class ReminderRepository {
     }
 
     /**
-     * Removes person-level visa reminders that duplicate a visa-history entry
-     * with the same end date. Safe to call on app start for existing data.
+     * Creates or replaces a single document expiry reminder, or deletes if leadDays is null
+     * or the document has no expiry date. Must be called on a background thread.
      */
-    public void reconcileOverlappingVisaReminders() {
-        executor.execute(() -> {
-            List<Person> persons = database.personDao().getAllSync();
-            for (Person person : persons) {
-                if (person.visaEndDate == null) {
-                    continue;
-                }
-                if (hasVisaEntryWithEndDate(person.id, person.visaEndDate)) {
-                    database.reminderDao().deleteByLinked(LinkedEntityType.PERSON, person.id);
-                }
-            }
-        });
-    }
-
-    public void syncDocumentReminders(Document document) {
+    public void applyDocumentReminder(Document document, Integer leadDays) {
         database.reminderDao().deleteByLinked(LinkedEntityType.DOCUMENT, document.id);
-        if (document.expiryDate == null) {
+        if (leadDays == null || document.expiryDate == null) {
             return;
         }
+        int days = normalizeLeadDays(leadDays);
         String typeLabel = EnumLabels.documentType(document.type);
         String body = document.documentNumber + " expires on " + DateUtils.formatDate(document.expiryDate);
-        insertLeadDayReminders(
+        insertReminder(
                 LinkedEntityType.DOCUMENT,
                 document.id,
                 document.personId,
                 ReminderKind.DOC_EXPIRY,
                 document.expiryDate,
+                days,
                 typeLabel + " expiring soon",
                 body
         );
     }
 
     /**
-     * Person overview visa dates create reminders only when no visa-history entry
-     * already covers the same end date (avoids duplicate VISA_EXPIRY rows).
+     * Creates or replaces a single visa expiry reminder, or deletes if leadDays is null
+     * or the entry has no end date. Must be called on a background thread.
      */
-    public void syncVisaReminders(Person person) {
-        database.reminderDao().deleteByLinked(LinkedEntityType.PERSON, person.id);
-        if (person.visaEndDate == null) {
-            return;
-        }
-        if (hasVisaEntryWithEndDate(person.id, person.visaEndDate)) {
-            return;
-        }
-        String typeLabel = person.currentVisaType != null && !person.currentVisaType.isEmpty()
-                ? person.currentVisaType
-                : "Visa";
-        insertLeadDayReminders(
-                LinkedEntityType.PERSON,
-                person.id,
-                person.id,
-                ReminderKind.VISA_EXPIRY,
-                person.visaEndDate,
-                "Visa expiring soon",
-                typeLabel + " for " + person.getDisplayName() + " expires on "
-                        + DateUtils.formatDate(person.visaEndDate)
-        );
-    }
-
-    public void syncVisaEntryReminders(VisaEntry entry) {
+    public void applyVisaReminder(VisaEntry entry, Integer leadDays) {
         database.reminderDao().deleteByLinked(LinkedEntityType.VISA, entry.id);
-        if (entry.endDate == null) {
+        if (leadDays == null || entry.endDate == null) {
             return;
         }
+        int days = normalizeLeadDays(leadDays);
         String typeLabel = EnumLabels.visaType(entry.type);
         String numberPrefix = entry.visaNumber != null && !entry.visaNumber.isEmpty()
                 ? entry.visaNumber + " · "
                 : "";
-        insertLeadDayReminders(
+        insertReminder(
                 LinkedEntityType.VISA,
                 entry.id,
                 entry.personId,
                 ReminderKind.VISA_EXPIRY,
                 entry.endDate,
+                days,
                 typeLabel + " expiring soon",
                 numberPrefix + typeLabel + " expires on " + DateUtils.formatDate(entry.endDate)
         );
-
-        // Drop overview-level duplicates for the same end date.
-        Person person = database.personDao().getByIdSync(entry.personId);
-        if (person != null && sameCalendarDay(person.visaEndDate, entry.endDate)) {
-            database.reminderDao().deleteByLinked(LinkedEntityType.PERSON, person.id);
-        }
-    }
-
-    public void syncPetitionReminders(Petition petition) {
-        database.reminderDao().deleteByLinked(LinkedEntityType.PETITION, petition.id);
-        if (petition.status != PetitionStatus.PENDING) {
-            return;
-        }
-        Date baseDate = petition.lastCheckedDate != null ? petition.lastCheckedDate : petition.filedDate;
-        if (baseDate == null) {
-            baseDate = new Date();
-        }
-        Reminder reminder = new Reminder();
-        reminder.linkedType = LinkedEntityType.PETITION;
-        reminder.linkedId = petition.id;
-        reminder.personId = petition.personId;
-        reminder.reminderKind = ReminderKind.PETITION_CHECK;
-        reminder.triggerDate = DateUtils.addDays(baseDate, petition.checkIntervalDays);
-        reminder.leadDays = 0;
-        reminder.title = "Check petition status";
-        reminder.body = EnumLabels.petitionType(petition.type) + " (" + petition.receiptNumber + ")";
-        database.reminderDao().insert(reminder);
     }
 
     /**
-     * Collapses 30/14/7 lead-day copies into one row per linked entity for summary UIs.
+     * Collapses multiple lead-day copies into one row per linked entity for summary UIs.
      * Keeps the soonest upcoming trigger (or the earliest if all are past).
      */
     public static List<Reminder> collapseByLinkedEntity(List<Reminder> reminders) {
@@ -182,49 +124,35 @@ public class ReminderRepository {
         return new ArrayList<>(best.values());
     }
 
-    private void insertLeadDayReminders(
+    private void insertReminder(
             LinkedEntityType linkedType,
             long linkedId,
             long personId,
             ReminderKind kind,
             Date expiryDate,
+            int leadDays,
             String title,
             String body
     ) {
-        for (int leadDays : DEFAULT_LEAD_DAYS) {
-            Reminder reminder = new Reminder();
-            reminder.linkedType = linkedType;
-            reminder.linkedId = linkedId;
-            reminder.personId = personId;
-            reminder.reminderKind = kind;
-            reminder.triggerDate = DateUtils.addDays(expiryDate, -leadDays);
-            reminder.leadDays = leadDays;
-            reminder.title = title;
-            reminder.body = body;
-            database.reminderDao().insert(reminder);
-        }
+        Reminder reminder = new Reminder();
+        reminder.linkedType = linkedType;
+        reminder.linkedId = linkedId;
+        reminder.personId = personId;
+        reminder.reminderKind = kind;
+        reminder.triggerDate = DateUtils.addDays(expiryDate, -leadDays);
+        reminder.leadDays = leadDays;
+        reminder.title = title;
+        reminder.body = body;
+        database.reminderDao().insert(reminder);
     }
 
-    private boolean hasVisaEntryWithEndDate(long personId, Date endDate) {
-        List<VisaEntry> entries = database.visaDao().getByPersonSync(personId);
-        for (VisaEntry entry : entries) {
-            if (sameCalendarDay(entry.endDate, endDate)) {
-                return true;
+    private static int normalizeLeadDays(int leadDays) {
+        for (int option : LEAD_DAY_OPTIONS) {
+            if (option == leadDays) {
+                return leadDays;
             }
         }
-        return false;
-    }
-
-    private static boolean sameCalendarDay(Date a, Date b) {
-        if (a == null || b == null) {
-            return false;
-        }
-        Calendar ca = Calendar.getInstance();
-        ca.setTime(a);
-        Calendar cb = Calendar.getInstance();
-        cb.setTime(b);
-        return ca.get(Calendar.YEAR) == cb.get(Calendar.YEAR)
-                && ca.get(Calendar.DAY_OF_YEAR) == cb.get(Calendar.DAY_OF_YEAR);
+        return DEFAULT_LEAD_DAYS;
     }
 
     private static boolean isBetterSummaryReminder(Reminder candidate, Reminder current, Date today) {

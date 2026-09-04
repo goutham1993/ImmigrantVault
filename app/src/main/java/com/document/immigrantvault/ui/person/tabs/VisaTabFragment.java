@@ -20,6 +20,7 @@ import com.document.immigrantvault.ui.visa.VisaFormBottomSheet;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
 import com.document.immigrantvault.util.StatusHelper;
+import com.document.immigrantvault.util.UiUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +62,17 @@ public class VisaTabFragment extends Fragment {
 
         adapter.setOnItemClickListener(pos -> VisaFormBottomSheet.newInstance(personId, entries.get(pos).id)
                 .show(getParentFragmentManager(), "visa_form"));
+        adapter.setOnItemLongClickListener(pos -> {
+            VisaEntry entry = entries.get(pos);
+            String copyText = copyIdentifier(entry);
+            if (copyText == null) {
+                return;
+            }
+            int toastRes = entry.visaNumber != null && !entry.visaNumber.isEmpty()
+                    ? R.string.visa_number_copied
+                    : R.string.control_number_copied;
+            UiUtils.copyText(requireContext(), copyText, getString(toastRes));
+        });
         binding.fabAdd.setOnClickListener(v -> VisaFormBottomSheet.newInstance(personId, null)
                 .show(getParentFragmentManager(), "visa_form"));
 
@@ -88,7 +100,7 @@ public class VisaTabFragment extends Fragment {
                 }
                 items.add(new ListEntryAdapter.ListItem(
                         EnumLabels.visaType(e.type), formatSubtitle(e), meta,
-                        badge, badgeTextColor, badgeBackground));
+                        badge, badgeTextColor, badgeBackground, copyIdentifier(e)));
             }
             adapter.setItems(items);
             boolean isEmpty = entries.isEmpty();
@@ -135,5 +147,16 @@ public class VisaTabFragment extends Fragment {
             sb.append(entry.controlNumber);
         }
         return sb.toString();
+    }
+
+    /** Prefer visa number; fall back to control number. */
+    private static String copyIdentifier(VisaEntry entry) {
+        if (entry.visaNumber != null && !entry.visaNumber.isEmpty()) {
+            return entry.visaNumber;
+        }
+        if (entry.controlNumber != null && !entry.controlNumber.isEmpty()) {
+            return entry.controlNumber;
+        }
+        return null;
     }
 }

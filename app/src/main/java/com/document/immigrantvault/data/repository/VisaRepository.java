@@ -29,24 +29,24 @@ public class VisaRepository {
         return database.visaDao().getByPerson(personId);
     }
 
-    public void insert(VisaEntry entry, Runnable onComplete) {
+    public void insert(VisaEntry entry, Integer leadDays, Runnable onComplete) {
         executor.execute(() -> {
             long id = database.visaDao().insert(entry);
             entry.id = id;
             addTimeline(entry);
-            reminderRepository.syncVisaEntryReminders(entry);
+            reminderRepository.applyVisaReminder(entry, leadDays);
             if (onComplete != null) {
                 onComplete.run();
             }
         });
     }
 
-    public void update(VisaEntry entry, Runnable onComplete) {
+    public void update(VisaEntry entry, Integer leadDays, Runnable onComplete) {
         executor.execute(() -> {
             database.visaDao().update(entry);
             database.timelineDao().deleteBySource(SourceEntityType.VISA, entry.id);
             addTimeline(entry);
-            reminderRepository.syncVisaEntryReminders(entry);
+            reminderRepository.applyVisaReminder(entry, leadDays);
             if (onComplete != null) {
                 onComplete.run();
             }

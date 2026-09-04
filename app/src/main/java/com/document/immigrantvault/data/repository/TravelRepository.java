@@ -62,7 +62,7 @@ public class TravelRepository {
             TimelineEvent arrival = new TimelineEvent();
             arrival.personId = entry.personId;
             arrival.eventType = TimelineEventType.TRAVEL_ENTRY;
-            arrival.title = "Arrived in US";
+            arrival.title = "Entered the United States";
             arrival.description = formatTravelDescription(entry);
             arrival.eventDate = entry.arrivalDate;
             arrival.sourceEntityType = SourceEntityType.TRAVEL;
@@ -73,7 +73,7 @@ public class TravelRepository {
             TimelineEvent departure = new TimelineEvent();
             departure.personId = entry.personId;
             departure.eventType = TimelineEventType.TRAVEL_EXIT;
-            departure.title = "Departed US";
+            departure.title = "Departed the United States";
             departure.description = formatTravelDescription(entry);
             departure.eventDate = entry.departureDate;
             departure.sourceEntityType = SourceEntityType.TRAVEL;
@@ -83,6 +83,9 @@ public class TravelRepository {
     }
 
     private String formatTravelDescription(TravelEntry entry) {
+        if (entry.portOfEntry != null && !entry.portOfEntry.isEmpty()) {
+            return entry.portOfEntry;
+        }
         String departureCity = entry.departureCity != null ? entry.departureCity : "";
         String arrivalCity = entry.arrivalCity != null ? entry.arrivalCity : "";
         if (!departureCity.isEmpty() || !arrivalCity.isEmpty()) {
@@ -90,6 +93,6 @@ public class TravelRepository {
                     + " → "
                     + (arrivalCity.isEmpty() ? "—" : arrivalCity);
         }
-        return entry.portOfEntry;
+        return null;
     }
 }

@@ -29,24 +29,24 @@ public class DocumentRepository {
         return database.documentDao().getByPerson(personId);
     }
 
-    public void insert(Document document, Runnable onComplete) {
+    public void insert(Document document, Integer leadDays, Runnable onComplete) {
         executor.execute(() -> {
             long id = database.documentDao().insert(document);
             document.id = id;
             addTimeline(document);
-            reminderRepository.syncDocumentReminders(document);
+            reminderRepository.applyDocumentReminder(document, leadDays);
             if (onComplete != null) {
                 onComplete.run();
             }
         });
     }
 
-    public void update(Document document, Runnable onComplete) {
+    public void update(Document document, Integer leadDays, Runnable onComplete) {
         executor.execute(() -> {
             database.documentDao().update(document);
             database.timelineDao().deleteBySource(SourceEntityType.DOCUMENT, document.id);
             addTimeline(document);
-            reminderRepository.syncDocumentReminders(document);
+            reminderRepository.applyDocumentReminder(document, leadDays);
             if (onComplete != null) {
                 onComplete.run();
             }

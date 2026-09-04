@@ -8,13 +8,53 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_check_status"
-            style="@style/Widget.ImmigrantVault.Button.Outlined"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/action_check_status" />
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_check_status"
+                    style="@style/Widget.ImmigrantVault.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_check_status" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_processing_times"
+                    style="@style/Widget.ImmigrantVault.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_processing_times" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_visa_bulletin"
+                    style="@style/Widget.ImmigrantVault.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_visa_bulletin" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_visa_bulletin_dates"
+                    style="@style/Widget.ImmigrantVault.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_visa_bulletin_dates" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_recycler"
@@ -23,6 +63,7 @@
             android:layout_weight="1"
             android:clipToPadding="false"
             android:paddingHorizontal="16dp"
+            android:paddingTop="8dp"
             android:paddingBottom="80dp" />
 
     </LinearLayout>

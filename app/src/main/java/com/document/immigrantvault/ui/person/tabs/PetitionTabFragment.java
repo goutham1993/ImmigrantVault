@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
 import com.document.immigrantvault.data.db.entity.Petition;
+import com.document.immigrantvault.data.db.entity.PetitionType;
 import com.document.immigrantvault.databinding.FragmentPetitionTabBinding;
 import com.document.immigrantvault.databinding.ViewEmptyStateBinding;
 import com.document.immigrantvault.ui.common.ListEntryAdapter;
@@ -68,11 +69,21 @@ public class PetitionTabFragment extends Fragment {
                 UiUtils.openUrl(requireContext(), LinkConstants.USCIS_CASE_STATUS_URL);
             }
         });
+        binding.btnProcessingTimes.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.USCIS_PROCESSING_TIMES_URL));
+        binding.btnVisaBulletin.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.VISA_BULLETIN_URL));
+        binding.btnVisaBulletinDates.setOnClickListener(v ->
+                UiUtils.openUrl(requireContext(), LinkConstants.VISA_BULLETIN_DATES_URL));
 
         adapter.setOnItemClickListener(pos -> {
             Petition p = petitions.get(pos);
             PetitionFormBottomSheet.newInstance(personId, p.id)
                     .show(getParentFragmentManager(), "petition_form");
+        });
+        adapter.setOnItemLongClickListener(pos -> {
+            ListEntryAdapter.ListItem item = adapter.getItem(pos);
+            UiUtils.copyText(requireContext(), item.copyText, getString(R.string.receipt_copied));
         });
         binding.fabAdd.setOnClickListener(v -> PetitionFormBottomSheet.newInstance(personId, null)
                 .show(getParentFragmentManager(), "petition_form"));
@@ -82,12 +93,9 @@ public class PetitionTabFragment extends Fragment {
             petitions = list != null ? list : new ArrayList<>();
             List<ListEntryAdapter.ListItem> items = new ArrayList<>();
             for (Petition p : petitions) {
-                String meta = EnumLabels.petitionStatus(p.status);
-                if (p.lastCheckedDate != null) {
-                    meta += " · Checked " + DateUtils.formatDate(p.lastCheckedDate);
-                }
                 items.add(new ListEntryAdapter.ListItem(
-                        EnumLabels.petitionType(p.type), p.receiptNumber, meta));
+                        EnumLabels.petitionType(p.type), p.receiptNumber, buildMeta(p),
+                        p.receiptNumber));
             }
             adapter.setItems(items);
             boolean isEmpty = petitions.isEmpty();
@@ -96,5 +104,29 @@ public class PetitionTabFragment extends Fragment {
             binding.fabAdd.setVisibility(View.VISIBLE);
         });
         return binding.getRoot();
+    }
+
+    private String buildMeta(Petition p) {
+        StringBuilder meta = new StringBuilder(EnumLabels.petitionStatus(p.status));
+        if (p.type == PetitionType.I140 || p.type == PetitionType.I485) {
+            if (p.priorityDate != null) {
+                meta.append(" · PD ").append(DateUtils.formatDate(p.priorityDate));
+            }
+            if (p.preferenceCategory != null) {
+                meta.append(" · ").append(EnumLabels.preferenceCategory(p.preferenceCategory));
+            }
+        }
+        if (p.type == PetitionType.N400 || p.type == PetitionType.I485) {
+            if (p.interviewDate != null) {
+                meta.append(" · Interview ").append(DateUtils.formatDate(p.interviewDate));
+            }
+            if (p.oathDate != null) {
+                meta.append(" · Oath ").append(DateUtils.formatDate(p.oathDate));
+            }
+        }
+        if (p.lastCheckedDate != null) {
+            meta.append(" · Checked ").append(DateUtils.formatDate(p.lastCheckedDate));
+        }
+        return meta.toString();
     }
 }

@@ -180,6 +180,31 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_remind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:enabled="false"
+            android:text="@string/label_remind_me" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_lead_days_layout"
+            style="@style/Widget.ImmigrantVault.TextInputLayout.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/form_field_spacing"
+            android:hint="@string/label_remind_lead_days"
+            android:visibility="gone">
+
+            <AutoCompleteTextView
+                android:id="@+id/input_lead_days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

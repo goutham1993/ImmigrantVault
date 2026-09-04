@@ -46,7 +46,6 @@ public class PersonRepository {
             long id = database.personDao().insert(person);
             person.id = id;
             addTimelineForPerson(person);
-            reminderRepository.syncVisaReminders(person);
             completeOnMain(onComplete);
         });
     }
@@ -55,7 +54,6 @@ public class PersonRepository {
         executor.execute(() -> {
             database.personDao().update(person);
             addTimelineForPerson(person);
-            reminderRepository.syncVisaReminders(person);
             completeOnMain(onComplete);
         });
     }

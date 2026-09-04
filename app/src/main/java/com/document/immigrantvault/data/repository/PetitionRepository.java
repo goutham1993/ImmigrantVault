@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData;
 import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.db.entity.LinkedEntityType;
 import com.document.immigrantvault.data.db.entity.Petition;
-import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.SourceEntityType;
 import com.document.immigrantvault.data.db.entity.TimelineEvent;
 import com.document.immigrantvault.data.db.entity.TimelineEventType;
@@ -18,12 +17,10 @@ public class PetitionRepository {
 
     private final AppDatabase database;
     private final ExecutorService executor;
-    private final ReminderRepository reminderRepository;
 
     public PetitionRepository(AppDatabase database, ExecutorService executor) {
         this.database = database;
         this.executor = executor;
-        this.reminderRepository = new ReminderRepository(database, executor);
     }
 
     public LiveData<List<Petition>> getByPerson(long personId) {
@@ -35,7 +32,6 @@ public class PetitionRepository {
             long id = database.petitionDao().insert(petition);
             petition.id = id;
             addTimeline(petition);
-            reminderRepository.syncPetitionReminders(petition);
             if (onComplete != null) {
                 onComplete.run();
             }
@@ -47,7 +43,6 @@ public class PetitionRepository {
             database.petitionDao().update(petition);
             database.timelineDao().deleteBySource(SourceEntityType.PETITION, petition.id);
             addTimeline(petition);
-            reminderRepository.syncPetitionReminders(petition);
             if (onComplete != null) {
                 onComplete.run();
             }
@@ -69,9 +64,6 @@ public class PetitionRepository {
         executor.execute(() -> {
             petition.lastCheckedDate = new java.util.Date();
             database.petitionDao().update(petition);
-            if (petition.status == PetitionStatus.PENDING) {
-                reminderRepository.syncPetitionReminders(petition);
-            }
             if (onComplete != null) {
                 onComplete.run();
             }
@@ -83,22 +75,100 @@ public class PetitionRepository {
             TimelineEvent filed = new TimelineEvent();
             filed.personId = petition.personId;
             filed.eventType = TimelineEventType.PETITION_FILED;
-            filed.title = EnumLabels.petitionType(petition.type) + " filed";
-            filed.description = petition.receiptNumber;
+            filed.title = EnumLabels.petitionType(petition.type) + " petition filed";
+            filed.description = formatReceiptDescription(petition);
             filed.eventDate = petition.filedDate;
             filed.sourceEntityType = SourceEntityType.PETITION;
             filed.sourceEntityId = petition.id;
             database.timelineDao().insert(filed);
         }
 
+        if (petition.priorityDate != null) {
+            TimelineEvent priority = new TimelineEvent();
+            priority.personId = petition.personId;
+            priority.eventType = TimelineEventType.PRIORITY_DATE;
+            String title = "Priority date";
+            if (petition.preferenceCategory != null) {
+                title += " · " + EnumLabels.preferenceCategory(petition.preferenceCategory);
+            }
+            priority.title = title;
+            StringBuilder description = new StringBuilder();
+            if (petition.receiptNumber != null) {
+                description.append(petition.receiptNumber);
+            }
+            if (petition.countryOfChargeability != null && !petition.countryOfChargeability.isEmpty()) {
+                if (description.length() > 0) {
+                    description.append(" · ");
+                }
+                description.append(petition.countryOfChargeability);
+            }
+            priority.description = description.length() > 0 ? description.toString() : null;
+            priority.eventDate = petition.priorityDate;
+            priority.sourceEntityType = SourceEntityType.PETITION;
+            priority.sourceEntityId = petition.id;
+            database.timelineDao().insert(priority);
+        }
+
+        if (petition.interviewDate != null) {
+            TimelineEvent interview = new TimelineEvent();
+            interview.personId = petition.personId;
+            interview.eventType = TimelineEventType.PETITION_INTERVIEW;
+            interview.title = EnumLabels.petitionType(petition.type) + " interview";
+            interview.description = formatReceiptDescription(petition);
+            interview.eventDate = petition.interviewDate;
+            interview.sourceEntityType = SourceEntityType.PETITION;
+            interview.sourceEntityId = petition.id;
+            database.timelineDao().insert(interview);
+        }
+
+        if (petition.oathDate != null) {
+            TimelineEvent oath = new TimelineEvent();
+            oath.personId = petition.personId;
+            oath.eventType = TimelineEventType.PETITION_OATH;
+            oath.title = EnumLabels.petitionType(petition.type) + " oath ceremony";
+            oath.description = formatReceiptDescription(petition);
+            oath.eventDate = petition.oathDate;
+            oath.sourceEntityType = SourceEntityType.PETITION;
+            oath.sourceEntityId = petition.id;
+            database.timelineDao().insert(oath);
+        }
+
         TimelineEvent status = new TimelineEvent();
         status.personId = petition.personId;
         status.eventType = TimelineEventType.PETITION_STATUS;
-        status.title = EnumLabels.petitionType(petition.type) + " — " + EnumLabels.petitionStatus(petition.status);
-        status.description = petition.receiptNumber;
-        status.eventDate = petition.lastCheckedDate != null ? petition.lastCheckedDate : new java.util.Date();
+        status.title = formatStatusTitle(petition);
+        status.description = formatReceiptDescription(petition);
+        status.eventDate = petition.lastCheckedDate != null
+                ? petition.lastCheckedDate
+                : new java.util.Date();
         status.sourceEntityType = SourceEntityType.PETITION;
         status.sourceEntityId = petition.id;
         database.timelineDao().insert(status);
+    }
+
+    private static String formatStatusTitle(Petition petition) {
+        String type = EnumLabels.petitionType(petition.type);
+        if (petition.status == null) {
+            return type + " petition status updated";
+        }
+        switch (petition.status) {
+            case APPROVED:
+                return type + " petition approved";
+            case DENIED:
+                return type + " petition denied";
+            case RFE:
+                return type + " petition — RFE received";
+            case PENDING:
+                return type + " petition pending";
+            default:
+                return type + " — " + EnumLabels.petitionStatus(petition.status);
+        }
+    }
+
+    private static String formatReceiptDescription(Petition petition) {
+        if (petition.receiptNumber == null || petition.receiptNumber.isEmpty()) {
+            return "USCIS";
+        }
+        return "USCIS · Receipt " + petition.receiptNumber;
     }
 }

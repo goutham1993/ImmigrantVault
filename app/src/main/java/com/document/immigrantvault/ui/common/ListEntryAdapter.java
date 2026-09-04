@@ -28,25 +28,38 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
     public static class ListItem {
         public final String title;
         public final String subtitle;
-        public final String meta;
+        public final CharSequence meta;
         public final String badge;
         @ColorRes
         public final int badgeTextColorRes;
         @ColorRes
         public final int badgeBackgroundColorRes;
+        /** Raw identifier to copy on long-press; null when not copyable. */
+        public final String copyText;
 
-        public ListItem(String title, String subtitle, String meta) {
-            this(title, subtitle, meta, null, 0, 0);
+        public ListItem(String title, String subtitle, CharSequence meta) {
+            this(title, subtitle, meta, null, 0, 0, null);
         }
 
-        public ListItem(String title, String subtitle, String meta, String badge,
+        public ListItem(String title, String subtitle, CharSequence meta, String copyText) {
+            this(title, subtitle, meta, null, 0, 0, copyText);
+        }
+
+        public ListItem(String title, String subtitle, CharSequence meta, String badge,
                         @ColorRes int badgeTextColorRes, @ColorRes int badgeBackgroundColorRes) {
+            this(title, subtitle, meta, badge, badgeTextColorRes, badgeBackgroundColorRes, null);
+        }
+
+        public ListItem(String title, String subtitle, CharSequence meta, String badge,
+                        @ColorRes int badgeTextColorRes, @ColorRes int badgeBackgroundColorRes,
+                        String copyText) {
             this.title = title;
             this.subtitle = subtitle;
             this.meta = meta;
             this.badge = badge;
             this.badgeTextColorRes = badgeTextColorRes;
             this.badgeBackgroundColorRes = badgeBackgroundColorRes;
+            this.copyText = copyText;
         }
     }
 
@@ -68,6 +81,10 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
 
     public void setOnItemLongClickListener(OnItemLongClickListener longClickListener) {
         this.longClickListener = longClickListener;
+    }
+
+    public ListItem getItem(int position) {
+        return items.get(position);
     }
 
     @NonNull
@@ -103,7 +120,7 @@ public class ListEntryAdapter extends RecyclerView.Adapter<ListEntryAdapter.View
             binding.itemSubtitle.setVisibility(
                     item.subtitle != null && !item.subtitle.isEmpty() ? View.VISIBLE : View.GONE);
             binding.itemMeta.setVisibility(
-                    item.meta != null && !item.meta.isEmpty() ? View.VISIBLE : View.GONE);
+                    item.meta != null && item.meta.length() > 0 ? View.VISIBLE : View.GONE);
             bindBadge(item);
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

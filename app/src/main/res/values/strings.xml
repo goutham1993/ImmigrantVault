@@ -172,6 +172,11 @@
     <string name="label_filed_date">Filed date</string>
     <string name="label_status">Status</string>
     <string name="label_check_interval">Check every (days)</string>
+    <string name="label_priority_date">Priority date</string>
+    <string name="label_preference_category">Preference category</string>
+    <string name="label_country_of_chargeability">Country of chargeability</string>
+    <string name="label_interview_date">Interview date</string>
+    <string name="label_oath_date">Oath / ceremony date</string>
 
     <!-- Actions -->
     <string name="action_save">Save</string>
@@ -179,7 +184,10 @@
     <string name="action_add">Add</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
-    <string name="action_check_status">Check status on USCIS</string>
+    <string name="action_check_status">Case status</string>
+    <string name="action_processing_times">Processing times</string>
+    <string name="action_visa_bulletin">Visa Bulletin</string>
+    <string name="action_visa_bulletin_dates">Bulletin dates</string>
     <string name="action_get_i94">Get latest I-94</string>
     <string name="action_mark_checked">Mark as checked today</string>
     <string name="action_scan">Scan</string>
@@ -189,6 +197,12 @@
     <string name="form_fill_filled">Fields filled — please review</string>
     <string name="form_upload_pdf_unsupported">PDF can\'t be read for form fill — scan or upload a photo</string>
     <string name="receipt_copied">Receipt number copied</string>
+    <string name="document_number_copied">Document number copied</string>
+    <string name="a_number_copied">A-number copied</string>
+    <string name="i94_number_copied">I-94 number copied</string>
+    <string name="visa_number_copied">Visa number copied</string>
+    <string name="control_number_copied">Control number copied</string>
+    <string name="ssn_last4_copied">SSN last 4 copied</string>
 
     <!-- Status -->
     <string name="status_active">Active</string>
@@ -244,12 +258,15 @@
     <string name="empty_links">No useful links</string>
     <string name="empty_links_subtitle">Save websites and resources for quick access. Tap to open, long-press to edit.</string>
     <string name="empty_reminders">No upcoming reminders</string>
-    <string name="empty_reminders_subtitle">Reminders are created for expiring documents and pending petitions</string>
+    <string name="empty_reminders_subtitle">Turn on Remind me when adding a document or visa with an expiry date</string>
 
     <!-- Reminders -->
     <string name="reminders_title">Reminders</string>
     <string name="reminder_on">Reminder on %1$s</string>
     <string name="reminder_on_lead">%1$d days before · Reminder on %2$s</string>
+    <string name="label_remind_me">Remind me before this expires</string>
+    <string name="label_remind_lead_days">Remind me</string>
+    <string name="remind_lead_days">%1$d days before</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -264,6 +281,10 @@
     <string name="settings_link_i94">Official I-94 website</string>
     <string name="settings_link_uscis">USCIS case status</string>
     <string name="settings_link_processing">USCIS processing times</string>
+    <string name="settings_link_visa_bulletin">DOS Visa Bulletin</string>
+    <string name="settings_link_visa_bulletin_dates">Visa Bulletin dates chart</string>
+    <string name="settings_link_green_card">USCIS Green Card</string>
+    <string name="settings_link_n400">N-400 naturalization</string>
     <string name="settings_privacy">All data is stored locally on this device. No cloud sync.</string>
     <string name="settings_about">ImmigrantVault helps you organize immigration records for you and your family.</string>
     <string name="settings_backup">Backup &amp; restore</string>
@@ -299,6 +320,17 @@
     <string name="overview_no_birthday">No birthday set</string>
     <string name="overview_no_ssn">No SSN last 4 set</string>
     <string name="overview_visa_status">Visa status</string>
+    <string name="overview_green_card_path">Green card path</string>
+    <string name="overview_citizenship">Citizenship</string>
+    <string name="overview_no_priority_date">No priority date</string>
+    <string name="overview_no_category">No category</string>
+    <string name="overview_no_chargeability">No chargeability country</string>
+    <string name="overview_no_i485">No I-485 on file</string>
+    <string name="overview_no_n400">No N-400 on file</string>
+    <string name="overview_lpr_since">LPR since %1$s</string>
+    <string name="overview_no_green_card_doc">No green card document</string>
+    <string name="overview_interview">Interview: %1$s</string>
+    <string name="overview_oath">Oath: %1$s</string>
     <string name="overview_employment">Employment</string>
     <string name="overview_no_employer">No employer set</string>
     <string name="overview_no_role">No role set</string>

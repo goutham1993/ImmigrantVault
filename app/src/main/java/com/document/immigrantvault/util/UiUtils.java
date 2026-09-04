@@ -86,13 +86,42 @@ public final class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void copyAndOpen(Context context, String text, String url, String toastMessage) {
+    /**
+     * Copies {@code text} to the clipboard and shows a short toast.
+     * No-ops (no toast) when {@code text} is null or blank.
+     *
+     * @return true if text was copied
+     */
+    public static boolean copyText(Context context, String text, String toastMessage) {
+        if (text == null || text.trim().isEmpty()) {
+            return false;
+        }
         android.content.ClipboardManager clipboard =
                 (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {
             clipboard.setPrimaryClip(android.content.ClipData.newPlainText("copied", text));
         }
         Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    /**
+     * Long-press on {@code view} copies {@code value} (raw, not display text).
+     * Clears the listener when {@code value} is blank.
+     */
+    public static void bindCopyOnLongPress(View view, String value, String toastMessage) {
+        if (value == null || value.trim().isEmpty()) {
+            view.setOnLongClickListener(null);
+            return;
+        }
+        view.setOnLongClickListener(v -> {
+            copyText(v.getContext(), value, toastMessage);
+            return true;
+        });
+    }
+
+    public static void copyAndOpen(Context context, String text, String url, String toastMessage) {
+        copyText(context, text, toastMessage);
         openUrl(context, url);
     }
 

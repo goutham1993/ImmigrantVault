@@ -12,8 +12,11 @@ import androidx.annotation.Nullable;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
+import com.document.immigrantvault.data.db.entity.LinkedEntityType;
+import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.VisaEntry;
 import com.document.immigrantvault.data.db.entity.VisaType;
+import com.document.immigrantvault.data.repository.ReminderRepository;
 import com.document.immigrantvault.databinding.BottomSheetVisaFormBinding;
 import com.document.immigrantvault.util.DatePickerHelper;
 import com.document.immigrantvault.util.DateUtils;
@@ -35,6 +38,7 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
     private VisaEntry editing;
     private Date startDate;
     private Date endDate;
+    private int selectedLeadDays = ReminderRepository.DEFAULT_LEAD_DAYS;
 
     public static VisaFormBottomSheet newInstance(long personId, Long entryId) {
         VisaFormBottomSheet sheet = new VisaFormBottomSheet();
@@ -61,8 +65,13 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         personId = requireArguments().getLong(ARG_PERSON_ID);
 
         setupTypeDropdown();
+        setupLeadDaysDropdown();
         DatePickerHelper.bind(requireContext(), binding.inputStart, null, d -> startDate = d);
-        DatePickerHelper.bind(requireContext(), binding.inputEnd, null, d -> endDate = d);
+        DatePickerHelper.bind(requireContext(), binding.inputEnd, null, d -> {
+            endDate = d;
+            updateReminderUi();
+        });
+        binding.switchRemind.setOnCheckedChangeListener((buttonView, isChecked) -> updateReminderUi());
         binding.btnCancel.setOnClickListener(v -> dismiss());
         binding.btnSave.setOnClickListener(v -> save());
         binding.btnDelete.setOnClickListener(v -> delete());
@@ -73,10 +82,15 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
             long id = requireArguments().getLong(ARG_ENTRY_ID);
             app.getExecutor().execute(() -> {
                 VisaEntry entry = app.getDatabase().visaDao().getByIdSync(id);
-                if (entry != null) requireActivity().runOnUiThread(() -> populate(entry));
+                Reminder reminder = app.getReminderRepository()
+                        .getByLinkedSync(LinkedEntityType.VISA, id);
+                if (entry != null) {
+                    requireActivity().runOnUiThread(() -> populate(entry, reminder));
+                }
             });
         } else {
             binding.formTitle.setText(R.string.add_visa);
+            updateReminderUi();
         }
     }
 
@@ -91,7 +105,43 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         binding.inputType.setText(typeLabels[0], false);
     }
 
-    private void populate(VisaEntry entry) {
+    private void setupLeadDaysDropdown() {
+        String[] labels = new String[ReminderRepository.LEAD_DAY_OPTIONS.length];
+        for (int i = 0; i < ReminderRepository.LEAD_DAY_OPTIONS.length; i++) {
+            labels[i] = getString(R.string.remind_lead_days, ReminderRepository.LEAD_DAY_OPTIONS[i]);
+        }
+        binding.inputLeadDays.setAdapter(new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_dropdown_item_1line, labels));
+        setLeadDaysSelection(ReminderRepository.DEFAULT_LEAD_DAYS);
+        binding.inputLeadDays.setOnItemClickListener((parent, view, position, id) ->
+                selectedLeadDays = ReminderRepository.LEAD_DAY_OPTIONS[position]);
+    }
+
+    private void setLeadDaysSelection(int leadDays) {
+        selectedLeadDays = leadDays;
+        for (int i = 0; i < ReminderRepository.LEAD_DAY_OPTIONS.length; i++) {
+            if (ReminderRepository.LEAD_DAY_OPTIONS[i] == leadDays) {
+                binding.inputLeadDays.setText(
+                        getString(R.string.remind_lead_days, leadDays), false);
+                return;
+            }
+        }
+        selectedLeadDays = ReminderRepository.DEFAULT_LEAD_DAYS;
+        binding.inputLeadDays.setText(
+                getString(R.string.remind_lead_days, selectedLeadDays), false);
+    }
+
+    private void updateReminderUi() {
+        boolean hasEnd = endDate != null;
+        binding.switchRemind.setEnabled(hasEnd);
+        if (!hasEnd) {
+            binding.switchRemind.setChecked(false);
+        }
+        binding.inputLeadDaysLayout.setVisibility(
+                hasEnd && binding.switchRemind.isChecked() ? View.VISIBLE : View.GONE);
+    }
+
+    private void populate(VisaEntry entry, Reminder reminder) {
         editing = entry;
         binding.inputType.setText(EnumLabels.visaType(entry.type), false);
         binding.inputVisaNumber.setText(entry.visaNumber);
@@ -106,6 +156,14 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         if (endDate != null) {
             binding.inputEnd.setText(DateUtils.formatDate(endDate));
         }
+        if (reminder != null && reminder.enabled) {
+            binding.switchRemind.setChecked(true);
+            setLeadDaysSelection(reminder.leadDays);
+        } else {
+            binding.switchRemind.setChecked(false);
+            setLeadDaysSelection(ReminderRepository.DEFAULT_LEAD_DAYS);
+        }
+        updateReminderUi();
     }
 
     private VisaType typeFromLabel(String label) {
@@ -126,8 +184,15 @@ public class VisaFormBottomSheet extends BottomSheetDialogFragment {
         entry.endDate = endDate;
         entry.notes = emptyToNull(text(binding.inputNotes));
 
-        if (editing == null) app.getVisaRepository().insert(entry, this::dismiss);
-        else app.getVisaRepository().update(entry, this::dismiss);
+        Integer leadDays = (endDate != null && binding.switchRemind.isChecked())
+                ? selectedLeadDays
+                : null;
+
+        if (editing == null) {
+            app.getVisaRepository().insert(entry, leadDays, this::dismiss);
+        } else {
+            app.getVisaRepository().update(entry, leadDays, this::dismiss);
+        }
     }
 
     private void delete() {

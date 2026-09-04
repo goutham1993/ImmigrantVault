@@ -19,6 +19,7 @@ import com.document.immigrantvault.ui.common.ListEntryAdapter;
 import com.document.immigrantvault.ui.document.DocumentFormBottomSheet;
 import com.document.immigrantvault.util.DateUtils;
 import com.document.immigrantvault.util.EnumLabels;
+import com.document.immigrantvault.util.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +66,10 @@ public class DocumentsTabFragment extends Fragment {
             DocumentFormBottomSheet.newInstance(personId, doc.id)
                     .show(getParentFragmentManager(), "document_form");
         });
+        adapter.setOnItemLongClickListener(position -> {
+            ListEntryAdapter.ListItem item = adapter.getItem(position);
+            UiUtils.copyText(requireContext(), item.copyText, getString(R.string.document_number_copied));
+        });
 
         binding.fabAdd.setOnClickListener(v ->
                 DocumentFormBottomSheet.newInstance(personId, null)
@@ -78,7 +83,11 @@ public class DocumentsTabFragment extends Fragment {
                 items.add(new ListEntryAdapter.ListItem(
                         EnumLabels.documentType(doc.type),
                         doc.documentNumber,
-                        DateUtils.formatIssueExpiry(doc.issueDate, doc.expiryDate)));
+                        DateUtils.formatIssueExpiry(
+                                doc.issueDate,
+                                doc.expiryDate,
+                                requireContext().getColor(R.color.status_expired)),
+                        doc.documentNumber));
             }
             adapter.setItems(items);
             boolean isEmpty = documents.isEmpty();

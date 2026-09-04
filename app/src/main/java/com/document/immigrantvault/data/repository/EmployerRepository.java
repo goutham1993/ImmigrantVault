@@ -61,7 +61,9 @@ public class EmployerRepository {
         TimelineEvent event = new TimelineEvent();
         event.personId = entry.personId;
         event.eventType = TimelineEventType.EMPLOYER_CHANGE;
-        event.title = "Employer: " + (entry.employerName != null ? entry.employerName : "Unknown");
+        String employer = entry.employerName != null && !entry.employerName.isEmpty()
+                ? entry.employerName : "Unknown";
+        event.title = "Started employment at " + employer;
         event.description = entry.jobTitle;
         event.eventDate = entry.startDate != null ? entry.startDate : new java.util.Date();
         event.sourceEntityType = SourceEntityType.EMPLOYER;

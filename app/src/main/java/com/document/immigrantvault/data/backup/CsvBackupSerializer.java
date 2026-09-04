@@ -12,6 +12,7 @@ import com.document.immigrantvault.data.db.entity.Person;
 import com.document.immigrantvault.data.db.entity.Petition;
 import com.document.immigrantvault.data.db.entity.PetitionStatus;
 import com.document.immigrantvault.data.db.entity.PetitionType;
+import com.document.immigrantvault.data.db.entity.PreferenceCategory;
 import com.document.immigrantvault.data.db.entity.Relationship;
 import com.document.immigrantvault.data.db.entity.Reminder;
 import com.document.immigrantvault.data.db.entity.ReminderKind;
@@ -645,7 +646,9 @@ public final class CsvBackupSerializer {
     private static void writePetitions(Writer writer, List<Petition> petitions) throws IOException {
         CsvUtils.writeRow(writer,
                 "id", "personId", "type", "receiptNumber", "filedDate", "status",
-                "lastCheckedDate", "checkIntervalDays", "notes");
+                "lastCheckedDate", "checkIntervalDays", "notes",
+                "priorityDate", "preferenceCategory", "countryOfChargeability",
+                "interviewDate", "oathDate");
         for (Petition petition : petitions) {
             CsvUtils.writeRow(writer,
                     CsvUtils.formatLong(petition.id),
@@ -656,7 +659,12 @@ public final class CsvBackupSerializer {
                     CsvUtils.formatEnum(petition.status),
                     CsvUtils.formatDate(petition.lastCheckedDate),
                     CsvUtils.formatInt(petition.checkIntervalDays),
-                    CsvUtils.formatString(petition.notes));
+                    CsvUtils.formatString(petition.notes),
+                    CsvUtils.formatDate(petition.priorityDate),
+                    CsvUtils.formatEnum(petition.preferenceCategory),
+                    CsvUtils.formatString(petition.countryOfChargeability),
+                    CsvUtils.formatDate(petition.interviewDate),
+                    CsvUtils.formatDate(petition.oathDate));
         }
     }
 
@@ -676,6 +684,12 @@ public final class CsvBackupSerializer {
             petition.lastCheckedDate = CsvUtils.getDate(row, "lastCheckedDate");
             petition.checkIntervalDays = CsvUtils.getInt(row, "checkIntervalDays");
             petition.notes = CsvUtils.get(row, "notes");
+            petition.priorityDate = CsvUtils.getDate(row, "priorityDate");
+            petition.preferenceCategory = CsvUtils.parseEnum(
+                    CsvUtils.get(row, "preferenceCategory"), PreferenceCategory.class);
+            petition.countryOfChargeability = CsvUtils.get(row, "countryOfChargeability");
+            petition.interviewDate = CsvUtils.getDate(row, "interviewDate");
+            petition.oathDate = CsvUtils.getDate(row, "oathDate");
             petitions.add(petition);
         }
         return petitions;
