@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
+import com.document.immigrantvault.data.db.FolderTree;
 import com.document.immigrantvault.data.db.entity.FileSource;
 import com.document.immigrantvault.data.db.entity.VaultFolder;
 import com.document.immigrantvault.data.repository.RepositoryCallback;
@@ -113,10 +114,12 @@ public class FileSaveBottomSheet extends BottomSheetDialogFragment {
                 if (binding == null) {
                     return;
                 }
-                folders = loaded;
+                folders = new ArrayList<>(loaded);
+                folders.sort((left, right) -> FolderTree.path(left, folders)
+                        .compareToIgnoreCase(FolderTree.path(right, folders)));
                 String[] names = new String[folders.size()];
                 for (int i = 0; i < folders.size(); i++) {
-                    names[i] = folders.get(i).name;
+                    names[i] = FolderTree.path(folders.get(i), folders);
                     if (folders.get(i).id == initialFolderId) {
                         selectedFolderIndex = i;
                     }

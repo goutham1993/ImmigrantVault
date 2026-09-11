@@ -23,11 +23,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.document.immigrantvault.ImmigrantVaultApplication;
 import com.document.immigrantvault.R;
+import com.document.immigrantvault.data.db.FolderTree;
 import com.document.immigrantvault.data.db.dao.VaultFileDao;
 import com.document.immigrantvault.data.db.entity.FileSource;
 import com.document.immigrantvault.data.db.entity.VaultFile;
@@ -44,8 +46,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Two levels of the Files section in one screen. With no folder argument it lists the folders
- * belonging to a person; with a folder argument it shows that folder's documents as a grid.
+ * Files for one person. With no folder argument it lists that person's top-level
+ * folders; inside a folder it shows nested folders and documents together.
  */
 public class FileBrowserFragment extends Fragment {
 
@@ -61,6 +63,7 @@ public class FileBrowserFragment extends Fragment {
 
     private VaultRowAdapter folderAdapter;
     private VaultFileAdapter fileAdapter;
+    private List<VaultFolder> allFolders = new ArrayList<>();
     private List<VaultFolder> folders = new ArrayList<>();
     private List<VaultFile> folderFiles = new ArrayList<>();
     private String searchQuery = "";
@@ -176,6 +179,10 @@ public class FileBrowserFragment extends Fragment {
         return folderId < 0;
     }
 
+    private Long currentParentId() {
+        return isFolderMode() ? null : folderId;
+    }
+
     // region Folder mode
 
     private void setUpFolderMode() {
@@ -188,23 +195,22 @@ public class FileBrowserFragment extends Fragment {
         empty.emptyTitle.setText(R.string.files_empty_folders);
         empty.emptySubtitle.setText(R.string.files_empty_folders_subtitle);
 
-        folderAdapter.setOnRowClickListener(position -> {
-            VaultFolder folder = folders.get(position);
-            Bundle args = new Bundle();
-            args.putLong(ARG_PERSON_ID, personId);
-            args.putLong(ARG_FOLDER_ID, folder.id);
-            args.putString(ARG_TITLE, folder.name);
-            Navigation.findNavController(requireView())
-                    .navigate(R.id.action_browser_to_browser, args);
-        });
-        folderAdapter.setOnRowOverflowListener(
-                (position, anchor) -> showFolderMenu(folders.get(position), anchor));
+        bindFolderAdapter();
 
         binding.fabAdd.setOnClickListener(v -> FolderFormBottomSheet.newInstance(personId)
                 .show(getParentFragmentManager(), "folder_form"));
 
         app.getVaultFolderRepository().ensureDefaultFolders(personId, defaultFolderNames());
+        observeFoldersAndCounts();
+    }
 
+    private void bindFolderAdapter() {
+        folderAdapter.setOnRowClickListener(position -> openFolder(folders.get(position)));
+        folderAdapter.setOnRowOverflowListener(
+                (position, anchor) -> showFolderMenu(folders.get(position), anchor));
+    }
+
+    private void observeFoldersAndCounts() {
         app.getVaultFolderRepository().getFileCounts(personId)
                 .observe(getViewLifecycleOwner(), counts -> {
                     folderCounts.clear();
@@ -218,8 +224,11 @@ public class FileBrowserFragment extends Fragment {
 
         app.getVaultFolderRepository().getByPerson(personId)
                 .observe(getViewLifecycleOwner(), list -> {
-                    folders = list != null ? list : new ArrayList<>();
+                    allFolders = list != null ? list : new ArrayList<>();
                     renderFolders();
+                    if (!isFolderMode()) {
+                        renderFiles();
+                    }
                 });
     }
 
@@ -227,17 +236,44 @@ public class FileBrowserFragment extends Fragment {
         if (binding == null || folderAdapter == null) {
             return;
         }
+        folders = filterFolders(FolderTree.childrenOf(allFolders, currentParentId()));
         List<VaultRowAdapter.Row> rows = new ArrayList<>();
         for (VaultFolder folder : folders) {
-            Integer count = folderCounts.get(folder.id);
+            int count = FolderTree.inclusiveFileCount(folder.id, allFolders, folderCounts);
             rows.add(new VaultRowAdapter.Row(
                     folder.name,
-                    FileFormat.fileCountLabel(requireContext(), count != null ? count : 0),
+                    FileFormat.fileCountLabel(requireContext(), count),
                     R.drawable.ic_folder,
                     true));
         }
         folderAdapter.setRows(rows);
-        toggleEmptyState(folders.isEmpty());
+        if (isFolderMode()) {
+            toggleEmptyState(folders.isEmpty());
+        }
+    }
+
+    private List<VaultFolder> filterFolders(List<VaultFolder> source) {
+        if (isFolderMode() || searchQuery.isEmpty()) {
+            return source;
+        }
+        String needle = searchQuery.toLowerCase(Locale.getDefault());
+        List<VaultFolder> matches = new ArrayList<>();
+        for (VaultFolder folder : source) {
+            if (folder.name != null
+                    && folder.name.toLowerCase(Locale.getDefault()).contains(needle)) {
+                matches.add(folder);
+            }
+        }
+        return matches;
+    }
+
+    private void openFolder(VaultFolder folder) {
+        Bundle args = new Bundle();
+        args.putLong(ARG_PERSON_ID, personId);
+        args.putLong(ARG_FOLDER_ID, folder.id);
+        args.putString(ARG_TITLE, folder.name);
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_browser_to_browser, args);
     }
 
     private void showFolderMenu(VaultFolder folder, View anchor) {
@@ -297,15 +333,25 @@ public class FileBrowserFragment extends Fragment {
     // region File mode
 
     private void setUpFileMode() {
+        folderAdapter = new VaultRowAdapter();
         fileAdapter = new VaultFileAdapter(app.getVaultFileStorage());
-        binding.browserRecycler.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        binding.browserRecycler.setAdapter(fileAdapter);
+        ConcatAdapter concatAdapter = new ConcatAdapter(folderAdapter, fileAdapter);
+        GridLayoutManager grid = new GridLayoutManager(requireContext(), 2);
+        grid.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return position < folderAdapter.getItemCount() ? 2 : 1;
+            }
+        });
+        binding.browserRecycler.setLayoutManager(grid);
+        binding.browserRecycler.setAdapter(concatAdapter);
 
         ViewEmptyStateBinding empty = binding.emptyState;
         empty.emptyIcon.setImageResource(R.drawable.ic_file);
         empty.emptyTitle.setText(R.string.files_empty_folder);
         empty.emptySubtitle.setText(R.string.files_empty_folder_subtitle);
 
+        bindFolderAdapter();
         fileAdapter.setOnFileClickListener(this::openFile);
         fileAdapter.setOnFileOverflowListener(this::showFileMenu);
 
@@ -317,6 +363,10 @@ public class FileBrowserFragment extends Fragment {
 
         AddFileBottomSheet.setResultListener(this, choice -> {
             switch (choice) {
+                case FOLDER:
+                    FolderFormBottomSheet.newInstance(personId, folderId)
+                            .show(getParentFragmentManager(), "folder_form");
+                    break;
                 case SCAN:
                     startScan();
                     break;
@@ -331,6 +381,8 @@ public class FileBrowserFragment extends Fragment {
                     break;
             }
         });
+
+        observeFoldersAndCounts();
 
         app.getVaultFileRepository().getByFolder(folderId)
                 .observe(getViewLifecycleOwner(), files -> {
@@ -352,6 +404,7 @@ public class FileBrowserFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 searchQuery = editable.toString().trim();
+                renderFolders();
                 renderFiles();
             }
         });
@@ -371,12 +424,13 @@ public class FileBrowserFragment extends Fragment {
         List<VaultFile> visible = filterFiles();
         fileAdapter.setFiles(visible);
 
-        // The field stays visible while a query is active so an empty result can still be cleared.
-        boolean searchable = !folderFiles.isEmpty() || !searchQuery.isEmpty();
+        boolean hasChildren = !FolderTree.childrenOf(allFolders, currentParentId()).isEmpty();
+        boolean searchable = !folderFiles.isEmpty() || hasChildren || !searchQuery.isEmpty();
         binding.searchLayout.setVisibility(searchable ? View.VISIBLE : View.GONE);
 
         ViewEmptyStateBinding empty = binding.emptyState;
-        if (visible.isEmpty() && !searchQuery.isEmpty()) {
+        boolean nothingVisible = visible.isEmpty() && folders.isEmpty();
+        if (nothingVisible && !searchQuery.isEmpty()) {
             empty.emptyIcon.setImageResource(R.drawable.ic_search);
             empty.emptyTitle.setText(R.string.files_search_no_results);
             empty.emptySubtitle.setText(getString(R.string.files_search_no_results_subtitle, searchQuery));
@@ -385,7 +439,7 @@ public class FileBrowserFragment extends Fragment {
             empty.emptyTitle.setText(R.string.files_empty_folder);
             empty.emptySubtitle.setText(R.string.files_empty_folder_subtitle);
         }
-        toggleEmptyState(visible.isEmpty());
+        toggleEmptyState(nothingVisible);
     }
 
     private List<VaultFile> filterFiles() {
@@ -536,11 +590,14 @@ public class FileBrowserFragment extends Fragment {
 
     private void pickFolder(int titleRes, long excludeFolderId, FolderPickListener listener) {
         app.getExecutor().execute(() -> {
-            List<VaultFolder> targets = new ArrayList<>(
+            List<VaultFolder> all = new ArrayList<>(
                     app.getDatabase().vaultFolderDao().getByPersonSync(personId));
+            List<VaultFolder> targets = new ArrayList<>(all);
             if (excludeFolderId >= 0) {
                 targets.removeIf(folder -> folder.id == excludeFolderId);
             }
+            targets.sort((left, right) -> FolderTree.path(left, all)
+                    .compareToIgnoreCase(FolderTree.path(right, all)));
             if (!isAdded()) {
                 return;
             }
@@ -554,7 +611,7 @@ public class FileBrowserFragment extends Fragment {
                 }
                 String[] names = new String[targets.size()];
                 for (int i = 0; i < targets.size(); i++) {
-                    names[i] = targets.get(i).name;
+                    names[i] = FolderTree.path(targets.get(i), all);
                 }
                 new AlertDialog.Builder(requireContext())
                         .setTitle(titleRes)

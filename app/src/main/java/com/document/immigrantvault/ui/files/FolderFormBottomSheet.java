@@ -21,17 +21,26 @@ public class FolderFormBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_PERSON_ID = "person_id";
     private static final String ARG_FOLDER_ID = "folder_id";
+    private static final String ARG_PARENT_FOLDER_ID = "parent_folder_id";
     private static final String ARG_FOLDER_NAME = "folder_name";
 
     private BottomSheetFolderFormBinding binding;
     private ImmigrantVaultApplication app;
     private long personId;
     private Long folderId;
+    private Long parentFolderId;
 
     public static FolderFormBottomSheet newInstance(long personId) {
+        return newInstance(personId, -1L);
+    }
+
+    public static FolderFormBottomSheet newInstance(long personId, long parentFolderId) {
         FolderFormBottomSheet sheet = new FolderFormBottomSheet();
         Bundle args = new Bundle();
         args.putLong(ARG_PERSON_ID, personId);
+        if (parentFolderId >= 0) {
+            args.putLong(ARG_PARENT_FOLDER_ID, parentFolderId);
+        }
         sheet.setArguments(args);
         return sheet;
     }
@@ -60,6 +69,9 @@ public class FolderFormBottomSheet extends BottomSheetDialogFragment {
         UiUtils.autoCapitalizeInputs(view);
         app = (ImmigrantVaultApplication) requireActivity().getApplication();
         personId = requireArguments().getLong(ARG_PERSON_ID);
+        if (requireArguments().containsKey(ARG_PARENT_FOLDER_ID)) {
+            parentFolderId = requireArguments().getLong(ARG_PARENT_FOLDER_ID);
+        }
 
         if (requireArguments().containsKey(ARG_FOLDER_ID)) {
             folderId = requireArguments().getLong(ARG_FOLDER_ID);
@@ -100,6 +112,7 @@ public class FolderFormBottomSheet extends BottomSheetDialogFragment {
 
         VaultFolder folder = new VaultFolder();
         folder.personId = personId;
+        folder.parentFolderId = parentFolderId;
         folder.name = name;
         folder.sortOrder = Integer.MAX_VALUE;
         folder.isSystem = false;

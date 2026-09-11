@@ -353,6 +353,17 @@ final class DatabaseMigrations {
         }
     };
 
+    static final Migration MIGRATION_23_24 = new Migration(23, 24) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            if (!columnExists(db, "vault_folders", "parentFolderId")) {
+                db.execSQL("ALTER TABLE `vault_folders` ADD COLUMN `parentFolderId` INTEGER");
+            }
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_vault_folders_parentFolderId` "
+                    + "ON `vault_folders` (`parentFolderId`)");
+        }
+    };
+
     private static void rebuildTravelEntriesTable(SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS travel_entries_migration_tmp");
         db.execSQL("CREATE TABLE travel_entries_migration_tmp ("

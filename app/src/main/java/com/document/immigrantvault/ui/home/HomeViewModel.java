@@ -26,7 +26,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public LiveData<List<Reminder>> getReminders() {
-        return reminderRepository.getAllEnabled();
+        return reminderRepository.getUpcomingDeadlines();
     }
 
     public void deletePerson(Person person, Runnable onComplete) {

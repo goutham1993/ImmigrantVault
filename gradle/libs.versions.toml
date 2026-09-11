@@ -19,6 +19,8 @@ gson = "2.11.0"
 mlkitDocumentScanner = "16.0.0"
 mlkitTextRecognition = "16.0.1"
 glide = "4.16.0"
+documentfile = "1.1.0"
+playServicesAuth = "21.4.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -43,6 +45,8 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 mlkit-document-scanner = { group = "com.google.android.gms", name = "play-services-mlkit-document-scanner", version.ref = "mlkitDocumentScanner" }
 mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

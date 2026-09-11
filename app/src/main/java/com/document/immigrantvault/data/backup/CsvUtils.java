@@ -104,6 +104,11 @@ final class CsvUtils {
         return value == null ? 0L : Long.parseLong(value);
     }
 
+    static Long getNullableLong(Map<String, String> row, String key) {
+        String value = get(row, key);
+        return value == null ? null : Long.parseLong(value);
+    }
+
     static int getInt(Map<String, String> row, String key) {
         String value = get(row, key);
         return value == null ? 0 : Integer.parseInt(value);
@@ -140,6 +145,10 @@ final class CsvUtils {
 
     static String formatLong(long value) {
         return String.valueOf(value);
+    }
+
+    static String formatNullableLong(Long value) {
+        return value == null ? "" : String.valueOf(value);
     }
 
     static String formatInt(int value) {

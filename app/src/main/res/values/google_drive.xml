@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Optional Web OAuth client ID from Google Cloud Console (client type: Web application).
+      Also create an Android OAuth client with applicationId com.document.immigrantvault and your
+      signing certificate SHA-1, and enable the Google Drive API.
+      Replace the placeholder below before connecting a real account.
+    -->
+    <string name="google_drive_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID.apps.googleusercontent.com</string>
+</resources>

@@ -1,6 +1,7 @@
 package com.document.immigrantvault.data.repository;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import com.document.immigrantvault.data.db.AppDatabase;
 import com.document.immigrantvault.data.db.entity.Document;
@@ -23,6 +24,7 @@ public class ReminderRepository {
 
     public static final int[] LEAD_DAY_OPTIONS = {7, 14, 30};
     public static final int DEFAULT_LEAD_DAYS = 14;
+    public static final int UPCOMING_DEADLINE_DAYS = 30;
 
     private final AppDatabase database;
     private final ExecutorService executor;
@@ -34,6 +36,37 @@ public class ReminderRepository {
 
     public LiveData<List<Reminder>> getAllEnabled() {
         return database.reminderDao().getAllEnabled();
+    }
+
+    /** Enabled reminders whose actual deadline (expiry) is today through 30 days from now. */
+    public LiveData<List<Reminder>> getUpcomingDeadlines() {
+        return Transformations.map(getAllEnabled(), ReminderRepository::filterArrivingWithinUpcomingWindow);
+    }
+
+    public static List<Reminder> filterArrivingWithinUpcomingWindow(List<Reminder> reminders) {
+        List<Reminder> filtered = new ArrayList<>();
+        if (reminders == null) {
+            return filtered;
+        }
+        for (Reminder reminder : reminders) {
+            Date deadline = deadlineDate(reminder);
+            if (deadline == null) {
+                continue;
+            }
+            int days = DateUtils.daysUntil(deadline);
+            if (days >= 0 && days <= UPCOMING_DEADLINE_DAYS) {
+                filtered.add(reminder);
+            }
+        }
+        return filtered;
+    }
+
+    /** Actual expiry/deadline date, reconstructed from the reminder trigger and lead days. */
+    public static Date deadlineDate(Reminder reminder) {
+        if (reminder == null || reminder.triggerDate == null) {
+            return null;
+        }
+        return DateUtils.addDays(reminder.triggerDate, reminder.leadDays);
     }
 
     public Reminder getByLinkedSync(LinkedEntityType linkedType, long linkedId) {

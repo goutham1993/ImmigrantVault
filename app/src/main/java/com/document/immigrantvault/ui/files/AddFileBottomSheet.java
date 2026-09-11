@@ -13,8 +13,9 @@ import com.document.immigrantvault.databinding.BottomSheetAddFileBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 /**
- * Lets the user pick how a document enters the vault. The choice is handed back through the
- * fragment result API so the launchers stay registered on the hosting fragment.
+ * Lets the user add a nested folder or pick how a document enters the vault.
+ * The choice is handed back through the fragment result API so the launchers
+ * stay registered on the hosting fragment.
  */
 public class AddFileBottomSheet extends BottomSheetDialogFragment {
 
@@ -24,6 +25,7 @@ public class AddFileBottomSheet extends BottomSheetDialogFragment {
     private static final String RESULT_CHOICE = "choice";
 
     public enum Choice {
+        FOLDER,
         SCAN,
         PHOTO,
         UPLOAD
@@ -62,6 +64,7 @@ public class AddFileBottomSheet extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding.optionFolder.setOnClickListener(v -> deliver(Choice.FOLDER));
         binding.optionScan.setOnClickListener(v -> deliver(Choice.SCAN));
         binding.optionPhoto.setOnClickListener(v -> deliver(Choice.PHOTO));
         binding.optionUpload.setOnClickListener(v -> deliver(Choice.UPLOAD));

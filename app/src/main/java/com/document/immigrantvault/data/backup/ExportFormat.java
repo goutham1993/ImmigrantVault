@@ -28,4 +28,9 @@ public enum ExportFormat {
         String stamp = new SimpleDateFormat("yyyy-MM-dd_HHmm", Locale.US).format(new Date());
         return "immigrant_vault_backup_" + stamp + "." + extension;
     }
+
+    public String buildMonthlyFileName() {
+        String stamp = new SimpleDateFormat("yyyy-MM", Locale.US).format(new Date());
+        return "immigrant_vault_auto_backup_" + stamp + "." + extension;
+    }
 }

@@ -31,17 +31,19 @@ public class ExportImportRepository {
         this.databaseVersion = AppDatabase.VERSION;
     }
 
+    public byte[] export(ExportFormat format) throws ExportImportException {
+        VaultBackup backup = backupDao.exportAll();
+        backup.databaseVersion = databaseVersion;
+        if (format == ExportFormat.JSON) {
+            return JsonBackupSerializer.toBytes(backup);
+        }
+        BackupPayload payload = new BackupPayload(backup);
+        collectBinaries(payload);
+        return CsvBackupSerializer.toBytes(payload);
+    }
+
     public Future<byte[]> exportAsync(ExportFormat format) {
-        return executor.submit(() -> {
-            VaultBackup backup = backupDao.exportAll();
-            backup.databaseVersion = databaseVersion;
-            if (format == ExportFormat.JSON) {
-                return JsonBackupSerializer.toBytes(backup);
-            }
-            BackupPayload payload = new BackupPayload(backup);
-            collectBinaries(payload);
-            return CsvBackupSerializer.toBytes(payload);
-        });
+        return executor.submit(() -> export(format));
     }
 
     public Future<Void> importAsync(byte[] data, String mimeType) {

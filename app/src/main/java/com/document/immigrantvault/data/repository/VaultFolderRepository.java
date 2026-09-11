@@ -6,11 +6,14 @@ import android.os.Looper;
 import androidx.lifecycle.LiveData;
 
 import com.document.immigrantvault.data.db.AppDatabase;
+import com.document.immigrantvault.data.db.FolderTree;
 import com.document.immigrantvault.data.db.dao.VaultFileDao;
 import com.document.immigrantvault.data.db.entity.VaultFile;
 import com.document.immigrantvault.data.db.entity.VaultFolder;
 import com.document.immigrantvault.util.VaultFileStorage;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -93,14 +96,28 @@ public class VaultFolderRepository {
         });
     }
 
-    /** Deletes the folder and every file inside it, removing the bytes from disk first. */
+    /**
+     * Deletes the folder, nested folders, and every file they contain, removing
+     * bytes from disk first.
+     */
     public void delete(VaultFolder folder, RepositoryCallback<Void> callback) {
         executor.execute(() -> {
             try {
-                for (VaultFile file : database.vaultFileDao().getByFolderSync(folder.id)) {
-                    storage.delete(file.personId, file.storedName);
+                List<VaultFolder> all = database.vaultFolderDao().getByPersonSync(folder.personId);
+                List<Long> ids = FolderTree.inclusiveIds(folder.id, all);
+                for (Long id : ids) {
+                    for (VaultFile file : database.vaultFileDao().getByFolderSync(id)) {
+                        storage.delete(file.personId, file.storedName);
+                    }
                 }
-                database.vaultFolderDao().delete(folder);
+                List<Long> nestedFirst = new ArrayList<>(ids);
+                Collections.reverse(nestedFirst);
+                for (Long id : nestedFirst) {
+                    VaultFolder target = database.vaultFolderDao().getByIdSync(id);
+                    if (target != null) {
+                        database.vaultFolderDao().delete(target);
+                    }
+                }
                 postSuccess(callback, null);
             } catch (Exception e) {
                 postError(callback, e);

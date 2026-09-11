@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 
 import com.document.immigrantvault.data.backup.VaultBackup;
+import com.document.immigrantvault.data.db.FolderTree;
 import com.document.immigrantvault.data.db.entity.AddressEntry;
 import com.document.immigrantvault.data.db.entity.Document;
 import com.document.immigrantvault.data.db.entity.EducationEntry;
@@ -261,9 +262,10 @@ public interface BackupDao {
         if (backup.timelineEvents != null && !backup.timelineEvents.isEmpty()) {
             insertTimelineEvents(backup.timelineEvents);
         }
-        // Folders must land before the files that reference them.
+        // Folders must land before the files that reference them, and parents
+        // before nested children so restore order stays consistent.
         if (backup.vaultFolders != null && !backup.vaultFolders.isEmpty()) {
-            insertVaultFolders(backup.vaultFolders);
+            insertVaultFolders(FolderTree.parentsFirst(FolderTree.sanitizeParents(backup.vaultFolders)));
         }
         if (backup.vaultFiles != null && !backup.vaultFiles.isEmpty()) {
             insertVaultFiles(backup.vaultFiles);

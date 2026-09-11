@@ -15,7 +15,7 @@ import java.util.Date;
                 childColumns = "personId",
                 onDelete = ForeignKey.CASCADE
         ),
-        indices = {@Index("personId")}
+        indices = {@Index("personId"), @Index("parentFolderId")}
 )
 public class VaultFolder {
 
@@ -23,6 +23,8 @@ public class VaultFolder {
     public long id;
 
     public long personId;
+    /** Null for a person's top-level folders; otherwise the enclosing folder. */
+    public Long parentFolderId;
     public String name;
     public int sortOrder;
     public boolean isSystem;

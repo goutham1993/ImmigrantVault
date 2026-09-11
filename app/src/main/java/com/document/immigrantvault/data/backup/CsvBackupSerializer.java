@@ -162,7 +162,8 @@ public final class CsvBackupSerializer {
     }
 
     private static void writeVaultFolders(Writer writer, List<VaultFolder> folders) throws IOException {
-        CsvUtils.writeRow(writer, "id", "personId", "name", "sortOrder", "isSystem", "createdAt");
+        CsvUtils.writeRow(writer,
+                "id", "personId", "parentFolderId", "name", "sortOrder", "isSystem", "createdAt");
         if (folders == null) {
             return;
         }
@@ -170,6 +171,7 @@ public final class CsvBackupSerializer {
             CsvUtils.writeRow(writer,
                     CsvUtils.formatLong(folder.id),
                     CsvUtils.formatLong(folder.personId),
+                    CsvUtils.formatNullableLong(folder.parentFolderId),
                     CsvUtils.formatString(folder.name),
                     CsvUtils.formatInt(folder.sortOrder),
                     CsvUtils.formatBoolean(folder.isSystem),
@@ -186,6 +188,7 @@ public final class CsvBackupSerializer {
             VaultFolder folder = new VaultFolder();
             folder.id = CsvUtils.getLong(row, "id");
             folder.personId = CsvUtils.getLong(row, "personId");
+            folder.parentFolderId = CsvUtils.getNullableLong(row, "parentFolderId");
             folder.name = CsvUtils.get(row, "name");
             folder.sortOrder = CsvUtils.getInt(row, "sortOrder");
             folder.isSystem = CsvUtils.getBoolean(row, "isSystem");

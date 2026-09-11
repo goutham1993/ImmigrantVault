@@ -20,6 +20,7 @@ import com.document.immigrantvault.data.repository.W2Repository;
 import com.document.immigrantvault.data.repository.TaxReturnRepository;
 import com.document.immigrantvault.data.repository.VaultFileRepository;
 import com.document.immigrantvault.data.repository.VaultFolderRepository;
+import com.document.immigrantvault.util.AutoBackupScheduler;
 import com.document.immigrantvault.util.ReminderScheduler;
 import com.document.immigrantvault.util.ThemePreferences;
 import com.document.immigrantvault.util.VaultFileStorage;
@@ -76,6 +77,7 @@ public class ImmigrantVaultApplication extends Application {
         vaultFileRepository = new VaultFileRepository(database, executor, vaultFileStorage);
         vaultFileRepository.sweepOrphans();
         ReminderScheduler.schedule(this);
+        AutoBackupScheduler.schedule(this);
         personRepository.removeSeededDemoPeople();
     }
 

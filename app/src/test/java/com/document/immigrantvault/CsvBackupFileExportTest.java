@@ -4,6 +4,7 @@ import com.document.immigrantvault.data.backup.BackupPayload;
 import com.document.immigrantvault.data.backup.CsvBackupSerializer;
 import com.document.immigrantvault.data.backup.VaultBackup;
 import com.document.immigrantvault.data.db.entity.VaultFile;
+import com.document.immigrantvault.data.db.entity.VaultFolder;
 
 import org.junit.Test;
 
@@ -15,6 +16,8 @@ import java.util.zip.ZipInputStream;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class CsvBackupFileExportTest {
@@ -46,6 +49,44 @@ public class CsvBackupFileExportTest {
         assertEquals(1, restored.backup.vaultFiles.size());
         assertEquals("Passport scan", restored.backup.vaultFiles.get(0).displayName);
         assertArrayEquals(jpeg, restored.files.get("7/abc-123.jpg"));
+    }
+
+    @Test
+    public void csvZipRoundTripsNestedFolders() throws Exception {
+        VaultFolder parent = new VaultFolder();
+        parent.id = 4;
+        parent.personId = 7;
+        parent.name = "Visas";
+
+        VaultFolder child = new VaultFolder();
+        child.id = 9;
+        child.personId = 7;
+        child.parentFolderId = 4L;
+        child.name = "H-1B";
+
+        VaultBackup backup = new VaultBackup();
+        backup.vaultFolders.add(child);
+        backup.vaultFolders.add(parent);
+
+        byte[] zipBytes = CsvBackupSerializer.toBytes(new BackupPayload(backup));
+        BackupPayload restored = CsvBackupSerializer.fromBytes(zipBytes);
+
+        assertEquals(2, restored.backup.vaultFolders.size());
+        VaultFolder restoredChild = null;
+        VaultFolder restoredParent = null;
+        for (VaultFolder folder : restored.backup.vaultFolders) {
+            if (folder.id == 9) {
+                restoredChild = folder;
+            } else if (folder.id == 4) {
+                restoredParent = folder;
+            }
+        }
+        assertNotNull(restoredParent);
+        assertNotNull(restoredChild);
+        assertEquals("Visas", restoredParent.name);
+        assertNull(restoredParent.parentFolderId);
+        assertEquals("H-1B", restoredChild.name);
+        assertEquals(Long.valueOf(4L), restoredChild.parentFolderId);
     }
 
     @Test

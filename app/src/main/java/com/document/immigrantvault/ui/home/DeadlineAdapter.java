@@ -14,6 +14,7 @@ import com.document.immigrantvault.util.StatusHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.ViewHolder> {
@@ -25,7 +26,9 @@ public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.ViewHo
         if (reminders != null) {
             // One chip per document/visa/petition — hide 30/14/7 lead-day copies.
             items.addAll(ReminderRepository.collapseByLinkedEntity(reminders));
-            Collections.sort(items, Comparator.comparing(r -> r.triggerDate));
+            Collections.sort(items, Comparator.comparing(
+                    ReminderRepository::deadlineDate,
+                    Comparator.nullsLast(Date::compareTo)));
         }
         notifyDataSetChanged();
     }
@@ -66,7 +69,7 @@ public class DeadlineAdapter extends RecyclerView.Adapter<DeadlineAdapter.ViewHo
         void bind(Reminder reminder) {
             binding.deadlineTitle.setText(reminder.title);
             binding.deadlineBody.setText(reminder.body);
-            int color = StatusHelper.deadlineColorRes(reminder.triggerDate);
+            int color = StatusHelper.deadlineColorRes(ReminderRepository.deadlineDate(reminder));
             binding.deadlineTitle.setTextColor(itemView.getContext().getColor(color));
         }
     }
